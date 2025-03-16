@@ -1,0 +1,28 @@
+repository_type: pipeline
+
+nf_core_version: 3.2.0
+
+lint:
+  files_unchanged:
+    - .github/CONTRIBUTING.md
+    - assets/sendmail_template.txt
+    - .github/CONTRIBUTING.md
+    - assets/sendmail_template.txt
+  multiqc_config: false
+  files_exist:
+    - assets/multiqc_config.yml
+    - assets/multiqc_config.yml
+
+template:
+  org: nf-core
+  name: eduomics
+  description: Simulation Pipeline for Educational Omics Data
+  author: Mariangela Santorsola, Lorenzo Sola, Davide Bagordo, Simone Carpanzano,
+    Francesco Lescai
+  version: 1.0.0dev
+  force: true
+  outdir: ./eduomics
+  skip_features:
+    - multiqc
+    - fastqc
+  is_nfcore: true
