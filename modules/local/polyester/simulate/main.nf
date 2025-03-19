@@ -9,9 +9,8 @@ process POLYESTER_SIMULATE {
 
     input:
     tuple val(meta), path(countmatrix)
-    tuple val(meta), path(foldchange)
+    tuple val(meta2), path(foldchange)
     path(txfasta)
-    val(reps)
 
     output:
     tuple val(meta), path("*.fq.gz"), emit: reads
@@ -23,21 +22,30 @@ process POLYESTER_SIMULATE {
     script:
     def args = task.ext.args ?: ''
     def prefix = task.ext.prefix ?: "${meta.id}"
-    def simulation_args = countmatrix ? "readmat=${countmatrix}" : "fold_changes=${foldchange}"
-    def simulation_function = countmatrix ? "simulate_experiment_countmat" : "simulate_experiment"
+    def reps = meta2.reps ?: meta2.reps : 3
+    def groups = meta2.groups ?: meta2.groups : 2
+    // Create a list that repeats 'reps' for the number of 'groups' times
+    def repsList = (1..groups).collect { "${reps}" }.join(",")
+    def numRepsString = "num_reps=c(${repsList})"
+    def readData = countmatrix ? "countmat = readRDS('${countmatrix}')" : "fold_changes = readRDS('${foldchange}')"
+    def simulation_function = (countmatrix
+        ? "simulate_experiment_countmat(${txfasta}, readmat=countmat, outdir='simulated_reads')"
+        : "simulate_experiment(${txfasta}, reads_per_transcript=readspertx, ${numRepsString}, fold_changes=fold_changes, outdir='simulated_reads')")
 
     """
+    cat <<EOF >>simulate_reads.R
     #!/usr/bin/env R
 
     library(polyester)
     library(Biostrings)
 
-    ${simulation_function}(
-        "${txfasta}",
-        reps = c(${reps}, ${reps}),
-        ${simulation_args},
-        output_dir = "."
-    )
+    # Load the count matrix or fold changes
+    ${readData}
+
+    ${simulation_function}
+    EOF
+
+    Rscript simulate_reads.R
 
     cat <<-END_VERSIONS > versions.yml
     "${task.process}":
