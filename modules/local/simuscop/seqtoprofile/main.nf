@@ -5,8 +5,8 @@ process SIMUSCOP_SEQTOPROFILE {
 
     conda "${moduleDir}/environment.yml"
     container "${ workflow.containerEngine == 'singularity' && !task.ext.singularity_pull_docker_container ?
-        'oras://community.wave.seqera.io/library/simuscop:1.0--8218c026ebad31df':
-        'community.wave.seqera.io/library/simuscop:1.0--654f482edaeaba15' }"
+        'oras://community.wave.seqera.io/library/simuscop:1.1.2--a03a6e546b386805':
+        'community.wave.seqera.io/library/simuscop:1.1.2--251f0a0bfca0fa85' }"
 
     input:
     // TODO nf-core: Where applicable all sample-specific information e.g. "id", "single_end", "read_group"
