@@ -3,4 +3,4 @@ channels:
   - bioconda
   - lescailab
 dependencies:
-  - lescailab::simuscop=1.1.2
+  - lescailab::simuscop=1.2.0

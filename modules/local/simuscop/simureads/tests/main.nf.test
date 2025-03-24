@@ -11,13 +11,34 @@ nextflow_process {
 
     test("simulate reads") {
 
+        setup {
+            run("SIMUSCOP_SEQTOPROFILE"){
+                script '../../seqtoprofile/main.nf'
+                process {
+                    """
+                    input[0] = [
+                    [ id:'simulation_test', reps: 3, groups: 2 ], // meta map
+                    file('https://raw.githubusercontent.com/lescai-teaching/eduomics_testdata/refs/heads/main/dna/align_wgsim/wgsim_chr22q11-21_recal.bam', checkIfExists: true),
+                    ]
+                    input[1] = [
+                        [ id:'simulation_test', reps: 3, groups: 2 ], // meta map
+                        file('https://raw.githubusercontent.com/lescai-teaching/eduomics_testdata/refs/heads/main/dna/align_wgsim/wgsim_chr22q11-21.g.vcf.gz', checkIfExists: true),
+                    ]
+                    input[2] = [
+                        file('https://raw.githubusercontent.com/lescai-teaching/eduomics_testdata/refs/heads/main/dna/Twist_Exome_Target2_chr22q11-21_GRCh38_500pad.bed', checkIfExists: true),
+                    ]
+                    input[3] = [
+                        file('https://raw.githubusercontent.com/lescai-teaching/eduomics_testdata/refs/heads/main/dna/chr22_q11-21_GRCh38.fasta', checkIfExists: true),
+                    ]
+                    """
+                }
+            }
+        }
+
         when {
             process {
                 """
-                input[0] = [
-                    [ id:'sim01', coverage: 50, reps: 3, groups: 2 ], // meta map
-                    file('https://raw.githubusercontent.com/lescai-teaching/eduomics_testdata/refs/heads/main/dna/simureads/chr21_q11-21_test.profile', checkIfExists: true),
-                ]
+                input[0] = SIMUSCOP_SEQTOPROFILE.out.profile
                 input[1] = [
                     file('https://raw.githubusercontent.com/lescai-teaching/eduomics_testdata/refs/heads/main/dna/chr22_q11-21_GRCh38.fasta', checkIfExists: true),
                     file('https://raw.githubusercontent.com/lescai-teaching/eduomics_testdata/refs/heads/main/dna/chr22_q11-21_GRCh38.fasta.fai', checkIfExists: true),
