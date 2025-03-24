@@ -46,6 +46,11 @@ process SIMUSCOP_SIMUREADS {
 
     simuReads simulation.config
 
+    for read in \$(ls simulated_reads/*.fq)
+    do
+    gzip \$read
+    done
+
     cat <<-END_VERSIONS > versions.yml
     "${task.process}":
         simuscop: \$(seqToProfile -h 2>&1 | grep "^Version" | sed 's/Version: //')
