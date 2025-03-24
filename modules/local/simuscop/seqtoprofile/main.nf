@@ -9,19 +9,15 @@ process SIMUSCOP_SEQTOPROFILE {
         'community.wave.seqera.io/library/simuscop:1.1.2--251f0a0bfca0fa85' }"
 
     input:
-    // TODO nf-core: Where applicable all sample-specific information e.g. "id", "single_end", "read_group"
-    //               MUST be provided as an input via a Groovy Map called "meta".
-    //               This information may not be required in some instances e.g. indexing reference genome files:
-    //               https://github.com/nf-core/modules/blob/master/modules/nf-core/bwa/index/main.nf
-    // TODO nf-core: Where applicable please provide/convert compressed files as input/output
-    //               e.g. "*.fastq.gz" and NOT "*.fastq", "*.bam" and NOT "*.sam" etc.
     tuple val(meta), path(bam)
+    tuple val(meta2), path(vcf)
+    tuple path(capture)
+    tuple path(fasta)
+
 
     output:
-    // TODO nf-core: Named file extensions MUST be emitted for ALL output channels
-    tuple val(meta), path("*.bam"), emit: bam
-    // TODO nf-core: List additional required output channels/values here
-    path "versions.yml"           , emit: versions
+    tuple val(meta), path("*.profile"), emit: profile
+    path "versions.yml"               , emit: versions
 
     when:
     task.ext.when == null || task.ext.when
@@ -29,43 +25,34 @@ process SIMUSCOP_SEQTOPROFILE {
     script:
     def args = task.ext.args ?: ''
     def prefix = task.ext.prefix ?: "${meta.id}"
-    // TODO nf-core: Where possible, a command MUST be provided to obtain the version number of the software e.g. 1.10
-    //               If the software is unable to output a version number on the command-line then it can be manually specified
-    //               e.g. https://github.com/nf-core/modules/blob/master/modules/nf-core/homer/annotatepeaks/main.nf
-    //               Each software used MUST provide the software name and version number in the YAML version file (versions.yml)
-    // TODO nf-core: It MUST be possible to pass additional parameters to the tool as a command-line string via the "task.ext.args" directive
-    // TODO nf-core: If the tool supports multi-threading then you MUST provide the appropriate parameter
-    //               using the Nextflow "task" variable e.g. "--threads $task.cpus"
-    // TODO nf-core: Please replace the example samtools command below with your module's command
-    // TODO nf-core: Please indent the command appropriately (4 spaces!!) to help with readability ;)
+    // seqToProfile requires VCF files to be uncompressed
+    def vcf_command = vcf.name.endsWith('.gz') ? "gunzip -c ${vcf} > ${vcf.baseName} && vcf_file=${vcf.baseName}" : "vcf_file=${vcf}"
+
     """
-    samtools \\
-        sort \\
-        $args \\
-        -@ $task.cpus \\
-        -o ${prefix}.bam \\
-        -T $prefix \\
-        $bam
+    ${vcf_command}
+    seqToProfile \\
+    -b $bam \\
+    -v \$vcf_file \\
+    -t $capture \\
+    -r $fasta \\
+    $args >${prefix}.profile
 
     cat <<-END_VERSIONS > versions.yml
     "${task.process}":
-        simuscop: \$(samtools --version |& sed '1!d ; s/samtools //')
+        simuscop: \$(seqToProfile -h 2>&1 | grep "^Version" | sed 's/Version: //')
     END_VERSIONS
     """
 
     stub:
     def args = task.ext.args ?: ''
     def prefix = task.ext.prefix ?: "${meta.id}"
-    // TODO nf-core: A stub section should mimic the execution of the original module as best as possible
-    //               Have a look at the following examples:
-    //               Simple example: https://github.com/nf-core/modules/blob/818474a292b4860ae8ff88e149fbcda68814114d/modules/nf-core/bcftools/annotate/main.nf#L47-L63
-    //               Complex example: https://github.com/nf-core/modules/blob/818474a292b4860ae8ff88e149fbcda68814114d/modules/nf-core/bedtools/split/main.nf#L38-L54
+
     """
-    touch ${prefix}.bam
+    touch ${prefix}.profile
 
     cat <<-END_VERSIONS > versions.yml
     "${task.process}":
-        simuscop: \$(samtools --version |& sed '1!d ; s/samtools //')
+        simuscop: \$(seqToProfile -h 2>&1 | grep "^Version" | sed 's/Version: //')
     END_VERSIONS
     """
 }
