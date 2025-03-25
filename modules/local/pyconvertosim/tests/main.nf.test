@@ -17,6 +17,7 @@ nextflow_process {
                     file('https://raw.githubusercontent.com/lescai-teaching/eduomics_testdata/main/dna/clinvar_data/clinvar_20250317_chr22q11-21_benign.vcf', checkIfExists: true),
                 ]
                 input[1] = [
+                    [ id:'test_sample' ], // meta map
                     file('https://raw.githubusercontent.com/lescai-teaching/eduomics_testdata/main/dna/clinvar_data/clinvar_20250317_chr22q11-21_nonsense-pathogenic.vcf', checkIfExists: true),
                 ]
                 """
@@ -44,6 +45,7 @@ nextflow_process {
                     file('https://raw.githubusercontent.com/lescai-teaching/eduomics_testdata/main/dna/clinvar_data/clinvar_20250317_chr22q11-21_benign.vcf', checkIfExists: true),
                 ]
                 input[1] = [
+                    [ id:'test_sample' ], // meta map
                     file('https://raw.githubusercontent.com/lescai-teaching/eduomics_testdata/main/dna/clinvar_data/clinvar_20250317_chr22q11-21_nonsense-pathogenic.vcf', checkIfExists: true),
                 ]
                 """

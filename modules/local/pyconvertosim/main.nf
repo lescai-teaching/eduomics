@@ -7,9 +7,9 @@ process PYCONVERTOSIM {
         'https://depot.galaxyproject.org/singularity/biopython:1.70--np112py27_0':
         'biocontainers/biopython:1.70--np112py27_0' }"
 
-    input:
+input:
     tuple val(meta), path(vcf_benign)
-    path(vcf_pathogenic)
+    tuple val(meta2), path(vcf_pathogenic)
 
     output:
     tuple val(meta), path("*_base_variation.txt") , emit: base_variation
