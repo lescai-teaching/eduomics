@@ -1,0 +1,396 @@
+{
+    "homo_sapiens - vcf": {
+        "content": [
+            {
+                "0": [
+                    [
+                        {
+                            "id": "test_sample"
+                        },
+                        "test_sample_base_variation.txt:md5,8b7f5fdb6aab3c34672d0b4e42ff7260"
+                    ]
+                ],
+                "1": [
+                    [
+                        {
+                            "id": "test_sample"
+                        },
+                        "test_sample_patho_variation.txt:md5,03f9784098b1d8c32d444916a82bc331"
+                    ]
+                ],
+                "2": [
+                    [
+                        {
+                            "id": "test_sample"
+                        },
+                        [
+                            "test_sample_variation_1.txt:md5,09dc61a7dd0f0d4ec361a048f0aaf4c7",
+                            "test_sample_variation_10.txt:md5,50d4962a0a0e2fddb6fc61c107bd4318",
+                            "test_sample_variation_100.txt:md5,b2a0d0c1f69f73a1d34088cb7b73c343",
+                            "test_sample_variation_101.txt:md5,95b54f2b9a91bde9dcbd2d9302549a37",
+                            "test_sample_variation_102.txt:md5,47ad01b7fc87df21595f460edc2e756d",
+                            "test_sample_variation_103.txt:md5,1758f65f87fef07a1608bfc09709fa82",
+                            "test_sample_variation_104.txt:md5,81bd699a6669bfbcedc4e8d37f8745fe",
+                            "test_sample_variation_105.txt:md5,33e67ace980cca96b2904d8415d39cd2",
+                            "test_sample_variation_106.txt:md5,6bff7528ffa898b34e5c2487da27fb21",
+                            "test_sample_variation_107.txt:md5,d23310f4a120aa484579961deb45e3dc",
+                            "test_sample_variation_108.txt:md5,cf828f8b80031f8e2720967790bce607",
+                            "test_sample_variation_109.txt:md5,d80b1e16e5569d1643938f4fb3dca9c8",
+                            "test_sample_variation_11.txt:md5,dc879ff48a8abb6864764de31d481566",
+                            "test_sample_variation_110.txt:md5,820c46868fb74966ed52aa28b64550cc",
+                            "test_sample_variation_111.txt:md5,426232f98ba8b9226192967c195205bb",
+                            "test_sample_variation_112.txt:md5,ce413a59fce98ae9074caa2cbe6d6dad",
+                            "test_sample_variation_113.txt:md5,2c07031a5c2a48a09146b1a8348dc4dc",
+                            "test_sample_variation_114.txt:md5,934ccc953ede3a2b3c2b87191c589e34",
+                            "test_sample_variation_115.txt:md5,329727233f5decc406639cfefa138572",
+                            "test_sample_variation_116.txt:md5,dcf58cd472c8aa35a4a22e3ccd120519",
+                            "test_sample_variation_117.txt:md5,893aa26523ae6815b03490147861d60e",
+                            "test_sample_variation_118.txt:md5,6938668bb5303a94c6b1f4504086daba",
+                            "test_sample_variation_119.txt:md5,f1068ab8388898513d1b07adce24bd0f",
+                            "test_sample_variation_12.txt:md5,cc995b34db103036461bd62f322e0d7e",
+                            "test_sample_variation_120.txt:md5,0569b072a6badcba035c6900a87d3099",
+                            "test_sample_variation_121.txt:md5,254e231ef66f2871c83155dbe869e3e2",
+                            "test_sample_variation_122.txt:md5,76289a9dd9c331af90574c8454b69a69",
+                            "test_sample_variation_123.txt:md5,cb1c3eccae8008a5203b2af496f4a3a8",
+                            "test_sample_variation_124.txt:md5,d8f1720cc1a1cee81028a098090d57e7",
+                            "test_sample_variation_125.txt:md5,33adcbe8d2232426676782f4982e1ef1",
+                            "test_sample_variation_126.txt:md5,c53c739577fa53badcfc2e1186fc7aa6",
+                            "test_sample_variation_127.txt:md5,6a7ed40e5474eb67d4ee453b5222c9c4",
+                            "test_sample_variation_128.txt:md5,9c8724301a5f2cb82c063dc3fa930ab9",
+                            "test_sample_variation_129.txt:md5,68ca543bda312cd7edd8a169cd36da84",
+                            "test_sample_variation_13.txt:md5,b903679cd1872acc3ea83971ce2d1978",
+                            "test_sample_variation_130.txt:md5,744854fad371aa6918162ff1eab108e9",
+                            "test_sample_variation_131.txt:md5,b07a5f638cc14b97b11d80d2ddd2d466",
+                            "test_sample_variation_14.txt:md5,2b89195a3a1024140e3c8e658d4287ad",
+                            "test_sample_variation_15.txt:md5,ceed15d393cf1b6d23386e032f00152c",
+                            "test_sample_variation_16.txt:md5,8cffc11d8082623deec0751e57959f52",
+                            "test_sample_variation_17.txt:md5,8f4b01afa965e1776ef17353902dff14",
+                            "test_sample_variation_18.txt:md5,4958ff6f4a9d6f98040fe0720559b34e",
+                            "test_sample_variation_19.txt:md5,fe406aa64fde1ea3dedc184e517f4b7f",
+                            "test_sample_variation_2.txt:md5,1658be0bd95aed10eb66227822a4eeec",
+                            "test_sample_variation_20.txt:md5,c47b6f4c722ccfa636928405b5c7cd27",
+                            "test_sample_variation_21.txt:md5,9400337749b82905ee4d9361a9813a16",
+                            "test_sample_variation_22.txt:md5,cbfac8fa8f1a2b2f2e28b8d45b9ce85c",
+                            "test_sample_variation_23.txt:md5,cbd02754fd0864add7ce9c062f89438d",
+                            "test_sample_variation_24.txt:md5,4b55ccccc6aff24cf35990141980a920",
+                            "test_sample_variation_25.txt:md5,14adfafc51031b8d90b9aca2da3fc885",
+                            "test_sample_variation_26.txt:md5,429cce494a32b5d074bc3cad911b5589",
+                            "test_sample_variation_27.txt:md5,4cdce61fdde6acf6ae22309ad4070326",
+                            "test_sample_variation_28.txt:md5,20adc2ba7a8c859a5ccf79244765e818",
+                            "test_sample_variation_29.txt:md5,4c19aaf8559bf89f7c6f7f1bd42f1a40",
+                            "test_sample_variation_3.txt:md5,e1f712326ae8139329341c10cde28d83",
+                            "test_sample_variation_30.txt:md5,e9a227d020adcadf921496a2ee071f8d",
+                            "test_sample_variation_31.txt:md5,cdc3ea1c44d28810e16e525144833454",
+                            "test_sample_variation_32.txt:md5,751f40e02679945d2f5e33a285d74db6",
+                            "test_sample_variation_33.txt:md5,1c8f5902a6a7c7aecfdc8f1191b9be2b",
+                            "test_sample_variation_34.txt:md5,c5f73b34f933ba14bb359792a0ad0b56",
+                            "test_sample_variation_35.txt:md5,fd6254ed89e44f490fa02f91dafebf20",
+                            "test_sample_variation_36.txt:md5,500912e7cde60bd348efbcc09932d16f",
+                            "test_sample_variation_37.txt:md5,f5b2e21157ab59c1c89b0a0fd398b147",
+                            "test_sample_variation_38.txt:md5,d53c9ecfbbe929488d0726e8c43d2432",
+                            "test_sample_variation_39.txt:md5,90bb003376b480215ecf61ea7abde8d6",
+                            "test_sample_variation_4.txt:md5,b9cfd242c997a938be05cdab4ae06212",
+                            "test_sample_variation_40.txt:md5,04d7eb3ee33303069800d0362680ba7c",
+                            "test_sample_variation_41.txt:md5,4537d8ed72d45879d8cfa3265fbbc1be",
+                            "test_sample_variation_42.txt:md5,9a2cf365e14a63089dcea2a761658899",
+                            "test_sample_variation_43.txt:md5,cb553357e1f02c2d58ebd70e694d56db",
+                            "test_sample_variation_44.txt:md5,f1c1b07ef2978b9defb6ed983d7686a3",
+                            "test_sample_variation_45.txt:md5,a6d395d58105fe5a41e770de6939d4f0",
+                            "test_sample_variation_46.txt:md5,1553d121c6775ddc265042a31359a2d4",
+                            "test_sample_variation_47.txt:md5,9339be6922d7b726940590e0c3174487",
+                            "test_sample_variation_48.txt:md5,3cccab2a537482f48beb6200e1c24e1f",
+                            "test_sample_variation_49.txt:md5,dafabba3a6de851ae6c090d719f8df7d",
+                            "test_sample_variation_5.txt:md5,9675ed4efdb7c763e31cb2c8361c8a8b",
+                            "test_sample_variation_50.txt:md5,19d2eaebeaea5f0212cd8079606fba2d",
+                            "test_sample_variation_51.txt:md5,3d79c7dcbe634d55988d41912a71f258",
+                            "test_sample_variation_52.txt:md5,9f41648c13ff5acaab4ed508511b96a0",
+                            "test_sample_variation_53.txt:md5,3a040f0700047b8a519be02306525f62",
+                            "test_sample_variation_54.txt:md5,d622aae7c1be7a1130a5a726ba0bffc1",
+                            "test_sample_variation_55.txt:md5,3ca7aa54f7a4037d735b92284cfd70da",
+                            "test_sample_variation_56.txt:md5,b1fbd184f28374506aeb9e634fbd84c2",
+                            "test_sample_variation_57.txt:md5,88030c2de2400225afd9f1f46e986042",
+                            "test_sample_variation_58.txt:md5,8e61fb6ce0ff7e394334c967d7ce79fd",
+                            "test_sample_variation_59.txt:md5,879f5b67323536bcf6a6eb8298cc1830",
+                            "test_sample_variation_6.txt:md5,928c8afd4f5af1d5a2032f81fcd524e2",
+                            "test_sample_variation_60.txt:md5,21337aea6f26894d80aaec232624afb2",
+                            "test_sample_variation_61.txt:md5,68c2e66f0c61856bebd64e78d8df3f5c",
+                            "test_sample_variation_62.txt:md5,67ba0be56d05ff6cc5aff99807bfdf51",
+                            "test_sample_variation_63.txt:md5,157e16b13aa8293eab153b91e9934ade",
+                            "test_sample_variation_64.txt:md5,6ae226565abdb986847153e8ce74e115",
+                            "test_sample_variation_65.txt:md5,2adb6636f2634d6cef23acdba0ea1848",
+                            "test_sample_variation_66.txt:md5,d05f64407e0b5803035542f874774f79",
+                            "test_sample_variation_67.txt:md5,c2fb00bf1935d949ea1c065af1714caa",
+                            "test_sample_variation_68.txt:md5,71bf47f493578c0ee6e474d214257630",
+                            "test_sample_variation_69.txt:md5,6b0bd87815e539ef66e4cd63e909e0e1",
+                            "test_sample_variation_7.txt:md5,531433d927a05862afd90af716919d7e",
+                            "test_sample_variation_70.txt:md5,73b862ce7a159fcf9b3fc9c878e3936b",
+                            "test_sample_variation_71.txt:md5,8a2075d93d0db1976e83760587eeab83",
+                            "test_sample_variation_72.txt:md5,6c4d99a94fed1434b5b970707b9d7ecf",
+                            "test_sample_variation_73.txt:md5,02bfe8acdbe5149fe435ce4bfb9061c3",
+                            "test_sample_variation_74.txt:md5,80b81981980d3c6a8761d4faf8938eb8",
+                            "test_sample_variation_75.txt:md5,1fb5b7d6cdce76eaba35fc9aac82fa88",
+                            "test_sample_variation_76.txt:md5,e2fb426cdd987f880c6efa5bfa1e914f",
+                            "test_sample_variation_77.txt:md5,824edf65f07c6f8b5057bdee46f81100",
+                            "test_sample_variation_78.txt:md5,156da5f98a0979fc4dad9031c4b0380a",
+                            "test_sample_variation_79.txt:md5,934c4038671a890314a591e31e9ffa5b",
+                            "test_sample_variation_8.txt:md5,35fceb8b77f4f698e168ad38954b6e52",
+                            "test_sample_variation_80.txt:md5,c55ecefb0c0de578d86bb0e17a4a92f5",
+                            "test_sample_variation_81.txt:md5,75f9bfb8c69cb1689ce7c04898afc32a",
+                            "test_sample_variation_82.txt:md5,6feb0434c17530956e73f1d31c8a345f",
+                            "test_sample_variation_83.txt:md5,a7fce96d6cd22bcd97e31db187648fe3",
+                            "test_sample_variation_84.txt:md5,a2708fa7d9c96637f31bdf7d607dc707",
+                            "test_sample_variation_85.txt:md5,dc1a5547e6f3183541fe757f0d045a5f",
+                            "test_sample_variation_86.txt:md5,a18c2e44490fc09577b6ccf58f1a0e88",
+                            "test_sample_variation_87.txt:md5,5aeeb356abde4f19673f25a6c390855f",
+                            "test_sample_variation_88.txt:md5,a4b2dd83113653ac1dee7e1728daf7f8",
+                            "test_sample_variation_89.txt:md5,04e4d53dad59ed51f7a98607847a576d",
+                            "test_sample_variation_9.txt:md5,393527590e924f3c6399a87a579de1fe",
+                            "test_sample_variation_90.txt:md5,82cd4269f3f28c184987d881401fb0a2",
+                            "test_sample_variation_91.txt:md5,577a41c36d71f1f0902558e6e861ff54",
+                            "test_sample_variation_92.txt:md5,ceef91ae55aca0c6d7d8a76034117647",
+                            "test_sample_variation_93.txt:md5,c2145564da7eb8253f7b224c94be7730",
+                            "test_sample_variation_94.txt:md5,acd901e02cb711f73a7b45ce4191b492",
+                            "test_sample_variation_95.txt:md5,fa61ad608af85d5a9e17911b7b8d9a35",
+                            "test_sample_variation_96.txt:md5,e50b65a8a2319aaf661ec479398c3c27",
+                            "test_sample_variation_97.txt:md5,d4ebcc767bb244b6d7ffdff9f4acc2a7",
+                            "test_sample_variation_98.txt:md5,d7a90a1412533f7693c3043e11e4bed0",
+                            "test_sample_variation_99.txt:md5,120d6a7989a75662dc867e94d906eec3"
+                        ]
+                    ]
+                ],
+                "3": [
+                    "versions.yml:md5,427ceba3b014e946d96c8f94b69450d4"
+                ],
+                "base_variation": [
+                    [
+                        {
+                            "id": "test_sample"
+                        },
+                        "test_sample_base_variation.txt:md5,8b7f5fdb6aab3c34672d0b4e42ff7260"
+                    ]
+                ],
+                "combined_variations": [
+                    [
+                        {
+                            "id": "test_sample"
+                        },
+                        [
+                            "test_sample_variation_1.txt:md5,09dc61a7dd0f0d4ec361a048f0aaf4c7",
+                            "test_sample_variation_10.txt:md5,50d4962a0a0e2fddb6fc61c107bd4318",
+                            "test_sample_variation_100.txt:md5,b2a0d0c1f69f73a1d34088cb7b73c343",
+                            "test_sample_variation_101.txt:md5,95b54f2b9a91bde9dcbd2d9302549a37",
+                            "test_sample_variation_102.txt:md5,47ad01b7fc87df21595f460edc2e756d",
+                            "test_sample_variation_103.txt:md5,1758f65f87fef07a1608bfc09709fa82",
+                            "test_sample_variation_104.txt:md5,81bd699a6669bfbcedc4e8d37f8745fe",
+                            "test_sample_variation_105.txt:md5,33e67ace980cca96b2904d8415d39cd2",
+                            "test_sample_variation_106.txt:md5,6bff7528ffa898b34e5c2487da27fb21",
+                            "test_sample_variation_107.txt:md5,d23310f4a120aa484579961deb45e3dc",
+                            "test_sample_variation_108.txt:md5,cf828f8b80031f8e2720967790bce607",
+                            "test_sample_variation_109.txt:md5,d80b1e16e5569d1643938f4fb3dca9c8",
+                            "test_sample_variation_11.txt:md5,dc879ff48a8abb6864764de31d481566",
+                            "test_sample_variation_110.txt:md5,820c46868fb74966ed52aa28b64550cc",
+                            "test_sample_variation_111.txt:md5,426232f98ba8b9226192967c195205bb",
+                            "test_sample_variation_112.txt:md5,ce413a59fce98ae9074caa2cbe6d6dad",
+                            "test_sample_variation_113.txt:md5,2c07031a5c2a48a09146b1a8348dc4dc",
+                            "test_sample_variation_114.txt:md5,934ccc953ede3a2b3c2b87191c589e34",
+                            "test_sample_variation_115.txt:md5,329727233f5decc406639cfefa138572",
+                            "test_sample_variation_116.txt:md5,dcf58cd472c8aa35a4a22e3ccd120519",
+                            "test_sample_variation_117.txt:md5,893aa26523ae6815b03490147861d60e",
+                            "test_sample_variation_118.txt:md5,6938668bb5303a94c6b1f4504086daba",
+                            "test_sample_variation_119.txt:md5,f1068ab8388898513d1b07adce24bd0f",
+                            "test_sample_variation_12.txt:md5,cc995b34db103036461bd62f322e0d7e",
+                            "test_sample_variation_120.txt:md5,0569b072a6badcba035c6900a87d3099",
+                            "test_sample_variation_121.txt:md5,254e231ef66f2871c83155dbe869e3e2",
+                            "test_sample_variation_122.txt:md5,76289a9dd9c331af90574c8454b69a69",
+                            "test_sample_variation_123.txt:md5,cb1c3eccae8008a5203b2af496f4a3a8",
+                            "test_sample_variation_124.txt:md5,d8f1720cc1a1cee81028a098090d57e7",
+                            "test_sample_variation_125.txt:md5,33adcbe8d2232426676782f4982e1ef1",
+                            "test_sample_variation_126.txt:md5,c53c739577fa53badcfc2e1186fc7aa6",
+                            "test_sample_variation_127.txt:md5,6a7ed40e5474eb67d4ee453b5222c9c4",
+                            "test_sample_variation_128.txt:md5,9c8724301a5f2cb82c063dc3fa930ab9",
+                            "test_sample_variation_129.txt:md5,68ca543bda312cd7edd8a169cd36da84",
+                            "test_sample_variation_13.txt:md5,b903679cd1872acc3ea83971ce2d1978",
+                            "test_sample_variation_130.txt:md5,744854fad371aa6918162ff1eab108e9",
+                            "test_sample_variation_131.txt:md5,b07a5f638cc14b97b11d80d2ddd2d466",
+                            "test_sample_variation_14.txt:md5,2b89195a3a1024140e3c8e658d4287ad",
+                            "test_sample_variation_15.txt:md5,ceed15d393cf1b6d23386e032f00152c",
+                            "test_sample_variation_16.txt:md5,8cffc11d8082623deec0751e57959f52",
+                            "test_sample_variation_17.txt:md5,8f4b01afa965e1776ef17353902dff14",
+                            "test_sample_variation_18.txt:md5,4958ff6f4a9d6f98040fe0720559b34e",
+                            "test_sample_variation_19.txt:md5,fe406aa64fde1ea3dedc184e517f4b7f",
+                            "test_sample_variation_2.txt:md5,1658be0bd95aed10eb66227822a4eeec",
+                            "test_sample_variation_20.txt:md5,c47b6f4c722ccfa636928405b5c7cd27",
+                            "test_sample_variation_21.txt:md5,9400337749b82905ee4d9361a9813a16",
+                            "test_sample_variation_22.txt:md5,cbfac8fa8f1a2b2f2e28b8d45b9ce85c",
+                            "test_sample_variation_23.txt:md5,cbd02754fd0864add7ce9c062f89438d",
+                            "test_sample_variation_24.txt:md5,4b55ccccc6aff24cf35990141980a920",
+                            "test_sample_variation_25.txt:md5,14adfafc51031b8d90b9aca2da3fc885",
+                            "test_sample_variation_26.txt:md5,429cce494a32b5d074bc3cad911b5589",
+                            "test_sample_variation_27.txt:md5,4cdce61fdde6acf6ae22309ad4070326",
+                            "test_sample_variation_28.txt:md5,20adc2ba7a8c859a5ccf79244765e818",
+                            "test_sample_variation_29.txt:md5,4c19aaf8559bf89f7c6f7f1bd42f1a40",
+                            "test_sample_variation_3.txt:md5,e1f712326ae8139329341c10cde28d83",
+                            "test_sample_variation_30.txt:md5,e9a227d020adcadf921496a2ee071f8d",
+                            "test_sample_variation_31.txt:md5,cdc3ea1c44d28810e16e525144833454",
+                            "test_sample_variation_32.txt:md5,751f40e02679945d2f5e33a285d74db6",
+                            "test_sample_variation_33.txt:md5,1c8f5902a6a7c7aecfdc8f1191b9be2b",
+                            "test_sample_variation_34.txt:md5,c5f73b34f933ba14bb359792a0ad0b56",
+                            "test_sample_variation_35.txt:md5,fd6254ed89e44f490fa02f91dafebf20",
+                            "test_sample_variation_36.txt:md5,500912e7cde60bd348efbcc09932d16f",
+                            "test_sample_variation_37.txt:md5,f5b2e21157ab59c1c89b0a0fd398b147",
+                            "test_sample_variation_38.txt:md5,d53c9ecfbbe929488d0726e8c43d2432",
+                            "test_sample_variation_39.txt:md5,90bb003376b480215ecf61ea7abde8d6",
+                            "test_sample_variation_4.txt:md5,b9cfd242c997a938be05cdab4ae06212",
+                            "test_sample_variation_40.txt:md5,04d7eb3ee33303069800d0362680ba7c",
+                            "test_sample_variation_41.txt:md5,4537d8ed72d45879d8cfa3265fbbc1be",
+                            "test_sample_variation_42.txt:md5,9a2cf365e14a63089dcea2a761658899",
+                            "test_sample_variation_43.txt:md5,cb553357e1f02c2d58ebd70e694d56db",
+                            "test_sample_variation_44.txt:md5,f1c1b07ef2978b9defb6ed983d7686a3",
+                            "test_sample_variation_45.txt:md5,a6d395d58105fe5a41e770de6939d4f0",
+                            "test_sample_variation_46.txt:md5,1553d121c6775ddc265042a31359a2d4",
+                            "test_sample_variation_47.txt:md5,9339be6922d7b726940590e0c3174487",
+                            "test_sample_variation_48.txt:md5,3cccab2a537482f48beb6200e1c24e1f",
+                            "test_sample_variation_49.txt:md5,dafabba3a6de851ae6c090d719f8df7d",
+                            "test_sample_variation_5.txt:md5,9675ed4efdb7c763e31cb2c8361c8a8b",
+                            "test_sample_variation_50.txt:md5,19d2eaebeaea5f0212cd8079606fba2d",
+                            "test_sample_variation_51.txt:md5,3d79c7dcbe634d55988d41912a71f258",
+                            "test_sample_variation_52.txt:md5,9f41648c13ff5acaab4ed508511b96a0",
+                            "test_sample_variation_53.txt:md5,3a040f0700047b8a519be02306525f62",
+                            "test_sample_variation_54.txt:md5,d622aae7c1be7a1130a5a726ba0bffc1",
+                            "test_sample_variation_55.txt:md5,3ca7aa54f7a4037d735b92284cfd70da",
+                            "test_sample_variation_56.txt:md5,b1fbd184f28374506aeb9e634fbd84c2",
+                            "test_sample_variation_57.txt:md5,88030c2de2400225afd9f1f46e986042",
+                            "test_sample_variation_58.txt:md5,8e61fb6ce0ff7e394334c967d7ce79fd",
+                            "test_sample_variation_59.txt:md5,879f5b67323536bcf6a6eb8298cc1830",
+                            "test_sample_variation_6.txt:md5,928c8afd4f5af1d5a2032f81fcd524e2",
+                            "test_sample_variation_60.txt:md5,21337aea6f26894d80aaec232624afb2",
+                            "test_sample_variation_61.txt:md5,68c2e66f0c61856bebd64e78d8df3f5c",
+                            "test_sample_variation_62.txt:md5,67ba0be56d05ff6cc5aff99807bfdf51",
+                            "test_sample_variation_63.txt:md5,157e16b13aa8293eab153b91e9934ade",
+                            "test_sample_variation_64.txt:md5,6ae226565abdb986847153e8ce74e115",
+                            "test_sample_variation_65.txt:md5,2adb6636f2634d6cef23acdba0ea1848",
+                            "test_sample_variation_66.txt:md5,d05f64407e0b5803035542f874774f79",
+                            "test_sample_variation_67.txt:md5,c2fb00bf1935d949ea1c065af1714caa",
+                            "test_sample_variation_68.txt:md5,71bf47f493578c0ee6e474d214257630",
+                            "test_sample_variation_69.txt:md5,6b0bd87815e539ef66e4cd63e909e0e1",
+                            "test_sample_variation_7.txt:md5,531433d927a05862afd90af716919d7e",
+                            "test_sample_variation_70.txt:md5,73b862ce7a159fcf9b3fc9c878e3936b",
+                            "test_sample_variation_71.txt:md5,8a2075d93d0db1976e83760587eeab83",
+                            "test_sample_variation_72.txt:md5,6c4d99a94fed1434b5b970707b9d7ecf",
+                            "test_sample_variation_73.txt:md5,02bfe8acdbe5149fe435ce4bfb9061c3",
+                            "test_sample_variation_74.txt:md5,80b81981980d3c6a8761d4faf8938eb8",
+                            "test_sample_variation_75.txt:md5,1fb5b7d6cdce76eaba35fc9aac82fa88",
+                            "test_sample_variation_76.txt:md5,e2fb426cdd987f880c6efa5bfa1e914f",
+                            "test_sample_variation_77.txt:md5,824edf65f07c6f8b5057bdee46f81100",
+                            "test_sample_variation_78.txt:md5,156da5f98a0979fc4dad9031c4b0380a",
+                            "test_sample_variation_79.txt:md5,934c4038671a890314a591e31e9ffa5b",
+                            "test_sample_variation_8.txt:md5,35fceb8b77f4f698e168ad38954b6e52",
+                            "test_sample_variation_80.txt:md5,c55ecefb0c0de578d86bb0e17a4a92f5",
+                            "test_sample_variation_81.txt:md5,75f9bfb8c69cb1689ce7c04898afc32a",
+                            "test_sample_variation_82.txt:md5,6feb0434c17530956e73f1d31c8a345f",
+                            "test_sample_variation_83.txt:md5,a7fce96d6cd22bcd97e31db187648fe3",
+                            "test_sample_variation_84.txt:md5,a2708fa7d9c96637f31bdf7d607dc707",
+                            "test_sample_variation_85.txt:md5,dc1a5547e6f3183541fe757f0d045a5f",
+                            "test_sample_variation_86.txt:md5,a18c2e44490fc09577b6ccf58f1a0e88",
+                            "test_sample_variation_87.txt:md5,5aeeb356abde4f19673f25a6c390855f",
+                            "test_sample_variation_88.txt:md5,a4b2dd83113653ac1dee7e1728daf7f8",
+                            "test_sample_variation_89.txt:md5,04e4d53dad59ed51f7a98607847a576d",
+                            "test_sample_variation_9.txt:md5,393527590e924f3c6399a87a579de1fe",
+                            "test_sample_variation_90.txt:md5,82cd4269f3f28c184987d881401fb0a2",
+                            "test_sample_variation_91.txt:md5,577a41c36d71f1f0902558e6e861ff54",
+                            "test_sample_variation_92.txt:md5,ceef91ae55aca0c6d7d8a76034117647",
+                            "test_sample_variation_93.txt:md5,c2145564da7eb8253f7b224c94be7730",
+                            "test_sample_variation_94.txt:md5,acd901e02cb711f73a7b45ce4191b492",
+                            "test_sample_variation_95.txt:md5,fa61ad608af85d5a9e17911b7b8d9a35",
+                            "test_sample_variation_96.txt:md5,e50b65a8a2319aaf661ec479398c3c27",
+                            "test_sample_variation_97.txt:md5,d4ebcc767bb244b6d7ffdff9f4acc2a7",
+                            "test_sample_variation_98.txt:md5,d7a90a1412533f7693c3043e11e4bed0",
+                            "test_sample_variation_99.txt:md5,120d6a7989a75662dc867e94d906eec3"
+                        ]
+                    ]
+                ],
+                "patho_variation": [
+                    [
+                        {
+                            "id": "test_sample"
+                        },
+                        "test_sample_patho_variation.txt:md5,03f9784098b1d8c32d444916a82bc331"
+                    ]
+                ],
+                "versions": [
+                    "versions.yml:md5,427ceba3b014e946d96c8f94b69450d4"
+                ]
+            }
+        ],
+        "meta": {
+            "nf-test": "0.9.2",
+            "nextflow": "24.10.5"
+        },
+        "timestamp": "2025-03-25T14:25:53.223444074"
+    },
+    "homo sapiens - stub": {
+        "content": [
+            {
+                "0": [
+                    [
+                        {
+                            "id": "test_sample"
+                        },
+                        "test_sample_base_variation.txt:md5,d41d8cd98f00b204e9800998ecf8427e"
+                    ]
+                ],
+                "1": [
+                    [
+                        {
+                            "id": "test_sample"
+                        },
+                        "test_sample_patho_variation.txt:md5,d41d8cd98f00b204e9800998ecf8427e"
+                    ]
+                ],
+                "2": [
+                    [
+                        {
+                            "id": "test_sample"
+                        },
+                        "test_sample_variation_1.txt:md5,d41d8cd98f00b204e9800998ecf8427e"
+                    ]
+                ],
+                "3": [
+                    "versions.yml:md5,427ceba3b014e946d96c8f94b69450d4"
+                ],
+                "base_variation": [
+                    [
+                        {
+                            "id": "test_sample"
+                        },
+                        "test_sample_base_variation.txt:md5,d41d8cd98f00b204e9800998ecf8427e"
+                    ]
+                ],
+                "combined_variations": [
+                    [
+                        {
+                            "id": "test_sample"
+                        },
+                        "test_sample_variation_1.txt:md5,d41d8cd98f00b204e9800998ecf8427e"
+                    ]
+                ],
+                "patho_variation": [
+                    [
+                        {
+                            "id": "test_sample"
+                        },
+                        "test_sample_patho_variation.txt:md5,d41d8cd98f00b204e9800998ecf8427e"
+                    ]
+                ],
+                "versions": [
+                    "versions.yml:md5,427ceba3b014e946d96c8f94b69450d4"
+                ]
+            }
+        ],
+        "meta": {
+            "nf-test": "0.9.2",
+            "nextflow": "24.10.5"
+        },
+        "timestamp": "2025-03-25T14:26:17.497025142"
+    }
+}
