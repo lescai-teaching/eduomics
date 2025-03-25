@@ -153,10 +153,8 @@ chr_genes
 percent_de_genes <- 0.1
 
 # now left join with the original transcript_data tibble and filter out genes with NA in the membership column
-transcript_data_filt <- transcript_data %>%
-left_join(membership_tb, by = "transcript_id") %>%
-filter(!is.na(membership))
-
+transcript_data <- transcript_data %>%
+left_join(membership_tb, by = "transcript_id")
 
 #### PHENOTYPE DATA FROM MONARCH ####
 
@@ -190,7 +188,7 @@ if (length(phenos_description) == 0) {
 return(c(phenos_hpo,phenos_description))
 }
 
-transcript_data_pheno <- transcript_data_filt %>%
+transcript_data_pheno <- transcript_data %>%
 rowwise() %>%
 mutate(phenotypes = list(get_phenotypes_for_gene(gene_id))) %>%
 ungroup() %>%
@@ -203,11 +201,12 @@ dplyr::select(-phenotypes)
 
 # Tidy the data before enrichment
 transcript_data_pheno_filt <- transcript_data_pheno %>%
+filter(!is.na(membership)) %>%
 group_by(membership) %>%
 mutate(
     gene_number = n_distinct(gene_name),
-    .groups = "drop",
 ) %>%
+ungroup() %>%
 arrange(gene_number) %>%
 relocate(gene_number, .before = membership) %>%
 filter(gene_number > 3 & gene_number < (chr_genes * percent_de_genes))
@@ -328,4 +327,4 @@ if (length(enriched_categories) > 0) {
 
 # Save the resulting files
 saveRDS(valid_gene_lists, "valid_gene_lists.rds")
-saveRDS(transcript_data, "transcript_data.rds")
+saveRDS(transcript_data_pheno, "transcript_data.rds")
