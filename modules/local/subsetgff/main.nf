@@ -4,8 +4,8 @@ process SUBSETGFF {
 
     conda "${moduleDir}/environment.yml"
     container "${ workflow.containerEngine == 'singularity' && !task.ext.singularity_pull_docker_container ?
-        'https://depot.galaxyproject.org/singularity/YOUR-TOOL-HERE':
-        'biocontainers/YOUR-TOOL-HERE' }"
+        'oras://ghcr.io/lescailab/gff-parsing:r-base-4.3.2_bioconductor-annotationdbi-1.62.2_bioconductor-org.hs.eg.db-3.17.0--d87518872d6a6346':
+        'ghcr.io/lescailab/gff-parsing:r-base-4.3.2_bioconductor-annotationdbi-1.62.2_bioconductor-org.hs.eg.db-3.17.0--2784b1cf02b4cfd3' }"
 
     input:
     val(meta)
@@ -25,7 +25,7 @@ process SUBSETGFF {
     def prefix = task.ext.prefix ?: "${meta.id}"
 
     """
-    Rscript ${baseDir}/bin/subsetgff.R ${meta.chromosome} ${gff3}
+    Rscript ${baseDir}/bin/subset_gff.R ${meta.chromosome} ${gff3}
 
     cat <<-END_VERSIONS > versions.yml
     "${task.process}":
@@ -35,7 +35,6 @@ process SUBSETGFF {
         bioconductor-annotationdbi: \$(Rscript -e "cat(as.character(packageVersion('AnnotationDbi')))")
         bioconductor-org.hs.eg.db: \$(Rscript -e "cat(as.character(packageVersion('org.Hs.eg.db')))")
         r-igraph: \$(Rscript -e "cat(as.character(packageVersion('igraph')))")
-        r-s3: \$(Rscript -e "cat(as.character(packageVersion('s3')))")
         r-httr: \$(Rscript -e "cat(as.character(packageVersion('httr')))")
         r-jsonlite: \$(Rscript -e "cat(as.character(packageVersion('jsonlite')))")
         bioconductor-clusterprofiler: \$(Rscript -e "cat(as.character(packageVersion('clusterProfiler')))")
@@ -48,7 +47,9 @@ process SUBSETGFF {
     def prefix = task.ext.prefix ?: "${meta.id}"
 
     """
-    touch ${prefix}.bam
+    touch valid_gene_lists.rds
+    touch transcript_data.rds
+    touch parsing_log.txt
 
     cat <<-END_VERSIONS > versions.yml
     "${task.process}":
@@ -58,7 +59,6 @@ process SUBSETGFF {
         bioconductor-annotationdbi: \$(Rscript -e "cat(as.character(packageVersion('AnnotationDbi')))")
         bioconductor-org.hs.eg.db: \$(Rscript -e "cat(as.character(packageVersion('org.Hs.eg.db')))")
         r-igraph: \$(Rscript -e "cat(as.character(packageVersion('igraph')))")
-        r-s3: \$(Rscript -e "cat(as.character(packageVersion('s3')))")
         r-httr: \$(Rscript -e "cat(as.character(packageVersion('httr')))")
         r-jsonlite: \$(Rscript -e "cat(as.character(packageVersion('jsonlite')))")
         bioconductor-clusterprofiler: \$(Rscript -e "cat(as.character(packageVersion('clusterProfiler')))")

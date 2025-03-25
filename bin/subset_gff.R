@@ -6,7 +6,6 @@ library(igraph)
 library(tidyverse)
 library(AnnotationDbi)
 library(org.Hs.eg.db)
-library(s3)
 library(httr)
 library(jsonlite)
 library(clusterProfiler)
@@ -113,7 +112,7 @@ diag(jaccard_matrix) <- NA
 # Now, we can extract transcript pairs that meet the similarity threshold
 # We'll extract the upper triangle only (to avoid duplicates)
 # this is the parameter we set already at the beginning
-# similarity_threshold <- 0.3  # Adjust as needed
+similarity_threshold <- 0.3  # Adjust as needed
 idx <- which(jaccard_matrix >= similarity_threshold & upper.tri(jaccard_matrix), arr.ind = TRUE)
 
 # Create an edge list from these indices.
@@ -217,7 +216,7 @@ filter(gene_number > 3 & gene_number < (chr_genes * percent_de_genes))
 #### Enrichment with EnrichGO ####
 
 # Construct the gene list
-gene_lists <- transcript_data_filt_pheno %>%
+gene_lists <- transcript_data_pheno_filt %>%
 group_by(membership) %>%
 summarise(
     unique_genes = list(unique(gene_name)),
