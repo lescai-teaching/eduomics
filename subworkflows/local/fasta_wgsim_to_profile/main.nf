@@ -23,6 +23,7 @@ workflow FASTA_WGSIM_TO_PROFILE {
     dnsnp_tbi   // channel: [mandatory] [ [dbsnp_tbi] ]
     mills       // channel: [mandatory] [ [mills] ]
     mills_tbi   // channel: [mandatory] [ [mills_tbi] ]
+    capture     // channel: [mandatory] [ [capture] ]
 
     main:
 
@@ -70,7 +71,7 @@ workflow FASTA_WGSIM_TO_PROFILE {
 
     empty_intervals_ch = Channel.of([[]])
 
-    bam_for_recal = BWA_MEM.out.bam.combine(SAMTOOLS_INDEX.out.bai)
+    bam_for_recal = GATK4_MARKDUPLICATES.out.bam.combine(GATK4_MARKDUPLICATES.out.bai, by: 0)
     bam_for_recal = bam_for_recal.combine(empty_intervals_ch)
 
     known_sites_all = dbsnp.mix(mills).collect()
@@ -100,23 +101,42 @@ workflow FASTA_WGSIM_TO_PROFILE {
     )
     ch_versions = ch_versions.mix(GATK4_APPLYBQSR.out.versions)
 
-    GATK4_APPLYBQSR()
+    INDEX_RECAL(GATK4_APPLYBQSR.out.bam)
 
-    GATK4_HAPLOTYPECALLER()
+    empty_models_ch = Channel.of([[]])
+
+    bam_for_calling = GATK4_APPLYBQSR.out.bam
+        .mix(INDEX_RECAL.out.bai, by: 0)
+        .combine(empty_intervals_ch)
+        .combine(empty_models_ch)
+
+
+    GATK4_HAPLOTYPECALLER(
+        bam_for_calling,
+        fasta,
+        fastaindex,
+        fastadict,
+        dbsnp,
+        dnsnp_tbi
+    )
     ch_versions = ch_versions.mix(GATK4_HAPLOTYPECALLER.out.versions)
 
 
-    SIMUSCOP_SEQTOPROFILE()
+    SIMUSCOP_SEQTOPROFILE(
+        GATK4_APPLYBQSR.out.bam,
+        GATK4_HAPLOTYPECALLER.out.vcf,
+        capture,
+        fasta.map{ meta, it -> [ it ] }
+    )
     ch_versions = ch_versions.mix(SIMUSCOP_SEQTOPROFILE.out.versions)
 
 
 
     emit:
     // TODO nf-core: edit emitted channels
-    bam      = SAMTOOLS_SORT.out.bam           // channel: [ val(meta), [ bam ] ]
-    bai      = SAMTOOLS_INDEX.out.bai          // channel: [ val(meta), [ bai ] ]
-    csi      = SAMTOOLS_INDEX.out.csi          // channel: [ val(meta), [ csi ] ]
-
-    versions = ch_versions                     // channel: [ versions.yml ]
+    bam      = GATK4_APPLYBQSR.out.bam              // channel: [ val(meta), [ bam ] ]
+    vcf      = GATK4_HAPLOTYPECALLER.out.vcf        // channel: [ val(meta), [ vcf ] ]
+    profile  = SIMUSCOP_SEQTOPROFILE.out.profile    // channel: [ val(meta), [ profile ] ]
+    versions = ch_versions                          // channel: [ versions.yml ]
 }
 
