@@ -4,7 +4,7 @@ process POLYESTER_SIMULATE {
 
     conda "${moduleDir}/environment.yml"
     container "${ workflow.containerEngine == 'singularity' && !task.ext.singularity_pull_docker_container ?
-        'oras://community.wave.seqera.io/library/bioconductor-biostrings_bioconductor-polyester:e2c5eb02f27d03de':
+        'oras://community.wave.seqera.io/library/bioconductor-biostrings_bioconductor-polyester:e2c5eb02f27d03de' :
         'community.wave.seqera.io/library/bioconductor-biostrings_bioconductor-polyester:e85f578a0b8f70ca' }"
 
     input:
@@ -13,8 +13,8 @@ process POLYESTER_SIMULATE {
     path(txfasta)
 
     output:
-    tuple val(meta), path("simulated_reads/*.fasta.gz"), emit: reads
-    path "versions.yml"                                , emit: versions
+    tuple val(meta), path('simulated_reads/*.fasta.gz'), emit: reads
+    path 'versions.yml'                                , emit: versions
 
     when:
     task.ext.when == null || task.ext.when
@@ -24,7 +24,7 @@ process POLYESTER_SIMULATE {
     def prefix = task.ext.prefix ?: "${meta.id}"
     def reps = meta2.reps ?: 3
     def groups = meta2.groups ?: 2
-    def repsList = (1..groups).collect { "${reps}" }.join(",")
+    def repsList = (1..groups).collect { "${reps}" }.join(',')
     def numRepsString = "num_reps=c(${repsList})"
     def readData = countmatrix ? "countmat = readRDS('${countmatrix}')" : "fold_changes = readRDS('${foldchange}')"
     def simulation_function = countmatrix ?

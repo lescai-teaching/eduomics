@@ -1,0 +1,63 @@
+// TODO nf-core: Once you have added the required tests, please run the following command to build this file:
+// nf-core modules test subsetgff
+nextflow_process {
+
+    name "Test Process SUBSETGFF"
+    script "../main.nf"
+    process "SUBSETGFF"
+
+    tag "modules"
+    tag "modules_nfcore"
+    tag "subsetgff"
+
+    test("subsetgff - gff3") {
+
+        when {
+            process {
+                """
+
+                input[0] = [ id:'test', chromosome:'chr22' ]
+                input[1] = file('https://raw.githubusercontent.com/lescai-teaching/eduomics_testdata/refs/heads/main/rnaseq/subsetfastatx/gencode_chr21_chr22_v47.gff3', checkIfExists: true)
+
+                """
+            }
+        }
+
+        then {
+            assertAll(
+                { assert process.success },
+                { assert process.out.geneLists.get(0).endsWith('.rds') },
+                { assert process.out.transcriptData.get(0).endsWith('.rds') },
+                { assert process.out.versions }
+            )
+        }
+
+    }
+
+    test("subsetgff - stub") {
+
+        options "-stub"
+
+        when {
+            process {
+                """
+
+                input[0] = [ id:'test', chromosome:'chr22' ]
+                input[1] = file('https://raw.githubusercontent.com/lescai-teaching/eduomics_testdata/refs/heads/main/rnaseq/subsetfastatx/gencode_chr21_chr22_v47.gff3', checkIfExists: true)
+
+                """
+            }
+        }
+
+        then {
+            assertAll(
+                { assert process.success },
+                { assert process.out.geneLists.get(0).endsWith('.rds') },
+                { assert process.out.transcriptData.get(0).endsWith('.rds') },
+                { assert process.out.versions }
+            )
+        }
+
+    }
+
+}
