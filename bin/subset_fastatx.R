@@ -1,4 +1,4 @@
-#!/usr/bin/env Rscript
+#!/usr/bin/env R
 
 #### Load the libraries ####
 library(rtracklayer)

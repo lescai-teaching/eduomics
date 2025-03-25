@@ -1,4 +1,4 @@
-#!/usr/bin/env Rscript
+#!/usr/bin/env R
 
 #### Load the libraries ####
 library(rtracklayer)
@@ -43,9 +43,9 @@ mutate(
     gene_id = gsub("\\.\\d+$", "", gene_id, perl = TRUE)
 )
 
-cat("1) Annotation parsing\\nExtracted", nrow(transcript_data),
+cat("1) Annotation parsing\nExtracted", nrow(transcript_data),
     "protein-coding transcripts from", paste0(chromosome_of_interest),
-    "\\n", file = log_file, append = TRUE)
+    "\n", file = log_file, append = TRUE)
 
 #### RETRIEVE GO ANNOTATIONS USING org.Hs.eg.db ####
 
@@ -59,9 +59,9 @@ go_annotations <- AnnotationDbi::select(org.Hs.eg.db,
 go_annotations <- subset(go_annotations, !is.na(ONTOLOGYALL))
 go_annotations <- unique(go_annotations[, c("SYMBOL", "GOALL", "ONTOLOGYALL")])
 
-cat("\\n2) Number of Gene Ontologies\\nRetrieved", nrow(go_annotations),
+cat("\n2) Number of Gene Ontologies\nRetrieved", nrow(go_annotations),
     "unique GO annotations (ALL) for", length(unique_genes),
-    "\\n", file = log_file, append = TRUE)
+    "\n", file = log_file, append = TRUE)
 
 
 #### CREATE TRANSCRIPT-TO-GO MAPPING ####
@@ -124,9 +124,9 @@ weight = jaccard_matrix[idx],
 stringsAsFactors = FALSE
 )
 
-cat("\\n3) Number of edges\\nConstructed an edge list with",
-    nrow(edges), "edges based on vectorised GO similarity\\n",
-    "\\n", file = log_file, append = TRUE)
+cat("\n3) Number of edges\nConstructed an edge list with",
+    nrow(edges), "edges based on vectorised GO similarity\n",
+    "\n", file = log_file, append = TRUE)
 
 # Build an undirected, weighted graph of transcripts.
 g <- graph_from_data_frame(d = edges, directed = FALSE, vertices = transcript_ids)
@@ -291,7 +291,7 @@ message("Log file updated: ", log_file)
 valid_gene_lists <- list()
 
 # Write the title "5) Valid gene sets" to the log file and print it to the console
-write("\\n5) Valid gene sets", file = log_file, append = TRUE)
+write("\n5) Valid gene sets", file = log_file, append = TRUE)
 
 # Loop through the significant results
 for (i in 1:length(significant_results)) {
