@@ -47,7 +47,9 @@ nextflow_process {
                     [ id:'test_sample' ], // meta map
                     file("https://github.com/lescai-teaching/eduomics_testdata/blob/main/dna/clinvar_data/clinvar_20250317_chr22q11-21.vcf.gz", checkIfExists: true)
                 ]
-                input[1] = file("https://raw.githubusercontent.com/lescai-teaching/eduomics_testdata/main/dna/Twist_Exome_Target2_chr22q11-21_GRCh38_50pad.bed", checkIfExists: true)
+                input[1] = [
+                    file("https://raw.githubusercontent.com/lescai-teaching/eduomics_testdata/main/dna/Twist_Exome_Target2_chr22q11-21_GRCh38_50pad.bed", checkIfExists: true)
+                ]
                 """
             }
         }

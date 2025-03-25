@@ -13,6 +13,7 @@ process SUBVAR {
     output:
     tuple val(meta), path('*_benign.vcf.gz')        , optional: true, emit: benign_vcf
     tuple val(meta), path('*_pathogenic.vcf.gz')    , optional: true, emit: pathogenic_vcf
+    tuple val(meta), path('*_selected.vcf')         , optional: true, emit: selected_vcf
     path 'versions.yml'                             , emit: versions
 
     when:
@@ -27,6 +28,12 @@ process SUBVAR {
     tabix -h -R ${bed} ${vcf} | bgzip -c > ${prefix}_ontarget.vcf.gz
     zcat ${prefix}_ontarget.vcf.gz | grep -e "^#" -e "Benign" -e "_benign" | bgzip -c > ${prefix}_benign.vcf.gz
     zcat ${prefix}_ontarget.vcf.gz | grep -e "^#" -e "Pathogenic" -e "_pathogenic" | bgzip -c > ${prefix}_pathogenic.vcf.gz
+
+    # Additional filtering steps
+    zcat ${prefix}_ontarget.vcf.gz | grep -v "no_assertion_criteria_provided" | grep -e "^#" -e "reviewed_by_expert_panel" > ${prefix}_selected.vcf
+    zcat ${prefix}_ontarget.vcf.gz | grep -v "^#" | grep -e "multiple_submitters" | grep "nonsense" >> ${prefix}_selected.vcf
+
+
 
     cat <<-END_VERSIONS > versions.yml
     "${task.process}":

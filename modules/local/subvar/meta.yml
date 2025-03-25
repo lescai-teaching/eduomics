@@ -9,7 +9,6 @@ keywords:
   - clinvar
 tools:
   - "subvar":
-      ## TODO nf-core: Add a description and other details for the software below
       description: "Module that separates benign and pathogenic variants from clinvar VCF file."
       homepage: "https://github.com/lescai-teaching/eduomics"
       documentation: "https://github.com/lescai-teaching/eduomics"
@@ -49,6 +48,10 @@ output:
         type: file
         description: VCF file containing pathogenic variants
         pattern: "*.{vcf,vcf.gz}"
+    - selected_vcf:
+        type: file
+        description: VCF file containing high quality pathogenic variants
+        pattern: ".{vcf,vcf.gz}"
     - versions:
         type: file
         description: File containing software versions
