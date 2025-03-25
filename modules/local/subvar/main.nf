@@ -1,7 +1,6 @@
 process SUBVAR {
     tag "$meta.id"
     label 'process_low'
-
     conda "${moduleDir}/environment.yml"
     container "${workflow.containerEngine == 'singularity' && !task.ext.singularity_pull_docker_container ?
         'https://depot.galaxyproject.org/singularity/htslib:1.20--h5efdd21_2' :
@@ -26,10 +25,9 @@ process SUBVAR {
     """
     tabix -p vcf ${vcf}
     tabix -h -R ${bed} ${vcf} | bgzip -c > ${prefix}_ontarget.vcf.gz
-    gzcat ${prefix}_ontarget.vcf.gz | grep -e "^#" -e "Benign" -e "_benign" | bgzip -c > ${prefix}_benign.vcf.gz
-    gzcat ${prefix}_ontarget.vcf.gz | grep -e "^#" -e "Pathogenic" -e "_pathogenic" | bgzip -c > ${prefix}_pathogenic.vcf.gz
+    zcat ${prefix}_ontarget.vcf.gz | grep -e "^#" -e "Benign" -e "_benign" | bgzip -c > ${prefix}_benign.vcf.gz
+    zcat ${prefix}_ontarget.vcf.gz | grep -e "^#" -e "Pathogenic" -e "_pathogenic" | bgzip -c > ${prefix}_pathogenic.vcf.gz
 
-    # Ensure versions.yml is created even if other steps fail
     cat <<-END_VERSIONS > versions.yml
     "${task.process}":
         tabix: \$(tabix --version 2>&1 | sed 's/^.*tabix //')
