@@ -1,62 +1,72 @@
 ---
 # yaml-language-server: $schema=https://raw.githubusercontent.com/nf-core/modules/master/modules/meta-schema.json
 name: "polyester_simulate"
-## TODO nf-core: Add a description of the module and list keywords
-description: write your description here
+description: Polyester is an R package designed to simulate RNA sequencing experiments with differential transcript expression.
 keywords:
-  - sort
-  - example
-  - genomics
+  - rnaseq
+  - simulate
+  - polyester
 tools:
   - "polyester":
-      ## TODO nf-core: Add a description and other details for the software below
-      description: ""
-      homepage: ""
-      documentation: ""
-      tool_dev_url: ""
-      doi: ""
-      licence: 
+      description: "Polyester is an R package designed to simulate RNA sequencing experiments with differential transcript expression."
+      homepage: "https://github.com/alyssafrazee/polyester"
+      documentation: "https://bioconductor.org/packages/3.18/bioc/vignettes/polyester/inst/doc/polyester.html"
+      tool_dev_url: "https://github.com/alyssafrazee/polyester"
+      doi: "10.18129/B9.bioc.polyester"
+      licence: ["Artistic-2.0"]
       identifier: biotools:polyester
 
-## TODO nf-core: Add a description of all of the variables used as input
 input:
   # Only when we have meta
   - - meta:
         type: map
         description: |
           Groovy Map containing sample information
-          e.g. `[ id:'sample1', single_end:false ]`
-  
-  ## TODO nf-core: Delete / customise this example input
-    - bam:
+          e.g. `[ id:'simulation_id', reps:3, groups:2 ]`
+    - countmatrix:
         type: file
-        description: Sorted BAM/CRAM/SAM file
-        pattern: "*.{bam,cram,sam}"
+        description: RDS file containing transcripts counts to be simulated
+        pattern: "*.rds"
         ontologies:
           - edam: "http://edamontology.org/format_25722"
           - edam: "http://edamontology.org/format_2573"
           - edam: "http://edamontology.org/format_3462"
-          
+  - - meta2:
+        type: map
+        description: |
+          Groovy Map containing sample information
+          e.g. `[ id:'simulation_id', reps:3, groups:2 ]`
+    - foldchange:
+        type: file
+        description: RDS file containing fold changes to be simulated for different transcripts
+        pattern: "*.rds"
+        ontologies:
+          - edam: "http://edamontology.org/format_25722"
+          - edam: "http://edamontology.org/format_2573"
+          - edam: "http://edamontology.org/format_3462"
+  - - txfasta:
+        type: file
+        description: FASTA file containing sequences of the transcripts to be simulated
+        pattern: "*.fasta"
 
-## TODO nf-core: Add a description of all of the variables used as output
+
 output:
-  - bam:
+  - reads:
   #Only when we have meta
     - meta:
         type: map
         description: |
           Groovy Map containing sample information
-          e.g. `[ id:'sample1', single_end:false ]`
-  ## TODO nf-core: Delete / customise this example output
-    - "*.bam":
+          e.g. `[ id:'simulation_id', reps:3, groups:2 ]`
+    - "*.fasta.gz":
         type: file
-        description: Sorted BAM/CRAM/SAM file
-        pattern: "*.{bam,cram,sam}"
+        description: simulated reads in FASTA format
+        pattern: "*.fasta.gz"
         ontologies:
           - edam: "http://edamontology.org/format_25722"
           - edam: "http://edamontology.org/format_2573"
           - edam: "http://edamontology.org/format_3462"
-          
+
   - versions:
     - "versions.yml":
         type: file
