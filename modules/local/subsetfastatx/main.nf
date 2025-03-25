@@ -25,7 +25,14 @@ process SUBSETFASTATX {
     def prefix = task.ext.prefix ?: "${meta.id}"
 
     """
-    subset_fastatx.R ${meta.chromosome} ${txfasta} ${gff3}
+    Rscript ${baseDir}/bin/subset_fastatx.R ${meta.chromosome} ${txfasta} ${gff3}
+
+    cat <<-END_VERSIONS > versions.yml
+    "${task.process}":
+        bioconductor-rtracklayer: \$(Rscript -e "cat(as.character(packageVersion('rtracklayer')))")
+        bioconductor-biostrings: \$(Rscript -e "cat(as.character(packageVersion('Biostrings')))")
+        r-tidyverse: \$(Rscript -e "cat(as.character(packageVersion('tidyverse')))")
+    END_VERSIONS
     """
 
     stub:

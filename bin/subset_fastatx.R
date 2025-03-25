@@ -1,4 +1,4 @@
-#!/usr/bin/env R
+#!/usr/bin/env Rscript
 
 #### Load the libraries ####
 library(rtracklayer)
@@ -52,7 +52,7 @@ cat("\n2) Number of transcripts in FASTA before filtering", length(fasta_all),
 # Function to check if a given FASTA entry corresponds to an annotated transcript
 match_fasta_name <- function(fasta_name, parsed_gff_tibble){
 # Split the FASTA header by "|"
-data = unlist(stringr::str_split(fasta_name, "\|"))
+data = unlist(stringr::str_split(fasta_name, fixed("|")))
 # Extract the transcript ID, removing the version suffix (e.g., ".1")
 transcript_id = gsub("\\.\\d+$","", data[[1]], perl=T)
 # Check if the transcript ID is present in the parsed GFF data

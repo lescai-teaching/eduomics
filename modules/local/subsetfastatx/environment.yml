@@ -7,3 +7,4 @@ dependencies:
   - bioconda::bioconductor-biostrings=2.68.1
   - bioconda::bioconductor-rtracklayer=1.60.0
   - conda-forge::r-tidyverse=2.0.0
+  - conda-forge::r-base=4.3
