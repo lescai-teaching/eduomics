@@ -1,7 +1,11 @@
 include { GATK4_SELECTVARIANTS     } from '../../../modules/nf-core/gatk4/selectvariants/main'
-include { SAMTOOLS_FAIDX           } from '../../../modules/nf-core/samtools/faidx/main'
+//include { SAMTOOLS_FAIDX           } from '../../../modules/nf-core/samtools/faidx/main'
 include { SUBVAR                   } from '../../../modules/local/subvar/main'
 include { SUBSETCAPTURE            } from '../../../modules/local/subsetcapture/main'
+include { SAMTOOLS_FAIDX as SAMTOOLS_FAIDX_SUBSET } from './modules/samtools_faidx'
+include { SAMTOOLS_FAIDX as SAMTOOLS_FAIDX_INDEX } from './modules/samtools_faidx'
+include { SAMTOOLS_FAIDX as SAMTOOLS_FAIDX_SIZES } from './modules/samtools_faidx'
+
 
 workflow SUBSET_REFERENCES_TO_TARGETS {
 
@@ -18,9 +22,27 @@ workflow SUBSET_REFERENCES_TO_TARGETS {
 
     ch_versions = Channel.empty()
 
-    // Index the reference genome if not already indexed
-    SAMTOOLS_FAIDX ( ch_fasta.combine(ch_fai), [], false )
-    ch_versions = ch_versions.mix(SAMTOOLS_FAIDX.out.versions)
+    // Subset the reference genome, index and get chrom sizes
+    //SAMTOOLS_FAIDX ( ch_fasta.combine(ch_fai), [], false )
+    //ch_versions = ch_versions.mix(SAMTOOLS_FAIDX.out.versions
+
+    SAMTOOLS_FAIDX_SUBSET (
+        fasta_ch,
+        [],  // empty optional fai input
+        false // don't generate sizes
+    )
+
+    SAMTOOLS_FAIDX_INDEX (
+        fasta_ch,
+        [],  // empty fai input
+        false // don't generate sizes
+    )
+
+    SAMTOOLS_FAIDX_SIZES (
+        fasta_ch,
+        [],  // empty fai input
+        true // generate sizes
+    )
 
     // Subset capture regions
     SUBSETCAPTURE ( ch_chromosome, SAMTOOLS_FAIDX.out.sizes, ch_capture_bed )
