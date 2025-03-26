@@ -1,6 +1,7 @@
 include { WGSIM                          } from '../../../modules/nf-core/wgsim/main'
 include { SAMTOOLS_FAIDX                 } from '../../../modules/nf-core/samtools/faidx/main'
 include { SAMTOOLS_INDEX                 } from '../../../modules/nf-core/samtools/index/main'
+include { SAMTOOLS_INDEX as INDEX_MD     } from '../../../modules/nf-core/samtools/index/main'
 include { SAMTOOLS_INDEX as INDEX_RECAL  } from '../../../modules/nf-core/samtools/index/main'
 include { SAMTOOLS_SORT                  } from '../../../modules/nf-core/samtools/sort/main'
 include { BWA_INDEX                      } from '../../../modules/nf-core/bwa/index/main'
@@ -32,26 +33,35 @@ workflow FASTA_WGSIM_TO_PROFILE {
     // simulate reads on the chosen fasta
     WGSIM(fasta)
 
-    if(!fai){
-        SAMTOOLS_FAIDX ( fasta )
+    faicheck = true
+    fai.ifEmpty{ faicheck = false }
+
+    if(!faicheck){
+        SAMTOOLS_FAIDX(fasta, [ [ id:'no_fai' ], [] ], [] )
         ch_versions = ch_versions.mix(SAMTOOLS_FAIDX.out.versions)
     }
     // sets fasta index to correct input
-    fastaindex = fai ?: SAMTOOLS_FAIDX.out.fai
+    fastaindex = faicheck ? fai : SAMTOOLS_FAIDX.out.fai.collect()
+    fastaindex.dump(tag: 'fastaindex')
 
-    if(!dict){
+    dictcheck = true
+    dict.ifEmpty{ dictcheck = false }
+
+    if(!dictcheck){
         GATK4_CREATESEQUENCEDICTIONARY ( fasta )
         ch_versions = ch_versions.mix(GATK4_CREATESEQUENCEDICTIONARY.out.versions)
     }
     // sets dictionary to correct input
-    fastadict = dict ?: GATK4_CREATESEQUENCEDICTIONARY.out.dict
+    fastadict = dictcheck ? dict : GATK4_CREATESEQUENCEDICTIONARY.out.dict
 
-    if(!bwa_index){
-        BWAMEM_INDEX ( fasta )
-        ch_versions = ch_versions.mix(BWAMEM_INDEX.out.versions)
+    bwacheck = true
+    bwa_index.ifEmpty{ bwacheck = false }
+    if(!bwacheck){
+        BWA_INDEX ( fasta )
+        ch_versions = ch_versions.mix(BWA_INDEX.out.versions)
     }
     // sets bwaindex to correct input
-    bwaindex    = bwa_index ?: BWAMEM_INDEX.out.index
+    bwaindex    = bwacheck ? bwa_index : BWA_INDEX.out.index
 
 
     // align simulated reads to their reference
@@ -69,10 +79,14 @@ workflow FASTA_WGSIM_TO_PROFILE {
         )
     ch_versions = ch_versions.mix(GATK4_MARKDUPLICATES.out.versions)
 
-    empty_intervals_ch = Channel.of([[]])
+    empty_intervals_ch = Channel.value([[]])
 
-    bam_for_recal = GATK4_MARKDUPLICATES.out.bam.combine(GATK4_MARKDUPLICATES.out.bai, by: 0)
-    bam_for_recal = bam_for_recal.combine(empty_intervals_ch)
+    INDEX_MD(GATK4_MARKDUPLICATES.out.bam)
+    ch_versions = ch_versions.mix(INDEX_MD.out.versions)
+
+    bam_for_recal = GATK4_MARKDUPLICATES.out.bam
+                        .combine(INDEX_MD.out.bai, by: 0)
+                        .combine(empty_intervals_ch)
 
     known_sites_all = dbsnp.mix(mills).collect()
     known_sites_all_tbi = dbsnp_tbi.mix(mills_tbi).collect()
@@ -88,7 +102,7 @@ workflow FASTA_WGSIM_TO_PROFILE {
     ch_versions = ch_versions.mix(GATK4_BASERECALIBRATOR.out.versions)
 
     bam_for_applybqsr = BWA_MEM.out.bam
-        .combine(SAMTOOLS_INDEX.out.bai)
+        .combine(SAMTOOLS_INDEX.out.bai, by: 0)
         .combine(GATK4_BASERECALIBRATOR.out.table, by: 0)
         .combine(empty_intervals_ch)
 
@@ -102,7 +116,7 @@ workflow FASTA_WGSIM_TO_PROFILE {
 
     INDEX_RECAL(GATK4_APPLYBQSR.out.bam)
 
-    empty_models_ch = Channel.of([[]])
+    empty_models_ch = Channel.value([[]])
 
     bam_for_calling = GATK4_APPLYBQSR.out.bam
         .combine(INDEX_RECAL.out.bai, by: 0)
@@ -115,8 +129,8 @@ workflow FASTA_WGSIM_TO_PROFILE {
         fasta,
         fastaindex,
         fastadict,
-        dbsnp,
-        dbsnp_tbi
+        dbsnp.map{ it -> [[id:'test'], it] },
+        dbsnp_tbi.map{ it -> [[id:'test'], it] }
     )
     ch_versions = ch_versions.mix(GATK4_HAPLOTYPECALLER.out.versions)
 
