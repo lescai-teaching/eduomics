@@ -8,14 +8,12 @@ workflow SUBSET_REFERENCES_TO_TARGETS {
     take:
     ch_fasta         // channel: [ val(meta), [ fasta ] ]
     ch_fai           // channel: [ val(meta), [ fai ] ]
-    ch_vcf           // channel: [ val(meta), [ vcf, vcf_idx ] ]
-    ch_intervals     // channel: [ val(meta), [ intervals ] ]
+    ch_get_sizes     // channel: [ get_sizes ]
     ch_capture_bed   // channel: [ capture_bed ]
     ch_chromosome    // channel: [ val(meta), val(chromosome) ]
-    bed
-    get_sizes
-    vcf_idx
-intervals
+    ch_vcf_idx_intervals // channel: [ val(meta), [ vcf, vcf_idx, intervals ] ]
+    ch_clinvar_vcf   // channel: [ val(meta), path(vcf) ]
+
     main:
 
     ch_versions = Channel.empty()
@@ -25,21 +23,22 @@ intervals
     ch_versions = ch_versions.mix(SAMTOOLS_FAIDX.out.versions)
 
     // Subset capture regions
-    SUBSETCAPTURE ( ch_chromosome, ch_chrom_sizes, ch_capture_bed )
+    SUBSETCAPTURE ( ch_chromosome, SAMTOOLS_FAIDX.out.sizes, ch_capture_bed )
     ch_versions = ch_versions.mix(SUBSETCAPTURE.out.versions)
 
     // Select variants based on intervals
-    GATK4_SELECTVARIANTS ( ch_vcf.combine(ch_intervals) )
+    GATK4_SELECTVARIANTS ( ch_vcf_idx_intervals )
     ch_versions = ch_versions.mix(GATK4_SELECTVARIANTS.out.versions)
 
-    // Subset variants
-    SUBVAR ( GATK4_SELECTVARIANTS.out.vcf, SUBSETCAPTURE.out.target_bed )
+    // Subset clinvar variants
+    SUBVAR ( ch_clinvar_vcf, SUBSETCAPTURE.out.target_bed )
     ch_versions = ch_versions.mix(SUBVAR.out.versions)
 
     emit:
+    fa                = SAMTOOLS_FAIDX.out.fa              // channel:  [ val(meta), [ fa, fasta ] ]
     fai               = SAMTOOLS_FAIDX.out.fai              // channel: [ val(meta), [ fai ] ]
     sizes             = SAMTOOLS_FAIDX.out.sizes            // channel: [ val(meta), [ sizes ] ]
-    target_chrom_size = SUBSETCAPTURE.out.target_chrom_size // channel: [ val(meta), [ target_chrom_size ] ]
+    gzi               = SAMTOOLS_FAIDX.out.gzi              // channel: [ val(meta), [ gzi ] ]
     capture_bed_gz    = SUBSETCAPTURE.out.capture_bed_gz    // channel: [ val(meta), [ capture_bed_gz ] ]
     capture_bed_index = SUBSETCAPTURE.out.capture_bed_index // channel: [ val(meta), [ capture_bed_index ] ]
     target_bed        = SUBSETCAPTURE.out.target_bed        // channel: [ val(meta), [ target_bed ] ]
@@ -49,6 +48,7 @@ intervals
     selected_tbi      = GATK4_SELECTVARIANTS.out.tbi        // channel: [ val(meta), [ tbi ] ]
     benign_vcf        = SUBVAR.out.benign_vcf               // channel: [ val(meta), [ benign_vcf ] ]
     pathogenic_vcf    = SUBVAR.out.pathogenic_vcf           // channel: [ val(meta), [ pathogenic_vcf ] ]
+    selected_vcf      = SUBVAR.out.selected_vcf             // channel: [ val(meta), [ selected_vcf ] ]
 
     versions = ch_versions                                  // channel: [ versions.yml ]
 }
