@@ -1,30 +1,35 @@
-include { SAMTOOLS_SORT      } from '../../../modules/nf-core/samtools/sort/main'
-include { SAMTOOLS_INDEX     } from '../../../modules/nf-core/samtools/index/main'
+include { SUBSETFASTATX      } from '../../../modules/local/subsetfastatx/main'
+include { SUBSETGFF          } from '../../../modules/local/subsetgff/main'
+include { SALMON_INDEX       } from '../../../modules/nf-core/salmon/index/main'
 
 workflow PREPARE_RNA_GENOME {
 
     take:
-    // TODO nf-core: edit input (take) channels
-    ch_bam // channel: [ val(meta), [ bam ] ]
+
+    ch_fasta   // channel: [ path(fasta) ]
+    ch_txfasta // channel: [ path(txfasta) ]
+    ch_gff3    // channel: [ path(gff3) ]
+    ch_meta    // channel: [ val(meta) ]
 
     main:
 
     ch_versions = Channel.empty()
 
-    // TODO nf-core: substitute modules here for the modules of your subworkflow
+    SUBSETFASTATX ( ch_meta, ch_txfasta, ch_gff3 )
+    ch_versions = ch_versions.mix(SUBSETFASTATX.out.versions.first())
 
-    SAMTOOLS_SORT ( ch_bam )
-    ch_versions = ch_versions.mix(SAMTOOLS_SORT.out.versions.first())
+    SUBSETGFF ( ch_meta, ch_gff3 )
+    ch_versions = ch_versions.mix(SUBSETGFF.out.versions.first())
 
-    SAMTOOLS_INDEX ( SAMTOOLS_SORT.out.bam )
-    ch_versions = ch_versions.mix(SAMTOOLS_INDEX.out.versions.first())
+    SALMON_INDEX ( ch_fasta, SUBSETFASTATX.out.fasta )
+    ch_versions = ch_versions.mix(SALMON_INDEX.out.versions.first())
 
     emit:
-    // TODO nf-core: edit emitted channels
-    bam      = SAMTOOLS_SORT.out.bam           // channel: [ val(meta), [ bam ] ]
-    bai      = SAMTOOLS_INDEX.out.bai          // channel: [ val(meta), [ bai ] ]
-    csi      = SAMTOOLS_INDEX.out.csi          // channel: [ val(meta), [ csi ] ]
+    txfasta_index      = SALMON_INDEX.out.index          // channel: [ path(txfasta_index) ]
+    txfasta            = SUBSETFASTATX.out.fasta         // channel: [ path(txfasta) ]
+    gene_lists         = SUBSETGFF.out.geneLists         // channel: [ path(geneLists) ]
+    transcript_data    = SUBSETGFF.out.transcriptData    // channel: [ path(transcriptData) ]
 
-    versions = ch_versions                     // channel: [ versions.yml ]
+    versions = ch_versions                               // channel: [ versions.yml ]
 }
 

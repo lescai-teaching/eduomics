@@ -9,10 +9,11 @@ process COUNTMATRICES {
 
     input:
     path(fasta)
+    path(gff3)
     path(genelist)
 
     output:
-    tuple val(meta), path("*.bam"), emit: bam
+    path "*.rds"                  , emit: rds
     path "versions.yml"           , emit: versions
 
     when:

@@ -1,0 +1,45 @@
+{
+    "prepare_rna_genome - test": {
+        "content": [
+            {
+                "0": [
+                    
+                ],
+                "1": [
+                    "gencode_transcripts_noversion_chr22.fasta:md5,4b4d69b3e46a9c3d47cd94d55ce13d21"
+                ],
+                "2": [
+                    "valid_gene_lists.rds:md5,d7c8a8267989395676bf144e7a793369"
+                ],
+                "3": [
+                    "transcript_data.rds:md5,2829de5c7c53afd3a671c0e131101f6b"
+                ],
+                "4": [
+                    "versions.yml:md5,2654c7a6b69615ffaf26e89ad773fca2",
+                    "versions.yml:md5,cee755a176b8939ac905cca4ca3766c1"
+                ],
+                "gene_lists": [
+                    "valid_gene_lists.rds:md5,d7c8a8267989395676bf144e7a793369"
+                ],
+                "transcript_data": [
+                    "transcript_data.rds:md5,2829de5c7c53afd3a671c0e131101f6b"
+                ],
+                "txfasta": [
+                    "gencode_transcripts_noversion_chr22.fasta:md5,4b4d69b3e46a9c3d47cd94d55ce13d21"
+                ],
+                "txfasta_index": [
+                    
+                ],
+                "versions": [
+                    "versions.yml:md5,2654c7a6b69615ffaf26e89ad773fca2",
+                    "versions.yml:md5,cee755a176b8939ac905cca4ca3766c1"
+                ]
+            }
+        ],
+        "meta": {
+            "nf-test": "0.9.2",
+            "nextflow": "24.10.4"
+        },
+        "timestamp": "2025-03-26T14:42:14.906568963"
+    }
+}
