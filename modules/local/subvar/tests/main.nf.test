@@ -1,0 +1,66 @@
+nextflow_process {
+
+    name "Test Process SUBVAR"
+    script "../main.nf"
+    process "SUBVAR"
+    config "./nextflow.config"
+
+    tag "modules"
+    tag "modules_nfcore"
+    tag "subvar"
+
+    test("homo_sapiens - vcf") {
+
+        when {
+            process {
+                """
+                input[0] = [
+                    [ id:'test_sample' ], // meta map
+                    file('https://raw.githubusercontent.com/lescai-teaching/eduomics_testdata/main/dna/clinvar_data/clinvar_20250317_chr22q11-21.vcf.gz', checkIfExists: true),
+                ]
+                input[1] = [
+                     file('https://raw.githubusercontent.com/lescai-teaching/eduomics_testdata/main/dna/Twist_Exome_Target2_chr22q11-21_GRCh38_50pad.bed', checkIfExists: true),
+                ]
+                """
+            }
+        }
+
+        then {
+            assertAll(
+                { assert process.success },
+                { assert path(process.out.benign_vcf.get(0).get(1)).exists() },
+                { assert path(process.out.pathogenic_vcf.get(0).get(1)).exists() },
+                { assert path(process.out.versions.get(0)).exists() }
+            )
+        }
+
+    }
+
+    test("homo_sapiens - vcf - stub") {
+
+        options "-stub"
+
+        when {
+            process {
+                """
+                input[0] = [
+                    [ id:'test_sample' ], // meta map
+                    file("https://github.com/lescai-teaching/eduomics_testdata/blob/main/dna/clinvar_data/clinvar_20250317_chr22q11-21.vcf.gz", checkIfExists: true)
+                ]
+                input[1] = [
+                    file("https://raw.githubusercontent.com/lescai-teaching/eduomics_testdata/main/dna/Twist_Exome_Target2_chr22q11-21_GRCh38_50pad.bed", checkIfExists: true)
+                ]
+                """
+            }
+        }
+
+        then {
+            assertAll(
+                { assert process.success },
+                { assert path(process.out.benign_vcf.get(0).get(1)).exists() },
+                { assert path(process.out.pathogenic_vcf.get(0).get(1)).exists() },
+                { assert path(process.out.versions.get(0)).exists() }
+            )
+        }
+    }
+}

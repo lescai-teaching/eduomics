@@ -1,0 +1,122 @@
+name: SUBSETGFF
+description: Processes GFF3 files and conducts enrichment analysis to select valid gene lists
+keywords:
+  - gff3
+  - transcripts
+  - gene ontology
+  - network analysis
+  - enrichment
+tools:
+  - bioconductor-rtracklayer:
+      description: "Importing and exporting genomic tracks"
+      homepage: "https://bioconductor.org/packages/release/bioc/html/rtracklayer.html"
+      documentation: "https://bioconductor.org/packages/release/bioc/vignettes/rtracklayer/inst/doc/rtracklayer.pdf"
+      tool_dev_url: "https://github.com/lawremi/rtracklayer"
+      doi: "10.1093/bioinformatics/btp328"
+      licence: "Artistic-2.0"
+      identifier: "bioconductor-rtracklayer"
+  - r-igraph:
+      description: "Network analysis and visualization"
+      homepage: "https://igraph.org/r/"
+      documentation: "https://igraph.org/r/doc/"
+      tool_dev_url: "https://github.com/igraph/rigraph"
+      doi: "10.1016/j.jss.2008.05.011"
+      licence: "GPL-2.0 | GPL-3.0"
+      identifier: "r-igraph"
+  - r-tidyverse:
+      description: "Collection of R packages for data science"
+      homepage: "https://www.tidyverse.org/"
+      documentation: "https://www.tidyverse.org/packages/"
+      tool_dev_url: "https://github.com/tidyverse/tidyverse"
+      doi: "10.21105/joss.01686"
+      licence: "MIT"
+      identifier: "r-tidyverse"
+  - bioconductor-annotationdbi:
+      description: "Annotation Database Interface"
+      homepage: "https://bioconductor.org/packages/release/bioc/html/AnnotationDbi.html"
+      documentation: "https://bioconductor.org/packages/release/bioc/vignettes/AnnotationDbi/inst/doc/IntroToAnnotationPackages.pdf"
+      tool_dev_url: "https://github.com/Bioconductor/AnnotationDbi"
+      doi: "10.1093/bioinformatics/btq388"
+      licence: "Artistic-2.0"
+      identifier: "bioconductor-annotationdbi"
+  - bioconductor-org.hs.eg.db:
+      description: "Genome wide annotation for Human"
+      homepage: "https://bioconductor.org/packages/release/data/annotation/html/org.Hs.eg.db.html"
+      documentation: "https://bioconductor.org/packages/release/data/annotation/manuals/org.Hs.eg.db/man/org.Hs.eg.db.pdf"
+      tool_dev_url: "https://github.com/Bioconductor/org.Hs.eg.db"
+      doi: "10.18129/B9.bioc.org.Hs.eg.db"
+      licence: "Artistic-2.0"
+      identifier: "bioconductor-org.hs.eg.db"
+  - r-s3:
+      description: "S3 object system for R"
+      homepage: "https://cran.r-project.org/web/packages/s3/index.html"
+      documentation: "https://cran.r-project.org/web/packages/s3/s3.pdf"
+      tool_dev_url: "https://github.com/cran/s3"
+      doi: ""
+      licence: "GPL-2.0 | GPL-3.0"
+      identifier: "r-s3"
+  - r-httr:
+      description: "Tools for Working with URLs and HTTP"
+      homepage: "https://httr.r-lib.org/"
+      documentation: "https://httr.r-lib.org/reference/index.html"
+      tool_dev_url: "https://github.com/r-lib/httr"
+      doi: ""
+      licence: "MIT"
+      identifier: "r-httr"
+  - r-jsonlite:
+      description: "A JSON parser and generator for R"
+      homepage: "https://cran.r-project.org/web/packages/jsonlite/index.html"
+      documentation: "https://cran.r-project.org/web/packages/jsonlite/jsonlite.pdf"
+      tool_dev_url: "https://github.com/jeroen/jsonlite"
+      doi: "10.18637/jss.v063.i04"
+      licence: "MIT"
+      identifier: "r-jsonlite"
+  - bioconductor-clusterprofiler:
+      description: "Statistical analysis and visualization of functional profiles for genes and gene clusters"
+      homepage: "https://bioconductor.org/packages/release/bioc/html/clusterProfiler.html"
+      documentation: "https://yulab-smu.top/biomedical-knowledge-mining-book/"
+      tool_dev_url: "https://github.com/YuLab-SMU/clusterProfiler"
+      doi: "10.1016/j.xinn.2021.100141"
+      licence: "Artistic-2.0"
+      identifier: "bioconductor-clusterprofiler"
+  - r-matrix:
+      description: "Sparse and Dense Matrix Classes and Methods"
+      homepage: "https://cran.r-project.org/web/packages/Matrix/index.html"
+      documentation: "https://cran.r-project.org/web/packages/Matrix/Matrix.pdf"
+      tool_dev_url: "https://github.com/cran/Matrix"
+      doi: "10.18637/jss.v059.i01"
+      licence: "GPL-2.0 | GPL-3.0"
+      identifier: "r-matrix"
+input:
+  - meta:
+      type: map
+      description: |
+        Metadata map containing sample information
+        Required keys:
+          - id: Sample identifier
+          - chromosome: Chromosome of interest
+  - gff3:
+      type: file
+      description: GFF3 annotation file
+      pattern: "*.{gff,gff3}"
+output:
+  - geneLists:
+      type: file
+      description: RDS file containing valid gene lists
+      pattern: "valid_gene_lists.rds"
+  - transcriptData:
+      type: file
+      description: RDS file containing transcript data
+      pattern: "transcript_data.rds"
+  - log:
+      type: file
+      description: Log file containing parsing and analysis information
+      pattern: "parsing_log.txt"
+  - versions:
+      type: file
+      description: File containing software versions
+      pattern: "versions.yml"
+authors:
+  - "@carpanz", "@LorenzoS96"
+maintainers:
+  - "@carpanz", "@LorenzoS96"
