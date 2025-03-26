@@ -20,7 +20,7 @@ workflow FASTA_WGSIM_TO_PROFILE {
     dict        // channel: [optional]  [ val(meta), [dict] ]
     bwa_index   // channel: [optional]  [ val(meta), [bwaindex] ]
     dbsnp       // channel: [mandatory] [ [dbsnp] ]
-    dnsnp_tbi   // channel: [mandatory] [ [dbsnp_tbi] ]
+    dbsnp_tbi   // channel: [mandatory] [ [dbsnp_tbi] ]
     mills       // channel: [mandatory] [ [mills] ]
     mills_tbi   // channel: [mandatory] [ [mills_tbi] ]
     capture     // channel: [mandatory] [ [capture] ]
@@ -30,7 +30,7 @@ workflow FASTA_WGSIM_TO_PROFILE {
     ch_versions = Channel.empty()
 
     // simulate reads on the chosen fasta
-    WGSIM(ch_fasta)
+    WGSIM(fasta)
 
     if(!fai){
         SAMTOOLS_FAIDX ( fasta )
@@ -92,7 +92,6 @@ workflow FASTA_WGSIM_TO_PROFILE {
         .combine(GATK4_BASERECALIBRATOR.out.table, by: 0)
         .combine(empty_intervals_ch)
 
-
     GATK4_APPLYBQSR(
         bam_for_applybqsr,
         fasta.map{ meta, it -> [ it ] },
@@ -106,7 +105,7 @@ workflow FASTA_WGSIM_TO_PROFILE {
     empty_models_ch = Channel.of([[]])
 
     bam_for_calling = GATK4_APPLYBQSR.out.bam
-        .mix(INDEX_RECAL.out.bai, by: 0)
+        .combine(INDEX_RECAL.out.bai, by: 0)
         .combine(empty_intervals_ch)
         .combine(empty_models_ch)
 
@@ -117,7 +116,7 @@ workflow FASTA_WGSIM_TO_PROFILE {
         fastaindex,
         fastadict,
         dbsnp,
-        dnsnp_tbi
+        dbsnp_tbi
     )
     ch_versions = ch_versions.mix(GATK4_HAPLOTYPECALLER.out.versions)
 
@@ -133,7 +132,6 @@ workflow FASTA_WGSIM_TO_PROFILE {
 
 
     emit:
-    // TODO nf-core: edit emitted channels
     bam      = GATK4_APPLYBQSR.out.bam              // channel: [ val(meta), [ bam ] ]
     vcf      = GATK4_HAPLOTYPECALLER.out.vcf        // channel: [ val(meta), [ vcf ] ]
     profile  = SIMUSCOP_SEQTOPROFILE.out.profile    // channel: [ val(meta), [ profile ] ]
