@@ -4,42 +4,69 @@ nextflow_workflow {
 
     name "Test Subworkflow SUBSET_REFERENCES_TO_TARGETS"
     script "../main.nf"
+    config "subworkflows/local/subset_references_to_targets/tests/test.config"
     workflow "SUBSET_REFERENCES_TO_TARGETS"
 
     tag "subworkflows"
     tag "subworkflows_"
     tag "subworkflows/subset_references_to_targets"
-    // TODO nf-core: Add tags for all modules used within this subworkflow. Example:
-    tag "samtools"
-    tag "samtools/sort"
-    tag "samtools/index"
+    tag "samtools/faidx"
+    tag "gatk4/selectvariants"
 
 
-    // TODO nf-core: Change the test name preferably indicating the test-data and file-format used
-    test("sarscov2 - bam - single_end") {
+    test("human - fasta/BED/VCF - subset by chr") {
 
         when {
             workflow {
                 """
-                // TODO nf-core: define inputs of the workflow here. Example:
-                input[0] = [
-                    [ id:'test', single_end:false ], // meta map
-                    file(params.modules_testdata_base_path + 'genomics/sarscov2/illumina/bam/test.paired_end.sorted.bam', checkIfExists: true),
-                ]
-                input[1] = [
-                    [ id:'genome' ],
-                    file(params.modules_testdata_base_path + 'genomics/sarscov2/illumina/bam/test.paired_end.sorted.bam', checkIfExists: true),
-                ]
+                // ch_fasta
+                // ch_fasta
+                input[0] = Channel.of([
+                    [ id:'test', chromosome:'chr22' ],
+                    file('https://raw.githubusercontent.com/lescai-teaching/eduomics_testdata/refs/heads/main/dna/chr22_q11-21_GRCh38.fasta', checkIfExists: true)
+                ])
+                // ch_fai (samtools index to subset works also without .fai, set to empty channel)
+                input[1] = Channel.empty()
+                // ch_get_sizes
+                input[2] = Channel.value(true)
+                // ch_capture_bed
+                input[3] = Channel.value(file('https://raw.githubusercontent.com/lescai-teaching/eduomics_testdata/refs/heads/main/dna/Twist_Exome_Target2_chr22q11-21_GRCh38.bed', checkIfExists: true))
+                // ch_chromosome
+                input[4] = Channel.of([ [ id:'test' ], 'chr22' ])
+                // ch_vcf_idx_intervals
+                input[5] = Channel.of([
+                    [ id:'test' ],
+                    file('https://github.com/lescai-teaching/eduomics_testdata/blob/main/dna/gatk_bundle/dbsnp_146_chr22_q11-21_fixed.vcf.gz', checkIfExists: true),
+                    file('https://github.com/lescai-teaching/eduomics_testdata/blob/main/dna/gatk_bundle/dbsnp_146_chr22_q11-21_fixed.vcf.gz', checkIfExists: true),
+                    file('https://raw.githubusercontent.com/lescai-teaching/eduomics_testdata/refs/heads/main/dna/Twist_Exome_Target2_chr22q11-21_GRCh38.bed', checkIfExists: true)
+                ])
+                // ch_clinvar_vcf
+                input[6] = Channel.of([
+                    [ id:'clinvar' ],
+                    file('https://github.com/lescai-teaching/eduomics_testdata/blob/main/dna/clinvar_data/clinvar_20250317_chr22q11-21.vcf.gz', checkIfExists: true)
+                ])
                 """
             }
         }
 
         then {
             assertAll(
-                { assert workflow.success},
-                { assert snapshot(workflow.out).match()}
-                //TODO nf-core: Add all required assertions to verify the test output.
-            )
+                { assert workflow.success },
+                { assert workflow.out.target_fa },
+                { assert workflow.out.target_fai },
+                { assert workflow.out.target_sizes },
+                { assert workflow.out.capture_bed_gz },
+                { assert workflow.out.capture_bed_index },
+                { assert workflow.out.target_bed },
+                { assert workflow.out.target_bed_pad50 },
+                { assert workflow.out.target_bed_pad500 },
+                { assert workflow.out.target_vcf_bundle },
+                { assert workflow.out.target_tbi_bundle },
+                { assert workflow.out.benign_vcf },
+                { assert workflow.out.pathogenic_vcf },
+                { assert workflow.out.selected_vcf },
+                { assert workflow.out.versions }
+           )
         }
     }
 }

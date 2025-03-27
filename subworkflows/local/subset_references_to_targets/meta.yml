@@ -1,50 +1,137 @@
 # yaml-language-server: $schema=https://raw.githubusercontent.com/nf-core/modules/master/subworkflows/yaml-schema.json
 name: "subset_references_to_targets"
-## TODO nf-core: Add a description of the subworkflow and list keywords
-description: Sort SAM/BAM/CRAM file
+description: Subset Human genome fasta, capture BED, GATK bundle and ClinVar VCFs by target chromosome
 keywords:
-  - sort
-  - bam
-  - sam
-  - cram
-## TODO nf-core: Add a list of the modules and/or subworkflows used in the subworkflow
+  - subset
+  - reference
+  - capture
+  - genomics
+  - variants
 components:
-  - samtools/sort
-  - samtools/index
-## TODO nf-core: List all of the channels used as input with a description and their structure
+  - samtools/faidx
+  - gatk4/selectvariants
+  - local/subsetcapture
+  - local/subvar
+
 input:
-  - ch_bam:
+  - meta:
+      type: map
+      description: Metadata map
+  - ch_fasta:
       type: file
       description: |
-        The input channel containing the BAM/CRAM/SAM files
-        Structure: [ val(meta), path(bam) ]
-      pattern: "*.{bam/cram/sam}"
-## TODO nf-core: List all of the channels used as output with a descriptions and their structure
+        The input channel containing the reference genome FASTA file
+        Structure: [ val(meta), [ fasta ] ]
+      pattern: "*.{fasta/fa}"
+  - ch_fai:
+      type: file
+      description: |
+        The input channel containing the FASTA index file
+        Structure: [ val(meta), [ fai ] ]
+      pattern: "*.{fasta/fa}"
+  - ch_get_sizes:
+      type: boolean
+      description: |
+        The input channel containing the boolean to generate chromosome .sizes file
+        Structure: [ get_sizes ]
+  - ch_capture_bed:
+      type: file
+      description: |
+        The input channel containing the capture regions BED file
+        Structure: [ capture_bed ]
+      pattern: "*.bed"
+  - chromosome:
+      type: value
+      description: |
+        The input channel containing the chromosome name
+      Structure: [ val(meta), val(chromosome) ]
+  - vcf:
+      type: file
+      description: |
+        GATK bundle VCF files
+      pattern: "*.vcf{,.gz}"
+  - vcf_idx:
+      type: file
+      description: VCF index file
+      pattern: "*.{tbi,csi}"
+  - intervals:
+      type: file
+      description: Intervals file for variant selection
+      pattern: "*.{bed}"
+  - clinvar_vcf:
+      type: file
+      description: |
+        ClinVar VCF file
+        Structure: [ val(meta), path(vcf) ]
+      pattern: "*.vcf{,.gz}"
+
 output:
-  - bam:
+  - target_fa:
       type: file
       description: |
-        Channel containing BAM files
-        Structure: [ val(meta), path(bam) ]
-      pattern: "*.bam"
-  - bai:
+        Subset reference genome FASTA file
+      pattern: "*.{fa,fasta}"
+  - target_fai:
       type: file
       description: |
-        Channel containing indexed BAM (BAI) files
-        Structure: [ val(meta), path(bai) ]
-      pattern: "*.bai"
-  - csi:
+       Subset FASTA index file
+      pattern: "*.fai"
+  - target_sizes:
       type: file
       description: |
-        Channel containing CSI files
-        Structure: [ val(meta), path(csi) ]
-      pattern: "*.csi"
-  - versions:
+       Chromosome sizes file
+      pattern: "*.sizes"
+  - capture_bed_gz:
       type: file
       description: |
-        File containing software versions
-        Structure: [ path(versions.yml) ]
-      pattern: "versions.yml"
+       Compressed origin capture BED file
+      pattern: "*.bed.gz"
+  - capture_bed_index:
+      type: file
+      description: |
+        Index for compressed origin capture BED file
+      pattern: "*.bed.gz.tbi"
+  - target_bed:
+      type: file
+      description: |
+        Target regions BED file
+      pattern: "*.bed"
+  - target_bed_pad50:
+      type: file
+      description: |
+       Target regions BED file with 50bp padding
+      pattern: "*_pad50.bed"
+  - target_bed_pad500:
+      type: file
+      description: |
+        Target regions BED file with 500bp padding
+      pattern: "*_pad500.bed"
+  - target_gatk_vcf:
+      type: file
+      description: |
+        Selected variants VCF file
+      pattern: "*.vcf{,.gz}"
+  - target_gatk_tbi:
+      type: file
+      description: |
+        Index for on target pathogenic variants from ClinVar
+      pattern: "*.{tbi,csi}"
+  - clinvar_benign_vcf:
+      type: file
+      description: |
+        Subset of benign variants from ClinVar
+      pattern: "*_benign.vcf{,.gz}"
+  - clinvar_pathogenic_vcf:
+      type: file
+      description: |
+        Subset of pathogenic variants from ClinVar
+      pattern: "*_pathogenic.vcf{,.gz}"
+  - clinvar_selected_vcf:
+      type: file
+      description: |
+        Subset of pathogenic variants from ClinVar
+      pattern: "*_pathogenic.vcf{,.gz}"
+
 authors:
   - "@msantorsola"
 maintainers:
