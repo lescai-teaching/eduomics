@@ -33,35 +33,27 @@ workflow FASTA_WGSIM_TO_PROFILE {
     // simulate reads on the chosen fasta
     WGSIM(fasta)
 
-    faicheck = true
-    fai.ifEmpty{ faicheck = false }
-
-    if(!faicheck){
+    if(!fai){
         SAMTOOLS_FAIDX(fasta, [ [ id:'no_fai' ], [] ], [] )
         ch_versions = ch_versions.mix(SAMTOOLS_FAIDX.out.versions)
     }
     // sets fasta index to correct input
-    fastaindex = faicheck ? fai : SAMTOOLS_FAIDX.out.fai.collect()
+    fastaindex = fai ?: SAMTOOLS_FAIDX.out.fai.collect()
     fastaindex.dump(tag: 'fastaindex')
 
-    dictcheck = true
-    dict.ifEmpty{ dictcheck = false }
-
-    if(!dictcheck){
+    if(!dict){
         GATK4_CREATESEQUENCEDICTIONARY ( fasta )
         ch_versions = ch_versions.mix(GATK4_CREATESEQUENCEDICTIONARY.out.versions)
     }
     // sets dictionary to correct input
-    fastadict = dictcheck ? dict : GATK4_CREATESEQUENCEDICTIONARY.out.dict
+    fastadict = dict ?: GATK4_CREATESEQUENCEDICTIONARY.out.dict
 
-    bwacheck = true
-    bwa_index.ifEmpty{ bwacheck = false }
-    if(!bwacheck){
+    if(!bwa_index){
         BWA_INDEX ( fasta )
         ch_versions = ch_versions.mix(BWA_INDEX.out.versions)
     }
     // sets bwaindex to correct input
-    bwaindex    = bwacheck ? bwa_index : BWA_INDEX.out.index
+    bwaindex    = bwa_index ?: BWA_INDEX.out.index
 
 
     // align simulated reads to their reference

@@ -117,13 +117,13 @@ nextflow_workflow {
                 ])
 
                 // fai         [optional]  [ val(meta), [fai] ]
-                input[1] = Channel.empty()
+                input[1] = false
 
                 // dict        [optional]  [ val(meta), [dict] ]
-                input[2] = Channel.empty()
+                input[2] = false
 
                 // bwa_index   [optional]  [ val(meta), [bwaindex] ]
-                input[3] = Channel.empty()
+                input[3] = false
 
                 // dbsnp       [mandatory] [ [dbsnp] ]
                 input[4] = Channel.value([
