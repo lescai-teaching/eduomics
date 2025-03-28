@@ -1,0 +1,44 @@
+nextflow_workflow {
+
+    name "Test Subworkflow PREPARE_RNA_GENOME"
+    script "../main.nf"
+    workflow "PREPARE_RNA_GENOME"
+
+    config "./test.config"
+    options "-dump-channels"
+
+    tag "subworkflows"
+    tag "subworkflows_"
+    tag "subworkflows/prepare_rna_genome"
+    tag "subsetfastatx"
+    tag "subsetgff"
+    tag "salmon"
+    tag "salmon/index"
+
+
+    test("prepare_rna_genome - test") {
+
+        when {
+
+            workflow {
+                """
+
+                input[0] = Channel.of(file('https://raw.githubusercontent.com/lescai-teaching/eduomics_testdata/refs/heads/main/dna/whole_chr22/Homo_sapiens.GRCh38.dna.chromosome.22.fa', checkIfExists: true))
+                input[1] = Channel.value(file('https://github.com/lescai-teaching/eduomics_testdata/raw/refs/heads/main/rnaseq/subsetfastatx/gencode_transcripts_noversion_chr21_chr22.fasta', checkIfExists: true))
+                input[2] = Channel.value(file('https://raw.githubusercontent.com/lescai-teaching/eduomics_testdata/refs/heads/main/rnaseq/subsetfastatx/gencode_chr21_chr22_v47.gff3', checkIfExists: true))
+                input[3] = Channel.of([ id:'test', chromosome:'chr22' ])
+
+                """
+            }
+        }
+
+        then {
+            assertAll(
+                { assert workflow.success },
+                { assert workflow.out.txfasta.get(0).endsWith('.fasta') },
+                { assert workflow.out.gene_lists.get(0).endsWith('.rds') },
+                { assert workflow.out.transcript_data.get(0).endsWith('.rds') }
+            )
+        }
+    }
+}
