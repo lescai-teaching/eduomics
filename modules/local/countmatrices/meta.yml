@@ -1,0 +1,57 @@
+---
+name: COUNTMATRICES
+description: Count matrices generation for simulation of RNA-seq data
+keywords:
+  - count
+  - matrix
+  - simulation
+  - rna-seq
+tools:
+  - r-tidyverse:
+      description: Collection of R packages for data science
+      homepage: https://www.tidyverse.org/
+      documentation: https://www.tidyverse.org/packages/
+  - bioconductor-biostrings:
+      description: Efficient manipulation of biological strings
+      homepage: https://bioconductor.org/packages/release/bioc/html/Biostrings.html
+      documentation: https://bioconductor.org/packages/release/bioc/vignettes/Biostrings/inst/doc/BiostringsQuickOverview.pdf
+input:
+  - meta:
+      type: map
+      description: Metadata map
+  - txfasta:
+      type: file
+      description: Transcriptome FASTA file
+      pattern: "*.{fa,fasta}"
+  - gff3:
+      type: file
+      description: GFF3 annotation file
+      pattern: "*.{gff3}"
+  - geneList:
+      type: file
+      description: Gene list file
+      pattern: "*.rds"
+output:
+  - count_matrices:
+      type: file
+      description: RDS file containing the count matrices
+      pattern: "*.rds"
+  - gene_info:
+      type: file
+      description: RDS file containing info about genes and the expected log2 fold change
+      pattern: "*.rds"
+  - tsv:
+      type: file
+      description: Tabular file containing info about genes and the expected log2 fold change
+      pattern: "*.tsv"
+  - versions:
+      type: file
+      description: File containing software versions
+      pattern: "versions.yml"
+authors:
+  - "carpanz"
+  - "LorenzoS96"
+maintainers:
+  - "carpanz"
+  - "LorenzoS96"
+

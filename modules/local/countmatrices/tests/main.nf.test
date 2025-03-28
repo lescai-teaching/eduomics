@@ -1,0 +1,61 @@
+nextflow_process {
+
+    name "Test Process COUNTMATRICES"
+    script "../main.nf"
+    process "COUNTMATRICES"
+
+    tag "modules"
+    tag "modules_nfcore"
+    tag "countmatrices"
+
+    test("countmatrices - counting") {
+
+        when {
+            process {
+                """
+                input[0] = [ id:'test', chromosome:'chr22', reps:'5', groups:'2' ]
+                input[1] = file('https://github.com/lescai-teaching/eduomics_testdata/raw/refs/heads/main/rnaseq/countmatrices/gencode_transcripts_noversion_chr22.fasta', checkIfExists: true)
+                input[2] = file('https://github.com/lescai-teaching/eduomics_testdata/raw/refs/heads/main/rnaseq/countmatrices/gff3_chr22.rds', checkIfExists: true)
+                input[3] = file('https://github.com/lescai-teaching/eduomics_testdata/raw/refs/heads/main/rnaseq/countmatrices/valid_gene_lists.rds', checkIfExists: true)
+                """
+            }
+        }
+
+        then {
+            assertAll(
+                { assert process.success },
+                { assert process.out.rds },
+                { assert process.out.tsv },
+                { assert process.out.versions }
+            )
+        }
+
+    }
+
+    test("countmatrices - stub") {
+
+        options "-stub"
+
+        when {
+            process {
+                """
+                input[0] = [ id:'test', chromosome:'chr22', reps:'5', groups:'2' ]
+                input[1] = file('https://github.com/lescai-teaching/eduomics_testdata/raw/refs/heads/main/rnaseq/countmatrices/gencode_transcripts_noversion_chr22.fasta', checkIfExists: true)
+                input[2] = file('https://github.com/lescai-teaching/eduomics_testdata/raw/refs/heads/main/rnaseq/countmatrices/gff3_chr22.rds', checkIfExists: true)
+                input[3] = file('https://github.com/lescai-teaching/eduomics_testdata/raw/refs/heads/main/rnaseq/countmatrices/valid_gene_lists.rds', checkIfExists: true)
+                """
+            }
+        }
+
+        then {
+             assertAll(
+                { assert process.success },
+                { assert process.out.rds },
+                { assert process.out.tsv },
+                { assert process.out.versions }
+            )
+        }
+
+    }
+
+}
