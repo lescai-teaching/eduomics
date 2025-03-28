@@ -1,14 +1,11 @@
 include { WGSIM                          } from '../../../modules/nf-core/wgsim/main'
-include { SAMTOOLS_FAIDX                 } from '../../../modules/nf-core/samtools/faidx/main'
 include { SAMTOOLS_INDEX                 } from '../../../modules/nf-core/samtools/index/main'
 include { SAMTOOLS_INDEX as INDEX_MD     } from '../../../modules/nf-core/samtools/index/main'
 include { SAMTOOLS_INDEX as INDEX_RECAL  } from '../../../modules/nf-core/samtools/index/main'
 include { SAMTOOLS_SORT                  } from '../../../modules/nf-core/samtools/sort/main'
-include { BWA_INDEX                      } from '../../../modules/nf-core/bwa/index/main'
 include { BWA_MEM                        } from '../../../modules/nf-core/bwa/mem/main'
 include { GATK4_MARKDUPLICATES           } from '../../../modules/nf-core/gatk4/markduplicates/main'
 include { GATK4_BASERECALIBRATOR         } from '../../../modules/nf-core/gatk4/baserecalibrator/main'
-include { GATK4_CREATESEQUENCEDICTIONARY } from '../../../modules/nf-core/gatk4/createsequencedictionary/main'
 include { GATK4_APPLYBQSR                } from '../../../modules/nf-core/gatk4/applybqsr/main'
 include { GATK4_HAPLOTYPECALLER          } from '../../../modules/nf-core/gatk4/haplotypecaller/main'
 include { SIMUSCOP_SEQTOPROFILE          } from '../../../modules/local/simuscop/seqtoprofile/main'
@@ -17,9 +14,9 @@ workflow FASTA_WGSIM_TO_PROFILE {
 
     take:
     fasta       // channel: [mandatory] [ val(meta), [ fasta ] ]
-    fai         // channel: [optional]  [ val(meta), [fai] ]
-    dict        // channel: [optional]  [ val(meta), [dict] ]
-    bwa_index   // channel: [optional]  [ val(meta), [bwaindex] ]
+    fai         // channel: [mandatory] [ val(meta), [fai] ]
+    dict        // channel: [mandatory] [ val(meta), [dict] ]
+    bwa_index   // channel: [mandatory] [ val(meta), [bwa_index] ]
     dbsnp       // channel: [mandatory] [ [dbsnp] ]
     dbsnp_tbi   // channel: [mandatory] [ [dbsnp_tbi] ]
     mills       // channel: [mandatory] [ [mills] ]
@@ -33,31 +30,8 @@ workflow FASTA_WGSIM_TO_PROFILE {
     // simulate reads on the chosen fasta
     WGSIM(fasta)
 
-    if(!fai){
-        SAMTOOLS_FAIDX(fasta, [ [ id:'no_fai' ], [] ], [] )
-        ch_versions = ch_versions.mix(SAMTOOLS_FAIDX.out.versions)
-    }
-    // sets fasta index to correct input
-    fastaindex = fai ?: SAMTOOLS_FAIDX.out.fai.collect()
-    fastaindex.dump(tag: 'fastaindex')
-
-    if(!dict){
-        GATK4_CREATESEQUENCEDICTIONARY ( fasta )
-        ch_versions = ch_versions.mix(GATK4_CREATESEQUENCEDICTIONARY.out.versions)
-    }
-    // sets dictionary to correct input
-    fastadict = dict ?: GATK4_CREATESEQUENCEDICTIONARY.out.dict
-
-    if(!bwa_index){
-        BWA_INDEX ( fasta )
-        ch_versions = ch_versions.mix(BWA_INDEX.out.versions)
-    }
-    // sets bwaindex to correct input
-    bwaindex    = bwa_index ?: BWA_INDEX.out.index
-
-
     // align simulated reads to their reference
-    BWA_MEM( WGSIM.out.fastq, bwaindex, fasta, true )
+    BWA_MEM( WGSIM.out.fastq, bwa_index, fasta, true )
 
     SAMTOOLS_INDEX ( BWA_MEM.out.bam )
     ch_versions = ch_versions.mix(SAMTOOLS_INDEX.out.versions.first())
@@ -67,7 +41,7 @@ workflow FASTA_WGSIM_TO_PROFILE {
     GATK4_MARKDUPLICATES(
         BWA_MEM.out.bam,
         fasta.map{ meta, it -> [ it ] },
-        fastaindex.map{ meta, it -> [ it ] },
+        fai.map{ meta, it -> [ it ] },
         )
     ch_versions = ch_versions.mix(GATK4_MARKDUPLICATES.out.versions)
 
@@ -86,7 +60,7 @@ workflow FASTA_WGSIM_TO_PROFILE {
     GATK4_BASERECALIBRATOR(
         bam_for_recal,
         fasta,
-        fastaindex,
+        fai,
         dict,
         known_sites_all.map{ it -> [[id:'sites'], it] },
         known_sites_all_tbi.map{ it -> [[id:'sites'], it] }
@@ -101,7 +75,7 @@ workflow FASTA_WGSIM_TO_PROFILE {
     GATK4_APPLYBQSR(
         bam_for_applybqsr,
         fasta.map{ meta, it -> [ it ] },
-        fastaindex.map{ meta, it -> [ it ] },
+        fai.map{ meta, it -> [ it ] },
         dict.map{ meta, it -> [ it ] }
     )
     ch_versions = ch_versions.mix(GATK4_APPLYBQSR.out.versions)
@@ -119,8 +93,8 @@ workflow FASTA_WGSIM_TO_PROFILE {
     GATK4_HAPLOTYPECALLER(
         bam_for_calling,
         fasta,
-        fastaindex,
-        fastadict,
+        fai,
+        dict,
         dbsnp.map{ it -> [[id:'test'], it] },
         dbsnp_tbi.map{ it -> [[id:'test'], it] }
     )
