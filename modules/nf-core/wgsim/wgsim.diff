@@ -1,0 +1,34 @@
+Changes in component 'nf-core/wgsim'
+Changes in 'wgsim/main.nf':
+--- modules/nf-core/wgsim/main.nf
++++ modules/nf-core/wgsim/main.nf
+@@ -11,8 +11,8 @@
+     tuple val(meta), path(fasta)
+ 
+     output:
+-    tuple val(meta), path("*.fastq"), emit: fastq
+-    path "versions.yml",              emit: versions
++    tuple val(meta), path("*.fastq.gz"), emit: fastq
++    path "versions.yml",                 emit: versions
+ 
+     when:
+     task.ext.when == null || task.ext.when
+@@ -26,6 +26,11 @@
+         $fasta \\
+         ${prefix}_R1.fastq \\
+         ${prefix}_R2.fastq
++    
++    for i in `ls *.fastq`
++    do
++    gzip \$i
++    done
+ 
+     cat <<-END_VERSIONS > versions.yml
+     "${task.process}":
+
+'modules/nf-core/wgsim/environment.yml' is unchanged
+'modules/nf-core/wgsim/meta.yml' is unchanged
+'modules/nf-core/wgsim/tests/main.nf.test' is unchanged
+'modules/nf-core/wgsim/tests/main.nf.test.snap' is unchanged
+'modules/nf-core/wgsim/tests/seed.config' is unchanged
+************************************************************
