@@ -1,17 +1,14 @@
-// TODO nf-core: If in doubt look at other nf-core/subworkflows to see how we are doing things! :)
-//               https://github.com/nf-core/modules/tree/master/subworkflows
-//               You can also ask for help via your pull request or on the #subworkflows channel on the nf-core Slack workspace:
-//               https://nf-co.re/join
-// TODO nf-core: A subworkflow SHOULD import at least two modules
-
-include { SAMTOOLS_SORT      } from '../../../modules/nf-core/samtools/sort/main'
-include { SAMTOOLS_INDEX     } from '../../../modules/nf-core/samtools/index/main'
+include { PYCONVERTOSIM      } from '../../../modules/local/pyconvertosim/main'
+include { SIMUSCOP_SIMUREADS } from '../../../modules/local/simuscop/simureads/main'
 
 workflow PROFILE_SIMULATE_VARS_FASTQ {
 
     take:
-    // TODO nf-core: edit input (take) channels
-    ch_bam // channel: [ val(meta), [ bam ] ]
+    vcf_benign // channel: [mandatory] [[meta], vcf_benign]
+    vcf_patho  // channel: [mandatory] [[meta], vcf_patho]
+    simprofile // channel: [mandatory] [[meta], profile]
+    fasta_fai  // channel: [mandatory] [[meta], fasta, fai]
+    capture    // channel: [mandatory] [capture_500pad]
 
     main:
 
