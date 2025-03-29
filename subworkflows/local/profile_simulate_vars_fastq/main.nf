@@ -14,13 +14,20 @@ workflow PROFILE_SIMULATE_VARS_FASTQ {
 
     ch_versions = Channel.empty()
 
-    // TODO nf-core: substitute modules here for the modules of your subworkflow
+    PYCONVERTOSIM( vcf_benign, vcf_patho )
+    ch_versions = ch_versions.mix(PYCONVERTOSIM.out.versions)
 
-    SAMTOOLS_SORT ( ch_bam )
-    ch_versions = ch_versions.mix(SAMTOOLS_SORT.out.versions.first())
+    variants_to_inject = PYCONVERTOSIM.out.combined_variations.flatten()
 
-    SAMTOOLS_INDEX ( SAMTOOLS_SORT.out.bam )
-    ch_versions = ch_versions.mix(SAMTOOLS_INDEX.out.versions.first())
+
+    SIMUSCOP_SIMUREADS(
+        simprofile,
+        fasta_fai,
+        variants_to_inject,
+        capture
+    )
+
+
 
     emit:
     // TODO nf-core: edit emitted channels
