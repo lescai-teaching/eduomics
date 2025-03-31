@@ -49,29 +49,28 @@ input:
         description: FASTA file containing sequences of the transcripts to be simulated
         pattern: "*.fasta"
 
-
 output:
   - reads:
-  #Only when we have meta
-    - meta:
-        type: map
-        description: |
-          Groovy Map containing sample information
-          e.g. `[ id:'simulation_id', reps:3, groups:2 ]`
-    - "*.fasta.gz":
-        type: file
-        description: simulated reads in FASTA format
-        pattern: "*.fasta.gz"
-        ontologies:
-          - edam: "http://edamontology.org/format_25722"
-          - edam: "http://edamontology.org/format_2573"
-          - edam: "http://edamontology.org/format_3462"
+      #Only when we have meta
+      - meta:
+          type: map
+          description: |
+            Groovy Map containing sample information
+            e.g. `[ id:'simulation_id', reps:3, groups:2 ]`
+      - "*.fasta.gz":
+          type: file
+          description: simulated reads in FASTA format
+          pattern: "*.fasta.gz"
+          ontologies:
+            - edam: "http://edamontology.org/format_25722"
+            - edam: "http://edamontology.org/format_2573"
+            - edam: "http://edamontology.org/format_3462"
 
   - versions:
-    - "versions.yml":
-        type: file
-        description: File containing software versions
-        pattern: "versions.yml"
+      - "versions.yml":
+          type: file
+          description: File containing software versions
+          pattern: "versions.yml"
 
 authors:
   - "@lescai"

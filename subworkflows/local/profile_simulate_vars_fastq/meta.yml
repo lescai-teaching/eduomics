@@ -1,52 +1,67 @@
-# yaml-language-server: $schema=https://raw.githubusercontent.com/nf-core/modules/master/subworkflows/yaml-schema.json
+---
+# yaml-language-server: $schema=https://raw.githubusercontent.com/nf-core/modules/master/modules/meta-schema.json
 name: "profile_simulate_vars_fastq"
-## TODO nf-core: Add a description of the subworkflow and list keywords
-description: Simulate reads with variants and process them
+description: Simulate reads with specific variants injected
+tools:
+  - "simuscop":
+      description: "Tool to Simulate Illumina Sequencing data based on position and Context dependent Profiles with the ability to inject specific variants into the simulated reads"
+      homepage: "https://github.com/qasimyu/simuscop"
+      documentation: "https://github.com/qasimyu/simuscop/blob/master/docs/SimuSCoP_User_Guide.pdf"
+      tool_dev_url: "https://github.com/qasimyu/simuscop"
+      doi: "no DOI available"
+      licence: ["GNU GPL v3"]
+      identifier: biotools:simuscop
 keywords:
   - simulate
   - reads
   - variants
-  - bam
-  - sam
-  - cram
-## TODO nf-core: Add a list of the modules and/or subworkflows used in the subworkflow
 components:
-  - samtools/sort
-  - samtools/index
-## TODO nf-core: List all of the channels used as input with a description and their structure
+  - local/pyconvertosim
+  - local/simuscop/simureads
 input:
-  - ch_bam:
-      type: file
-      description: |
-        The input channel containing the BAM/CRAM/SAM files
-        Structure: [ val(meta), path(bam) ]
-      pattern: "*.{bam/cram/sam}"
-## TODO nf-core: List all of the channels used as output with a descriptions and their structure
+  - - meta:
+        type: map
+        description: "a meta map like this [ id:'sim01', coverage:50, type: 'dnaseq', reps:1, groups:2]"
+    - vcf:
+        type: file
+        description: "VCF file with benign variation"
+        pattern: "*.vcf"
+  - - meta:
+        type: map
+        description: "a meta map like this [ id:'sim01', coverage:50, type: 'dnaseq', reps:1, groups:2]"
+      vcf:
+        type: file
+        description: "VCF file with pathogenic variation"
+        pattern: "*.vcf"
+  - - meta:
+        type: map
+        description: "a meta map like this [ id:'sim01', coverage:50, type: 'dnaseq', reps:1, groups:2]"
+    - simprofile:
+        type: file
+        description: "reads simulation profile produced by simuscop profile"
+  - - fasta:
+        type: file
+        description: "FASTA of the sequence reads should be simulated on"
+        pattern: "*.fasta"
+    - fai:
+        type: file
+        description: "index of the FASTA file"
+        pattern: "*.fai"
 output:
-  - bam:
-      type: file
-      description: |
-        Channel containing BAM files
-        Structure: [ val(meta), path(bam) ]
-      pattern: "*.bam"
-  - bai:
-      type: file
-      description: |
-        Channel containing indexed BAM (BAI) files
-        Structure: [ val(meta), path(bai) ]
-      pattern: "*.bai"
-  - csi:
-      type: file
-      description: |
-        Channel containing CSI files
-        Structure: [ val(meta), path(csi) ]
-      pattern: "*.csi"
+  - simreads:
+      - meta:
+          type: map
+          description: "a meta map like this [ id:'sim01', coverage:50, type: 'dnaseq', reps:1, groups:2]"
+      - reads:
+          type: file
+          description: "read pairs of simulated case control"
+          pattern: "*.fq.gz"
   - versions:
-      type: file
-      description: |
-        File containing software versions
-        Structure: [ path(versions.yml) ]
-      pattern: "versions.yml"
+      - versions.yml:
+          type: file
+          description: File containing software versions
+          pattern: "versions.yml"
+
 authors:
   - "@lescai"
 maintainers:
