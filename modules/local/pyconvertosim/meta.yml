@@ -1,7 +1,6 @@
 ---
 # yaml-language-server: $schema=https://raw.githubusercontent.com/nf-core/modules/master/modules/meta-schema.json
 name: "pyconvertosim"
-## TODO nf-core: Add a description of the module and list keywords
 description: Converts VCF files to variation files for simulation
 keywords:
   - vcf
@@ -21,32 +20,43 @@ input:
         type: file
         description: Input VCF file with benign variants
         pattern: "*.vcf"
+  - - meta:
+        type: map
+        description: Metadata map
     - vcf_pathogenic:
         type: file
         description: Input VCF file with pathogenic variants
         pattern: "*.vcf"
 output:
-  - profile:
-    - meta:
-        type: map
-        description: Metadata map
-    - base_variation:
-        type: file
-        description: Output file containing base variations
-        pattern: "*_base_variation.txt"
-    - patho_variation:
-        type: file
-        description: Output file containing pathogenic variations
-        pattern: "*_patho_variation.txt"
-    - combined_variations:
-        type: file
-        description: Output files containing combined variations
-        pattern: "*_variation_*.txt"
+  - base_variation:
+      - meta:
+          type: map
+          description: Metadata map
+      - "*_base_variation.txt":
+          type: file
+          description: Output file containing base variations
+          pattern: "*_base_variation.txt"
+  - patho_variation:
+      - meta:
+          type: map
+          description: Metadata map
+      - "*_patho_variation.txt":
+          type: file
+          description: Output file containing pathogenic variations
+          pattern: "*_patho_variation.txt"
+  - combined_variations:
+      - meta:
+          type: map
+          description: Metadata map
+      - "*_simvar_*.txt":
+          type: file
+          description: Output files containing combined variations
+          pattern: "*_simvar_*.txt"
   - versions:
-    - "versions.yml":
-        type: file
-        description: File containing software versions
-        pattern: "versions.yml"
+      - "versions.yml":
+          type: file
+          description: File containing software versions
+          pattern: "versions.yml"
 
 authors:
   - "@DavideBag"
