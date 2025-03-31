@@ -1,0 +1,107 @@
+
+nextflow_workflow {
+
+    name "Test Subworkflow FASTA_WGSIM_TO_PROFILE"
+    script "../main.nf"
+    workflow "FASTA_WGSIM_TO_PROFILE"
+
+    config "./test.config"
+    options "-dump-channels"
+
+    tag "subworkflows"
+    tag "subworkflows_"
+    tag "subworkflows/fasta_wgsim_to_profile"
+
+    tag "samtools"
+    tag "samtools/faidx"
+    tag "samtools/index"
+    tag "samtools/sort"
+    tag "bwa/index"
+    tag "bwa/mem"
+    tag "gatk4"
+    tag "gatk4/markduplicates"
+    tag "gatk4/baserecalibrator"
+    tag "gatk4/createsequencedictionary"
+    tag "gatk4/applybqsr"
+    tag "gatk4/haplotypecaller"
+    tag "wgsim"
+    tag "simuscop"
+    tag "simuscop/seqtoprofile"
+
+
+    test("wgsim to profile - indexes mandatory") {
+
+        tag "with-index"
+
+        when {
+            workflow {
+                """
+                // fasta       [mandatory] [ val(meta), [ fasta ] ]
+                input[0] = Channel.value([
+                    [ id:'test', coverage:50 ], // meta map
+                    file('https://raw.githubusercontent.com/lescai-teaching/eduomics_testdata/refs/heads/main/dna/whole_chr22/Homo_sapiens.GRCh38.dna.chromosome.22.fa', checkIfExists: true),
+                ])
+
+                // fai         [optional]  [ val(meta), [fai] ]
+                input[1] = Channel.value([
+                    [ id:'test', coverage:50 ], // meta map
+                    file('https://raw.githubusercontent.com/lescai-teaching/eduomics_testdata/refs/heads/main/dna/whole_chr22/Homo_sapiens.GRCh38.dna.chromosome.22.fa.fai', checkIfExists: true),
+                ])
+
+                // dict        [optional]  [ val(meta), [dict] ]
+                input[2] = Channel.value([
+                    [ id:'test', coverage:50 ], // meta map
+                    file('https://raw.githubusercontent.com/lescai-teaching/eduomics_testdata/refs/heads/main/dna/whole_chr22/Homo_sapiens.GRCh38.dna.chromosome.22.dict', checkIfExists: true),
+                ])
+
+                // bwa_index   [optional]  [ val(meta), [bwaindex] ]
+                input[3] = Channel.value([
+                    [ id:'test', coverage:50 ], // meta map
+                    [
+                    file('https://raw.githubusercontent.com/lescai-teaching/eduomics_testdata/refs/heads/main/dna/whole_chr22/whole_22_bwa_index/Homo_sapiens.GRCh38.dna.chromosome.22.fa.amb', checkIfExists: true),
+                    file('https://raw.githubusercontent.com/lescai-teaching/eduomics_testdata/refs/heads/main/dna/whole_chr22/whole_22_bwa_index/Homo_sapiens.GRCh38.dna.chromosome.22.fa.ann', checkIfExists: true),
+                    file('https://raw.githubusercontent.com/lescai-teaching/eduomics_testdata/refs/heads/main/dna/whole_chr22/whole_22_bwa_index/Homo_sapiens.GRCh38.dna.chromosome.22.fa.bwt', checkIfExists: true),
+                    file('https://raw.githubusercontent.com/lescai-teaching/eduomics_testdata/refs/heads/main/dna/whole_chr22/whole_22_bwa_index/Homo_sapiens.GRCh38.dna.chromosome.22.fa.fai', checkIfExists: true),
+                    file('https://raw.githubusercontent.com/lescai-teaching/eduomics_testdata/refs/heads/main/dna/whole_chr22/whole_22_bwa_index/Homo_sapiens.GRCh38.dna.chromosome.22.fa.pac', checkIfExists: true),
+                    file('https://raw.githubusercontent.com/lescai-teaching/eduomics_testdata/refs/heads/main/dna/whole_chr22/whole_22_bwa_index/Homo_sapiens.GRCh38.dna.chromosome.22.fa.sa', checkIfExists: true),
+                    ]
+                ])
+
+                // dbsnp       [mandatory] [ [dbsnp] ]
+                input[4] = Channel.value([
+                    file('https://raw.githubusercontent.com/lescai-teaching/eduomics_testdata/refs/heads/main/dna/whole_chr22/dbsnp_146.hg38_chr22.vcf.gz', checkIfExists: true),
+                ])
+
+                // dbsnp_tbi   [mandatory] [ [dbsnp_tbi] ]
+                input[5] = Channel.value([
+                    file('https://raw.githubusercontent.com/lescai-teaching/eduomics_testdata/refs/heads/main/dna/whole_chr22/dbsnp_146.hg38_chr22.vcf.gz.tbi', checkIfExists: true),
+                ])
+
+                // mills       [mandatory] [ [mills] ]
+                input[6] = Channel.value([
+                    file('https://raw.githubusercontent.com/lescai-teaching/eduomics_testdata/refs/heads/main/dna/whole_chr22/Mills_and_1000G_gold_standard.indels.hg38_chr22.vcf.gz', checkIfExists: true),
+                ])
+
+                // mills_tbi   [mandatory] [ [mills_tbi] ]
+                input[7] = Channel.value([
+                    file('https://raw.githubusercontent.com/lescai-teaching/eduomics_testdata/refs/heads/main/dna/whole_chr22/Mills_and_1000G_gold_standard.indels.hg38_chr22.vcf.gz.tbi', checkIfExists: true),
+                ])
+
+                // capture     [mandatory] [ [capture] ]
+                input[8] = Channel.value([
+                    file('https://raw.githubusercontent.com/lescai-teaching/eduomics_testdata/refs/heads/main/dna/whole_chr22/Twist_exome_2.0_covered_chr22_500pad.bed', checkIfExists: true),
+                ])
+                """
+            }
+        }
+
+        then {
+            assertAll(
+                { assert workflow.success },
+                { assert workflow.out.profile.get(0).get(1).endsWith('.profile') }
+            )
+        }
+    }
+
+
+}
