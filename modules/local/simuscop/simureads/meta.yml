@@ -15,45 +15,46 @@ tools:
       doi: "no DOI available"
       licence: ["GNU GPL v3"]
       identifier: biotools:simuscop
-
-## TODO nf-core: Add a description of all of the variables used as input
 input:
-  # Only when we have meta
   - - meta:
         type: map
         description: |
           Groovy Map containing sample information
           e.g. `[ id:'sample1', single_end:false ]`
-
-    ## TODO nf-core: Delete / customise this example input
-    - bam:
+    - profile:
         type: file
-        description: Sorted BAM/CRAM/SAM file
-        pattern: "*.{bam,cram,sam}"
-        ontologies:
-          - edam: "http://edamontology.org/format_25722"
-          - edam: "http://edamontology.org/format_2573"
-          - edam: "http://edamontology.org/format_3462"
-
-## TODO nf-core: Add a description of all of the variables used as output
+        description: "simuscop reads sequencing profile"
+  - - fasta:
+        type: file
+        description: "reference reads should be simulated on"
+        pattern: "*.fasta"
+    - fai:
+        type: file
+        description: "index of the reference"
+        pattern: "*.fai"
+  - - meta2:
+        type: map
+        description: |
+          Groovy Map containing sample information
+          e.g. `[ id:'sample1', single_end:false ]`
+    - variantstoinject:
+        type: file
+        description: "list of variants to be injected in simulated reads according to simuscop format"
+  - - capture:
+        type: file
+        description: "bed files of regions reads should be simulated on"
+        pattern: "*.bed"
 output:
-  - bam:
-      #Only when we have meta
+  - reads:
       - meta:
           type: map
           description: |
             Groovy Map containing sample information
             e.g. `[ id:'sample1', single_end:false ]`
-      ## TODO nf-core: Delete / customise this example output
-      - "*.bam":
+      - "simulated_reads/*.fq.gz":
           type: file
-          description: Sorted BAM/CRAM/SAM file
-          pattern: "*.{bam,cram,sam}"
-          ontologies:
-            - edam: "http://edamontology.org/format_25722"
-            - edam: "http://edamontology.org/format_2573"
-            - edam: "http://edamontology.org/format_3462"
-
+          description: fastq simulated reads
+          pattern: "*.fq.gz"
   - versions:
       - "versions.yml":
           type: file
