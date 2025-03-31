@@ -35,7 +35,7 @@ output:
   - simcountMatrix:
       type: file
       description: RDS file containing the count matrices
-      pattern: "*_CountMatrix_*.rds"
+      pattern: "*_countMatrix_*.rds"
   - simAnnords:
       type: file
       description: Gene info and expected log2 fold change in RDS format
