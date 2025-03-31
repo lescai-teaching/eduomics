@@ -7,7 +7,7 @@ process PYCONVERTOSIM {
         'oras://community.wave.seqera.io/library/python:3.9.21--7652b035af009a82':
         'community.wave.seqera.io/library/python:3.9.21--8c83a010dbf906d0' }"
 
-input:
+    input:
     tuple val(meta), path(vcf_benign)
     tuple val(meta2), path(vcf_pathogenic)
 

@@ -7,7 +7,7 @@ workflow PROFILE_SIMULATE_VARS_FASTQ {
     vcf_benign // channel: [mandatory] [[meta], vcf_benign]
     vcf_patho  // channel: [mandatory] [[meta], vcf_patho]
     simprofile // channel: [mandatory] [[meta], profile]
-    fasta_fai  // channel: [mandatory] [[meta], fasta, fai]
+    fasta_fai  // channel: [mandatory] [fasta, fai]
     capture    // channel: [mandatory] [capture_500pad]
 
     main:
@@ -17,7 +17,12 @@ workflow PROFILE_SIMULATE_VARS_FASTQ {
     PYCONVERTOSIM( vcf_benign, vcf_patho )
     ch_versions = ch_versions.mix(PYCONVERTOSIM.out.versions)
 
-    variants_to_inject = PYCONVERTOSIM.out.combined_variations.flatten()
+    variants_to_inject = PYCONVERTOSIM.out.combined_variations.flatMap { m, files ->
+                                                files.collect { file ->
+                                                def var = file.getName().split('_')[2]
+                                                def newmeta = m + [simulatedvar: "${var}"]
+                                                return [newmeta, file]
+                                                } }
 
 
     SIMUSCOP_SIMUREADS(
@@ -26,15 +31,26 @@ workflow PROFILE_SIMULATE_VARS_FASTQ {
         variants_to_inject,
         capture
     )
+    ch_versions = ch_versions.mix(SIMUSCOP_SIMUREADS.out.versions)
 
+    simulated_reads_ch = SIMUSCOP_SIMUREADS.out.reads
+            .map{ m, files ->
+                    def grouped = files.groupBy { file ->
+                        file.name.replaceFirst(/_[12]\.fq\.gz$/, '')
+                        }
+                    grouped.collect { sampleName, group ->
+                        def updatedMeta = m + [sample: sampleName]
+                        [updatedMeta, group.sort()]
+                        }
+            }
+            .flatMap{
+                m, reads ->
+                [m, reads]
+            }
 
 
     emit:
-    // TODO nf-core: edit emitted channels
-    bam      = SAMTOOLS_SORT.out.bam           // channel: [ val(meta), [ bam ] ]
-    bai      = SAMTOOLS_INDEX.out.bai          // channel: [ val(meta), [ bai ] ]
-    csi      = SAMTOOLS_INDEX.out.csi          // channel: [ val(meta), [ csi ] ]
-
-    versions = ch_versions                     // channel: [ versions.yml ]
+    simreads = simulated_reads_ch    // channel: [ val(meta), [ "reads_1.fq.gz", "reads_2.fq.gz" ] ]
+    versions = ch_versions           // channel: [ versions.yml ]
 }
 

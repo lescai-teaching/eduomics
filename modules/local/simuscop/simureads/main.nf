@@ -11,12 +11,12 @@ process SIMUSCOP_SIMUREADS {
     input:
     tuple val(meta), path(profile)
     tuple path(fasta), path(fai)
-    path(variantstoinject)
+    tuple val(meta2), path(variantstoinject)
     path(capture)
 
     output:
-    tuple val(meta), path("simulated_reads/*.fq.gz"), emit: reads
-    path "versions.yml"                             , emit: versions
+    tuple val(meta2), path("simulated_reads/*.fq.gz"), emit: reads
+    path "versions.yml"                              , emit: versions
 
     when:
     task.ext.when == null || task.ext.when
