@@ -1,6 +1,6 @@
 
 process SIMUSCOP_SIMUREADS {
-    tag "$meta.id"
+    tag "$meta2.simulatedvar"
     label 'process_single'
 
     conda "${moduleDir}/environment.yml"

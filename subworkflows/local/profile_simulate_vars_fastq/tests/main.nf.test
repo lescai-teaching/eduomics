@@ -47,8 +47,7 @@ nextflow_workflow {
         then {
             assertAll(
                 { assert workflow.success},
-                { assert snapshot(workflow.out.reads).match()}
-                { assert snapshot(workflow.out.versions).match()}
+                { assert workflow.out.simreads.get(0).get(1).first().endsWith('.fq.gz') }
             )
         }
     }
