@@ -4,7 +4,6 @@ nextflow_workflow {
     script "../main.nf"
     workflow "PREPARE_RNA_GENOME"
 
-    config "./test.config"
     options "-dump-channels"
 
     tag "subworkflows"
