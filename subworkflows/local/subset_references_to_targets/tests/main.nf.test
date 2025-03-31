@@ -16,7 +16,7 @@ nextflow_workflow {
     tag "gatk4/selectvariants"
 
 
-    test("human - fasta/BED/VCF (dbsnp) - subset by chr") {
+    test("human - fasta/BED/VCF (dbsnp, 1000G, mills, gnomad) - subset by chr") {
 
         when {
             workflow {
@@ -48,25 +48,25 @@ nextflow_workflow {
                     file('https://raw.githubusercontent.com/lescai-teaching/eduomics_testdata/refs/heads/main/dna/Twist_Exome_Target2_chr22q11-21_GRCh38.bed', checkIfExists: true)
                 ])
                 // ch_gnomad
-                input[5] = Channel.value([
+                input[6] = Channel.value([
                     [ id:'gnomad' ],
                     file('https://github.com/lescai-teaching/eduomics_testdata/blob/main/dna/gatk_bundle/af-only-gnomad_chr22_q11-21_GRCh38.vcf.gz', checkIfExists: true),
                     file('https://github.com/lescai-teaching/eduomics_testdata/blob/main/dna/gatk_bundle/af-only-gnomad_chr22_q11-21_GRCh38.vcf.gz.tbi', checkIfExists: true)
                 ])
                 // ch_mills
-                input[6] = Channel.value([
+                input[7] = Channel.value([
                     [ id:'mills' ],
                     file('https://github.com/lescai-teaching/eduomics_testdata/blob/main/dna/gatk_bundle/Mills_and_1000G_gold_standard.indels.hg38_chr22q11-21_fixed.vcf.gz', checkIfExists: true),
                     file('https://github.com/lescai-teaching/eduomics_testdata/blob/main/dna/gatk_bundle/Mills_and_1000G_gold_standard.indels.hg38_chr22q11-21_fixed.vcf.gz.tbi', checkIfExists: true)
                 ])
                 // ch_1000g
-                input[7] = Channel.value([
+                input[8] = Channel.value([
                     [ id:'1000g' ],
                     file('https://github.com/lescai-teaching/eduomics_testdata/blob/main/dna/gatk_bundle/1000G_omni2_5_chr22_q11-21_GRCh38.vcf.gz', checkIfExists: true),
                     file('https://github.com/lescai-teaching/eduomics_testdata/blob/main/dna/gatk_bundle/1000G_omni2_5_chr22_q11-21_GRCh38.vcf.gz.tbi', checkIfExists: true)
                 ])
                 // ch_clinvar_vcf
-                input[6] = Channel.value([
+                input[9] = Channel.value([
                     [ id:'clinvar' ],
                     file('https://github.com/lescai-teaching/eduomics_testdata/blob/main/dna/clinvar_data/clinvar_20250317_chr22q11-21.vcf.gz', checkIfExists: true)
                 ])

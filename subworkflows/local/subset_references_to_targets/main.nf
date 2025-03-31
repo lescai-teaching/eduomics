@@ -38,15 +38,15 @@ workflow SUBSET_REFERENCES_TO_TARGETS {
     ch_versions = ch_versions.mix(SAMTOOLS_FAIDX_SUBSET.out.versions)
     // false: do not generate chrom.sizes file
 
-    SAMTOOLS_FAIDX_INDEX ( SAMTOOLS_FAIDX_SUBSET.out.target_fa, false )
-    ch_versions = ch_versions.mix(SAMTOOLS_FAIDX_SUBSET.out.versions)
+    SAMTOOLS_FAIDX_INDEX ( SAMTOOLS_FAIDX_SUBSET.out.fa, [], false )
+    ch_versions = ch_versions.mix(SAMTOOLS_FAIDX_INDEX.out.versions)
     // index fasta after subsetting
 
-    SAMTOOLS_FAIDX_SIZES ( SAMTOOLS_FAIDX_SUBSET.out.target_fa, true )
-    ch_versions = ch_versions.mix(SAMTOOLS_FAIDX_SUBSET.out.versions)
+    SAMTOOLS_FAIDX_SIZES ( SAMTOOLS_FAIDX_SUBSET.out.fa, [], true )
+    ch_versions = ch_versions.mix(SAMTOOLS_FAIDX_SIZES.out.versions)
     // generating the .sizes from .fai index
 
-    // Subset capture regions by chrom
+    //Subset capture regions by chrom
     SUBSETCAPTURE ( ch_chromosome, SAMTOOLS_FAIDX_SIZES.out.sizes, ch_capture_bed )
     ch_versions = ch_versions.mix(SUBSETCAPTURE.out.versions)
 
@@ -64,7 +64,6 @@ workflow SUBSET_REFERENCES_TO_TARGETS {
     ch_versions = ch_versions.mix(SUBVAR.out.versions)
 
     emit:
-    target_fa         = SAMTOOLS_FAIDX_SUBSET.out.fa        // channel:  [ val(meta), [ fa, fasta ] ]
     target_fa         = SAMTOOLS_FAIDX_SUBSET.out.fa        // channel:  [ val(meta), [ fa, fasta ] ]
     target_fai        = SAMTOOLS_FAIDX_INDEX.out.fai        // channel: [ val(meta), [ fai ] ]
     target_sizes      = SAMTOOLS_FAIDX_SIZES.out.sizes      // channel: [ val(meta), [ sizes ] ]
