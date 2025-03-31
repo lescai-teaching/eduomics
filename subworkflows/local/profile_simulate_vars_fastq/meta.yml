@@ -1,9 +1,11 @@
 # yaml-language-server: $schema=https://raw.githubusercontent.com/nf-core/modules/master/subworkflows/yaml-schema.json
 name: "profile_simulate_vars_fastq"
 ## TODO nf-core: Add a description of the subworkflow and list keywords
-description: Sort SAM/BAM/CRAM file
+description: Simulate reads with variants and process them
 keywords:
-  - sort
+  - simulate
+  - reads
+  - variants
   - bam
   - sam
   - cram
