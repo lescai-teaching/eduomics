@@ -14,9 +14,10 @@ process COUNTMATRICES {
     path(geneList)
 
     output:
-    path "*.rds"                  , emit: rds
-    path "*.tsv"                  , emit: tsv
-    path "versions.yml"           , emit: versions
+    path "${meta.id}_countMatrix_*.rds"    , emit: simcountMatrix
+    path "${meta.id}_expected_*.rds"       , emit: simAnnords
+    path "${meta.id}_expected_*.tsv"       , emit: simAnnotsv
+    path "versions.yml"                    , emit: versions
 
     when:
     task.ext.when == null || task.ext.when
@@ -26,7 +27,7 @@ process COUNTMATRICES {
     def prefix = task.ext.prefix ?: "${meta.id}"
 
     """
-    Rscript ${baseDir}/bin/count_matrices.R ${meta.reps} ${meta.groups} ${txfasta} ${gff3} ${geneList}
+    Rscript ${baseDir}/bin/count_matrices.R ${prefix} ${meta.coverage} ${meta.reps} ${meta.groups} ${txfasta} ${gff3} ${geneList}
 
     cat <<-END_VERSIONS > versions.yml
     "${task.process}":
@@ -40,8 +41,9 @@ process COUNTMATRICES {
     def prefix = task.ext.prefix ?: "${meta.id}"
 
     """
-    touch ${prefix}.rds
-    touch ${prefix}.tsv
+    touch ${meta.id}_countMatrix_stub.rds
+    touch ${meta.id}_expected_stub.rds
+    touch ${meta.id}_expected_stub.tsv
 
     cat <<-END_VERSIONS > versions.yml
     "${task.process}":

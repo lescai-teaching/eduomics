@@ -32,26 +32,25 @@ input:
       description: Gene list file
       pattern: "*.rds"
 output:
-  - count_matrices:
+  - simcountMatrix:
       type: file
       description: RDS file containing the count matrices
-      pattern: "*.rds"
-  - gene_info:
+      pattern: "*_CountMatrix_*.rds"
+  - simAnnords:
       type: file
-      description: RDS file containing info about genes and the expected log2 fold change
-      pattern: "*.rds"
-  - tsv:
+      description: Gene info and expected log2 fold change in RDS format
+      pattern: "*_expected_*.rds"
+  - simAnnotsv:
       type: file
-      description: Tabular file containing info about genes and the expected log2 fold change
-      pattern: "*.tsv"
+      description: Gene info and expected log2 fold change in TSV format
+      pattern: "*_expected_*.tsv"
   - versions:
       type: file
       description: File containing software versions
       pattern: "versions.yml"
 authors:
-  - "carpanz"
   - "LorenzoS96"
+  - "carpanz"
 maintainers:
-  - "carpanz"
   - "LorenzoS96"
-
+  - "carpanz"
