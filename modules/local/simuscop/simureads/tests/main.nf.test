@@ -43,7 +43,6 @@ nextflow_process {
 
     }
 
-    // TODO nf-core: Change the test name preferably indicating the test-data and file-format used but keep the " - stub" suffix.
     test("simulate reads - stub") {
 
         options "-stub"
