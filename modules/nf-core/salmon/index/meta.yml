@@ -25,7 +25,7 @@ output:
   - index:
       - salmon:
           type: directory
-          description: Folder containing the star index files
+          description: Folder containing the salmon index files
           pattern: "salmon"
   - versions:
       - versions.yml:
