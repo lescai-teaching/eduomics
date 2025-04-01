@@ -3,6 +3,7 @@ nextflow_process {
 
     name "Test Process AISCENARIOS"
     script "../main.nf"
+    config "./env.config"
     process "AISCENARIOS"
 
     tag "modules"
