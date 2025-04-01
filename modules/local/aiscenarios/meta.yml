@@ -1,15 +1,13 @@
 ---
 # yaml-language-server: $schema=https://raw.githubusercontent.com/nf-core/modules/master/modules/meta-schema.json
 name: "aiscenarios"
-## TODO nf-core: Add a description of the module and list keywords
-description: write your description here
+description: This module uses Gemini Flash to generate clinical scenarios plausible with the simulated variant (for re sequencing datasets) or the differentially expressed genes (for RNAseq datasets).
 keywords:
-  - sort
-  - example
-  - genomics
+  - gemini
+  - generation
+  - scenarios
 tools:
   - "aiscenarios":
-      ## TODO nf-core: Add a description and other details for the software below
       description: "This module uses Gemini Flash to generate clinical scenarios plausible with the simulated variant (for re sequencing datasets) or the differentially expressed genes (for RNAseq datasets)."
       homepage: ""
       documentation: ""
