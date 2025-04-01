@@ -1,0 +1,54 @@
+---
+# yaml-language-server: $schema=https://raw.githubusercontent.com/nf-core/modules/master/modules/meta-schema.json
+name: "aiscenarios"
+description: This module uses Gemini Flash to generate clinical scenarios plausible with the simulated variant (for re sequencing datasets) or the differentially expressed genes (for RNAseq datasets).
+keywords:
+  - gemini
+  - generation
+  - scenarios
+tools:
+  - "aiscenarios":
+      description: "This module uses Gemini Flash to generate clinical scenarios plausible with the simulated variant (for re sequencing datasets) or the differentially expressed genes (for RNAseq datasets)."
+      homepage: "https://gemini.google.com/app"
+      documentation: "https://ai.google.dev/gemini-api/docs/quickstart?lang=python"
+      tool_dev_url: "https://gemini.google.com/app"
+      licence: ["MIT"]
+input:
+  - - meta:
+        type: map
+        description: |
+          Groovy Map containing sample information
+          e.g. `[ id:'sample1', single_end:false ]`
+    - variant:
+        type: string
+        description: Variant information for scenario generation in the format 'chr22-18078561-G-A'
+  - - meta2:
+        type: map
+        description: |
+          Groovy Map containing sample information for genes
+          e.g. [ id:'sample2', single_end:false ]
+    - genes:
+        type: string
+        description: Gene list for differential expression scenario generation in the format 'TCN2,NAGA,CYB5R3,PNPLA5,ARSA'
+
+output:
+  - scenario:
+      - meta:
+          type: map
+          description: |
+            Groovy Map containing sample information
+            e.g. `[ id:'sample1', single_end:false ]`
+      - "*_scenario.txt":
+          type: file
+          description: Generated AI scenario
+          pattern: "*_scenario.txt"
+  - versions:
+      - "versions.yml":
+          type: file
+          description: File containing software versions
+          pattern: "versions.yml"
+
+authors:
+  - "@lescai"
+maintainers:
+  - "@lescai"
