@@ -4,17 +4,17 @@ process PYCONVERTOSIM {
 
     conda "${moduleDir}/environment.yml"
     container "${ workflow.containerEngine == 'singularity' && !task.ext.singularity_pull_docker_container ?
-        'https://depot.galaxyproject.org/singularity/biopython:1.70--np112py27_0':
-        'biocontainers/biopython:1.70--np112py27_0' }"
+        'oras://community.wave.seqera.io/library/python:3.9.21--7652b035af009a82':
+        'community.wave.seqera.io/library/python:3.9.21--8c83a010dbf906d0' }"
 
-input:
+    input:
     tuple val(meta), path(vcf_benign)
     tuple val(meta2), path(vcf_pathogenic)
 
     output:
     tuple val(meta), path("*_base_variation.txt") , emit: base_variation
     tuple val(meta), path("*_patho_variation.txt"), emit: patho_variation
-    tuple val(meta), path("*_variation_*.txt")    , emit: combined_variations
+    tuple val(meta), path("*_simvar_*.txt")       , emit: combined_variations
     path "versions.yml"                           , emit: versions
 
     when:
@@ -25,12 +25,12 @@ input:
     def prefix = task.ext.prefix ?: "${meta.id}"
 
     """
-    python ${baseDir}/bin/convert_vcf_to_variation.py \
+    convert_vcf_to_variation.py \
         -i ${vcf_benign} \
         -o ${prefix}_base_variation.txt \
         -n True
 
-    python ${baseDir}/bin/convert_vcf_to_variation.py \
+    convert_vcf_to_variation.py \
         -i ${vcf_pathogenic} \
         -o ${prefix}_patho_variation.txt
 
@@ -42,9 +42,10 @@ input:
     while IFS= read -r line
     do
         counter=\$((counter+1))
-        cp ${prefix}_base_variation.txt ${prefix}_variation_\${counter}.txt
-        echo "\$line" >> ${prefix}_variation_\${counter}.txt
-        sort -k4 -n ${prefix}_variation_\${counter}.txt > tmp && mv tmp ${prefix}_variation_\${counter}.txt
+        variant=\$(echo -e \"\$line\" | awk -F'\\t' '{print \$3 "-" \$4 "-" \$5 "-" \$6}')
+        cp ${prefix}_base_variation.txt ${prefix}_simvar_\${variant}_\${counter}.txt
+        echo "\$line" >> ${prefix}_simvar_\${variant}_\${counter}.txt
+        sort -k4 -n ${prefix}_simvar_\${variant}_\${counter}.txt > tmp && mv tmp ${prefix}_simvar_\${variant}_\${counter}.txt
     done < ${prefix}_patho_variation.txt
 
     cat <<-END_VERSIONS > versions.yml
@@ -61,7 +62,7 @@ input:
     """
     touch ${prefix}_base_variation.txt
     touch ${prefix}_patho_variation.txt
-    touch ${prefix}_variation_1.txt
+    touch ${prefix}_simvar_chr22-12345-A-T_1.txt
 
     cat <<-END_VERSIONS > versions.yml
     "${task.process}":
