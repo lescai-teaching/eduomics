@@ -1,6 +1,6 @@
 ---
 # yaml-language-server: $schema=https://raw.githubusercontent.com/nf-core/modules/master/modules/meta-schema.json
-name: "simuscop_simureads"
+name: "aiscenarios"
 ## TODO nf-core: Add a description of the module and list keywords
 description: write your description here
 keywords:
@@ -8,7 +8,7 @@ keywords:
   - example
   - genomics
 tools:
-  - "simuscop":
+  - "aiscenarios":
       ## TODO nf-core: Add a description and other details for the software below
       description: ""
       homepage: ""
@@ -16,7 +16,7 @@ tools:
       tool_dev_url: ""
       doi: ""
       licence:
-      identifier: biotools:simuscop
+      identifier:
 
 ## TODO nf-core: Add a description of all of the variables used as input
 input:
