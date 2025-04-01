@@ -9,57 +9,46 @@ keywords:
 tools:
   - "aiscenarios":
       description: "This module uses Gemini Flash to generate clinical scenarios plausible with the simulated variant (for re sequencing datasets) or the differentially expressed genes (for RNAseq datasets)."
-      homepage: ""
+      homepage: "https://gemini.google.com/app"
       documentation: ""
-      tool_dev_url: ""
+      tool_dev_url: "https://gemini.google.com/app"
       doi: ""
-      licence:
+      licence: ["MIT"]
       identifier:
-
-## TODO nf-core: Add a description of all of the variables used as input
 input:
-  # Only when we have meta
   - - meta:
         type: map
         description: |
           Groovy Map containing sample information
           e.g. `[ id:'sample1', single_end:false ]`
+  - variant:
+      type: string
+      description: Variant information for scenario generation
+      pattern: "*.{vcf,vcf.gz}"
+  - meta2:
+      type: map
+      description: |
+        Groovy Map containing sample information for genes
+        e.g. [ id:'sample2', single_end:false ]
+  - genes:
+      type: string
+      description: Gene information for differential expression scenario generation
 
-    ## TODO nf-core: Delete / customise this example input
-    - bam:
-        type: file
-        description: Sorted BAM/CRAM/SAM file
-        pattern: "*.{bam,cram,sam}"
-        ontologies:
-          - edam: "http://edamontology.org/format_25722"
-          - edam: "http://edamontology.org/format_2573"
-          - edam: "http://edamontology.org/format_3462"
-
-## TODO nf-core: Add a description of all of the variables used as output
 output:
-  - bam:
-      #Only when we have meta
-      - meta:
-          type: map
-          description: |
-            Groovy Map containing sample information
-            e.g. `[ id:'sample1', single_end:false ]`
-      ## TODO nf-core: Delete / customise this example output
-      - "*.bam":
-          type: file
-          description: Sorted BAM/CRAM/SAM file
-          pattern: "*.{bam,cram,sam}"
-          ontologies:
-            - edam: "http://edamontology.org/format_25722"
-            - edam: "http://edamontology.org/format_2573"
-            - edam: "http://edamontology.org/format_3462"
-
+  - - meta:
+        type: map
+        description: |
+          Groovy Map containing sample information
+          e.g. `[ id:'sample1', single_end:false ]`
+  - scenario:
+      type: file
+      description: Generated AI scenario
+      pattern: "*_scenario.txt"
   - versions:
-      - "versions.yml":
-          type: file
-          description: File containing software versions
-          pattern: "versions.yml"
-
+      type: file
+      description: File containing software versions
+      pattern: "versions.yml"
+      
 authors:
   - "@lescai"
 maintainers:
