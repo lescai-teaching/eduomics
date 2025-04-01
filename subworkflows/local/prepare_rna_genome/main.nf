@@ -32,7 +32,7 @@ workflow PREPARE_RNA_GENOME {
     txfasta            = SUBSETFASTATX.out.fasta         // channel: [ path(txfasta) ]
     gene_lists         = SUBSETGFF.out.geneLists         // channel: [ path(geneLists) ]
     transcript_data    = SUBSETGFF.out.transcriptData    // channel: [ path(transcriptData) ]
-    log_files          = ch_log                          // channel: [ path(log) ]
+    log_files          = ch_log                          // channel: [ path(log_files) ]
     versions           = ch_versions                     // channel: [ versions.yml ]
 }
 

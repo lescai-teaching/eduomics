@@ -61,6 +61,12 @@ output:
         Channel containing transcript data from subset GFF
         Structure: [ path(transcript_data) ]
       pattern: "*.{rds}"
+  - log_files:
+      type: file
+      description: |
+        Channel containing log files from the local modules subsetfastatx and subsetgff
+        Structure: [ path(log_files) ]
+      pattern: "*.txt"
   - versions:
       type: file
       description: |

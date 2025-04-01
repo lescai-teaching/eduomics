@@ -36,7 +36,8 @@ nextflow_workflow {
                 { assert workflow.success },
                 { assert workflow.out.txfasta.get(0).endsWith('.fasta') },
                 { assert workflow.out.gene_lists.get(0).endsWith('.rds') },
-                { assert workflow.out.transcript_data.get(0).endsWith('.rds') }
+                { assert workflow.out.transcript_data.get(0).endsWith('.rds') },
+                { assert workflow.out.log_files.get(0).get(1).endsWith('.txt') }
             )
         }
     }
