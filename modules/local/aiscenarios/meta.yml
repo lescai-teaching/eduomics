@@ -10,7 +10,7 @@ keywords:
 tools:
   - "aiscenarios":
       ## TODO nf-core: Add a description and other details for the software below
-      description: ""
+      description: "This module uses Gemini Flash to generate clinical scenarios plausible with the simulated variant (for re sequencing datasets) or the differentially expressed genes (for RNAseq datasets)."
       homepage: ""
       documentation: ""
       tool_dev_url: ""
