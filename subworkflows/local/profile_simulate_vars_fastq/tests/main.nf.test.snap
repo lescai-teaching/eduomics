@@ -1,0 +1,10 @@
+{
+    "Simulate reads - profile - two pathological variants": {
+        "content": null,
+        "meta": {
+            "nf-test": "0.9.2",
+            "nextflow": "24.10.5"
+        },
+        "timestamp": "2025-03-31T10:00:57.002992232"
+    }
+}

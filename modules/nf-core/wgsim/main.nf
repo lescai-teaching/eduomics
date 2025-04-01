@@ -11,8 +11,8 @@ process WGSIM {
     tuple val(meta), path(fasta)
 
     output:
-    tuple val(meta), path("*.fastq"), emit: fastq
-    path "versions.yml",              emit: versions
+    tuple val(meta), path("*.fastq.gz"), emit: fastq
+    path "versions.yml",                 emit: versions
 
     when:
     task.ext.when == null || task.ext.when
@@ -26,6 +26,11 @@ process WGSIM {
         $fasta \\
         ${prefix}_R1.fastq \\
         ${prefix}_R2.fastq
+    
+    for i in `ls *.fastq`
+    do
+    gzip \$i
+    done
 
     cat <<-END_VERSIONS > versions.yml
     "${task.process}":

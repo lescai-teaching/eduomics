@@ -47,21 +47,21 @@ input:
 
 output:
   - profile:
-    - meta:
-        type: map
-        description: |
-          Groovy Map containing simulation information
-          e.g. `[ id:'simulation_id', reps:3, groups:2 ]`
-    - "*.profile":
-        type: file
-        description: Sequencing simulation profile
-        pattern: "*.profile"
+      - meta:
+          type: map
+          description: |
+            Groovy Map containing simulation information
+            e.g. `[ id:'simulation_id', reps:3, groups:2 ]`
+      - "*.profile":
+          type: file
+          description: Sequencing simulation profile
+          pattern: "*.profile"
 
   - versions:
-    - "versions.yml":
-        type: file
-        description: File containing software versions
-        pattern: "versions.yml"
+      - "versions.yml":
+          type: file
+          description: File containing software versions
+          pattern: "versions.yml"
 
 authors:
   - "@lescai"

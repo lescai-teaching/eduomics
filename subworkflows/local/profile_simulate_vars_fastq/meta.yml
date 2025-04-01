@@ -1,0 +1,68 @@
+---
+# yaml-language-server: $schema=https://raw.githubusercontent.com/nf-core/modules/master/modules/meta-schema.json
+name: "profile_simulate_vars_fastq"
+description: Simulate reads with specific variants injected
+tools:
+  - "simuscop":
+      description: "Tool to Simulate Illumina Sequencing data based on position and Context dependent Profiles with the ability to inject specific variants into the simulated reads"
+      homepage: "https://github.com/qasimyu/simuscop"
+      documentation: "https://github.com/qasimyu/simuscop/blob/master/docs/SimuSCoP_User_Guide.pdf"
+      tool_dev_url: "https://github.com/qasimyu/simuscop"
+      doi: "no DOI available"
+      licence: ["GNU GPL v3"]
+      identifier: biotools:simuscop
+keywords:
+  - simulate
+  - reads
+  - variants
+components:
+  - local/pyconvertosim
+  - local/simuscop/simureads
+input:
+  - - meta:
+        type: map
+        description: "a meta map like this [ id:'sim01', coverage:50, type: 'dnaseq', reps:1, groups:2]"
+    - vcf:
+        type: file
+        description: "VCF file with benign variation"
+        pattern: "*.vcf"
+  - - meta:
+        type: map
+        description: "a meta map like this [ id:'sim01', coverage:50, type: 'dnaseq', reps:1, groups:2]"
+      vcf:
+        type: file
+        description: "VCF file with pathogenic variation"
+        pattern: "*.vcf"
+  - - meta:
+        type: map
+        description: "a meta map like this [ id:'sim01', coverage:50, type: 'dnaseq', reps:1, groups:2]"
+    - simprofile:
+        type: file
+        description: "reads simulation profile produced by simuscop profile"
+  - - fasta:
+        type: file
+        description: "FASTA of the sequence reads should be simulated on"
+        pattern: "*.fasta"
+    - fai:
+        type: file
+        description: "index of the FASTA file"
+        pattern: "*.fai"
+output:
+  - simreads:
+      - meta:
+          type: map
+          description: "a meta map like this [ id:'sim01', coverage:50, type: 'dnaseq', reps:1, groups:2]"
+      - reads:
+          type: file
+          description: "read pairs of simulated case control"
+          pattern: "*.fq.gz"
+  - versions:
+      - versions.yml:
+          type: file
+          description: File containing software versions
+          pattern: "versions.yml"
+
+authors:
+  - "@lescai"
+maintainers:
+  - "@lescai"

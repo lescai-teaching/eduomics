@@ -11,8 +11,8 @@ process SIMUSCOP_SEQTOPROFILE {
     input:
     tuple val(meta), path(bam)
     tuple val(meta2), path(vcf)
-    tuple path(capture)
-    tuple path(fasta)
+    path(capture)
+    path(fasta)
 
 
     output:
