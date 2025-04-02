@@ -20,10 +20,10 @@ workflow SUBSET_REFERENCES_TO_TARGETS {
     ch_capture_bed   // channel: [ capture_bed ]
     ch_chromosome    // channel: [ val(meta), val(chromosome) ]
     //ch_vcf_idx_intervals // channel: [ val(meta), [ vcf, vcf_idx, intervals ] ]
-    ch_gnomad        // channel: [ val(meta), [ vcf, vcf_idx ] ]
-    ch_mills         // channel: [ val(meta), [ vcf, vcf_idx ] ]
-    ch_1000g         // channel: [ val(meta), [ vcf, vcf_idx ] ]
-    ch_dbsnp         // channel: [ val(meta), [ vcf, vcf_idx ] ]
+    ch_gnomad        // channel: [ val(meta), path(vcf), path(vcf_idx) ]
+    ch_mills         // channel: [ val(meta), path(vcf), path(vcf_idx) ]
+    ch_1000g         // channel: [ val(meta), path(vcf), path(vcf_idx) ]
+    ch_dbsnp         // channel: [ val(meta), path(vcf), path(vcf_idx) ]
     ch_clinvar_vcf   // channel: [ val(meta), path(vcf) ]
 
     main:
@@ -34,33 +34,45 @@ workflow SUBSET_REFERENCES_TO_TARGETS {
     //SAMTOOLS_FAIDX ( ch_fasta.combine(ch_fai), [], false )
     //ch_versions = ch_versions.mix(SAMTOOLS_FAIDX.out.versions
 
-    SAMTOOLS_FAIDX_SUBSET ( ch_fasta, ch_fai, false )
-    ch_versions = ch_versions.mix(SAMTOOLS_FAIDX_SUBSET.out.versions)
+    //SAMTOOLS_FAIDX_SUBSET ( ch_fasta, [[id:'null'], []], false )
+    //ch_versions = ch_versions.mix(SAMTOOLS_FAIDX_SUBSET.out.versions)
     // false: do not generate chrom.sizes file
 
-    SAMTOOLS_FAIDX_INDEX ( SAMTOOLS_FAIDX_SUBSET.out.fa, [], false )
-    ch_versions = ch_versions.mix(SAMTOOLS_FAIDX_INDEX.out.versions)
+    SAMTOOLS_FAIDX_SUBSET ( ch_fasta, [[],[]], false )
+    ch_versions = ch_versions.mix(SAMTOOLS_FAIDX_SUBSET.out.versions)
+    // [[id:'null'], []]
+
+    //SAMTOOLS_FAIDX_INDEX ( SAMTOOLS_FAIDX_SUBSET.out.fa, [], false )
     // index fasta after subsetting
 
-    SAMTOOLS_FAIDX_SIZES ( SAMTOOLS_FAIDX_SUBSET.out.fa, [], true )
+    SAMTOOLS_FAIDX_INDEX (SAMTOOLS_FAIDX_SUBSET.out.fa, [[],[]], false )
+    ch_versions = ch_versions.mix(SAMTOOLS_FAIDX_INDEX.out.versions)
+
+    SAMTOOLS_FAIDX_SIZES ( SAMTOOLS_FAIDX_SUBSET.out.fa, SAMTOOLS_FAIDX_INDEX.out.fai, true )
     ch_versions = ch_versions.mix(SAMTOOLS_FAIDX_SIZES.out.versions)
     // generating the .sizes from .fai index
 
     //Subset capture regions by chrom
-    SUBSETCAPTURE ( ch_chromosome, SAMTOOLS_FAIDX_SIZES.out.sizes, ch_capture_bed )
+    SUBSETCAPTURE (
+        ch_chromosome,
+        SAMTOOLS_FAIDX_SIZES.out.sizes.map{ map, sizes -> [sizes]},
+        ch_capture_bed
+        )
     ch_versions = ch_versions.mix(SUBSETCAPTURE.out.versions)
 
     // Select variants based on intervals (target capture BED) - GATK BUNDLE
     // TO FIX: to do for several VCF files!
     //GATK4_SELECTVARIANTS ( ch_vcf_idx_intervals )
-    GATK4_SELECTVARIANTS_GNOMAD ( ch_gnomad.combine(SUBSETCAPTURE.out.target_bed) )
-    GATK4_SELECTVARIANTS_MILLS  ( ch_mills.combine(SUBSETCAPTURE.out.target_bed) )
-    GATK4_SELECTVARIANTS_1000G  ( ch_1000g.combine(SUBSETCAPTURE.out.target_bed) )
-    GATK4_SELECTVARIANTS_DBSNP  ( ch_dbsnp.combine(SUBSETCAPTURE.out.target_bed) )
+    GATK4_SELECTVARIANTS_GNOMAD ( ch_gnomad.combine(SUBSETCAPTURE.out.target_bed.map{ map, target_bed -> [target_bed]}) )
+    GATK4_SELECTVARIANTS_MILLS  ( ch_mills.combine(SUBSETCAPTURE.out.target_bed.map{ map, target_bed -> [target_bed]}) )
+    GATK4_SELECTVARIANTS_1000G  ( ch_1000g.combine(SUBSETCAPTURE.out.target_bed.map{ map, target_bed -> [target_bed]}) )
+    GATK4_SELECTVARIANTS_DBSNP  ( ch_dbsnp.combine(SUBSETCAPTURE.out.target_bed.map{ map, target_bed -> [target_bed]}) )
     ch_versions = ch_versions.mix(GATK4_SELECTVARIANTS_GNOMAD.out.versions)
 
     // Subset clinvar variants
-    SUBVAR ( ch_clinvar_vcf, SUBSETCAPTURE.out.target_bed )
+    SUBVAR ( ch_clinvar_vcf,
+    SUBSETCAPTURE.out.target_bed.map{ map, target_bed -> [target_bed]}
+     )
     ch_versions = ch_versions.mix(SUBVAR.out.versions)
 
     emit:
