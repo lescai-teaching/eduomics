@@ -5,7 +5,6 @@ include { SALMON_INDEX       } from '../../../modules/nf-core/salmon/index/main'
 workflow PREPARE_RNA_GENOME {
 
     take:
-
     ch_fasta   // channel: [ path(fasta) ]
     ch_txfasta // channel: [ path(txfasta) ]
     ch_gff3    // channel: [ path(gff3) ]
