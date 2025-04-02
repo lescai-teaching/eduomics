@@ -1,0 +1,79 @@
+# yaml-language-server: $schema=https://raw.githubusercontent.com/nf-core/modules/master/subworkflows/yaml-schema.json
+name: "prepare_rna_genome"
+description: Prepares RNA genome data by subsetting FASTA and GFF files, and creating a Salmon index
+keywords:
+  - rna
+  - genome
+  - fasta
+  - gff
+  - salmon
+  - index
+components:
+  - subsetfastatx
+  - subsetgff
+  - salmon/index
+input:
+  - ch_fasta:
+      type: file
+      description: |
+        The input channel containing the FASTA file
+        Structure: [ path(fasta) ]
+      pattern: "*.{fa,fasta}"
+  - ch_txfasta:
+      type: file
+      description: |
+        The input channel containing the transcript FASTA file
+        Structure: [ path(txfasta) ]
+      pattern: "*.{fa,fasta}"
+  - ch_gff3:
+      type: file
+      description: |
+        The input channel containing the GFF3 file
+        Structure: [ path(gff3) ]
+      pattern: "*.gff3"
+  - ch_meta:
+      type: value
+      description: |
+        The input channel containing metadata for subsetting
+        Structure: [ val(meta) ]
+output:
+  - txfasta_index:
+      type: directory
+      description: |
+        Channel containing Salmon index directory
+        Structure: [ path(salmon_index) ]
+      pattern: "salmon_index"
+  - txfasta:
+      type: file
+      description: |
+        Channel containing subset transcript FASTA file
+        Structure: [ path(txfasta) ]
+      pattern: "*.{fa,fasta}"
+  - gene_lists:
+      type: file
+      description: |
+        Channel containing gene lists from subset GFF
+        Structure: [ path(gene_lists) ]
+      pattern: "*.{rds}"
+  - transcript_data:
+      type: file
+      description: |
+        Channel containing transcript data from subset GFF
+        Structure: [ path(transcript_data) ]
+      pattern: "*.{rds}"
+  - log_files:
+      type: file
+      description: |
+        Channel containing log files from the local modules subsetfastatx and subsetgff
+        Structure: [ path(log_files) ]
+      pattern: "*.txt"
+  - versions:
+      type: file
+      description: |
+        File containing software versions
+        Structure: [ path(versions.yml) ]
+      pattern: "versions.yml"
+authors:
+  - "@carpanz"
+maintainers:
+  - "@carpanz"
