@@ -17,7 +17,6 @@ workflow SUBSET_REFERENCES_TO_TARGETS {
     ch_get_sizes     // channel: [ get_sizes ], boolean
     ch_capture_bed   // channel: [ capture_bed ]
     ch_chromosome    // channel: [ val(meta), val(chromosome) ]
-    //ch_vcf_idx_intervals // channel: [ val(meta), [ vcf, vcf_idx, intervals ] ]
     ch_gnomad        // channel: [ val(meta), path(vcf), path(vcf_idx) ]
     ch_mills         // channel: [ val(meta), path(vcf), path(vcf_idx) ]
     ch_1000g         // channel: [ val(meta), path(vcf), path(vcf_idx) ]
