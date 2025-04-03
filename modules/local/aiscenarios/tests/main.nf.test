@@ -1,0 +1,102 @@
+
+nextflow_process {
+
+    name "Test Process AISCENARIOS"
+    script "../main.nf"
+    config "./env.config"
+    process "AISCENARIOS"
+
+    tag "modules"
+    tag "modules_"
+    tag "aiscenarios"
+
+    test("scenario with variant") {
+
+        when {
+            process {
+                """
+                input[0] = [
+                    [ id:'simu01', coverage:50 ], // meta map
+                    "chr22-18078561-G-A",
+                ]
+
+                input[1] = [
+                    [ id:'simu01', coverage:50 ], // meta map
+                    false,
+                ]
+                """
+            }
+        }
+
+        then {
+            assertAll(
+                { assert process.success },
+                { assert process.out.scenario.get(0).get(1).endsWith('_scenario.txt') },
+                { assert process.out.versions }
+
+            )
+        }
+
+    }
+
+    test("scenario with genes") {
+
+        when {
+            process {
+                """
+                input[0] = [
+                    [ id:'simu01', coverage:50 ], // meta map
+                    false,
+                ]
+
+                input[1] = [
+                    [ id:'simu01', coverage:50 ], // meta map
+                    "TCN2,NAGA,CYB5R3,PNPLA5,ARSA",
+                ]
+                """
+            }
+        }
+
+        then {
+            assertAll(
+                { assert process.success },
+                { assert process.out.scenario.get(0).get(1).endsWith('_scenario.txt') },
+                { assert process.out.versions }
+
+            )
+        }
+
+    }
+
+    test("scenario - stub") {
+
+        options "-stub"
+
+        when {
+            process {
+                """
+                input[0] = [
+                    [ id:'simu01', coverage:50 ], // meta map
+                    false,
+                ]
+
+                input[1] = [
+                    [ id:'simu01', coverage:50 ], // meta map
+                    "TCN2,NAGA,CYB5R3,PNPLA5,ARSA",
+                ]
+                """
+            }
+        }
+
+        then {
+            assertAll(
+                { assert process.success },
+                { assert process.out.scenario.get(0).get(1).endsWith('_scenario.txt') },
+                { assert process.out.versions }
+
+            )
+        }
+
+    }
+
+}
