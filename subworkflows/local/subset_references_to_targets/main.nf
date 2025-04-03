@@ -1,6 +1,5 @@
 include { SUBVAR                                   } from '../../../modules/local/subvar/main'
 include { SUBSETCAPTURE                            } from '../../../modules/local/subsetcapture/main'
-//include { SAMTOOLS_FAIDX           } from '../../../modules/nf-core/samtools/faidx/main'
 include { SAMTOOLS_FAIDX as SAMTOOLS_FAIDX_SUBSET  } from '../../../modules/nf-core/samtools/faidx/main'
 include { SAMTOOLS_FAIDX as SAMTOOLS_FAIDX_INDEX   } from '../../../modules/nf-core/samtools/faidx/main'
 include { SAMTOOLS_FAIDX as SAMTOOLS_FAIDX_SIZES   } from '../../../modules/nf-core/samtools/faidx/main'
