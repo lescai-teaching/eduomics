@@ -109,8 +109,12 @@ workflow SUBSET_REFERENCES_TO_TARGETS {
     SUBVAR ( ch_clinvar_vcf,
     SUBSETCAPTURE.out.target_bed.map{ map, target_bed -> [target_bed]})
     ch_versions = ch_versions.mix(SUBVAR.out.versions)
-
-
+    out_clinvar_benign_vcf = SUBVAR.out.benign_vcf.map { meta, vcf ->
+        [ meta, vcf.getName().replaceAll(/_benign.vcf$/, "_${meta.chromosome}_clinvar_benign.vcf") ]
+    }
+    out_pathogenic_benign_vcf = SUBVAR.out.pathogenic_vcf.map { meta, vcf ->
+        [ meta, vcf.getName().replaceAll(/_pathogenic.vcf$/, "_${meta.chromosome}_clinvar_pathogenic.vcf") ]
+    }
     emit:
     target_fa         = SAMTOOLS_FAIDX_SUBSET.out.fa        // channel:  [ val(meta), [ fa, fasta ] ]
     target_fai        = SAMTOOLS_FAIDX_INDEX.out.fai        // channel: [ val(meta), [ fai ] ]
@@ -131,8 +135,8 @@ workflow SUBSET_REFERENCES_TO_TARGETS {
     target_1000g_tbi  = out_1000G_tbi  // channel: [ val(meta), [ tbi ] ]
     target_dbsnp_vcf  = out_dbsnp_vcf  // channel: [ val(meta), [ vcf ] ]
     target_dbsnp_tbi  = out_dbsnp_tbi  // channel: [ val(meta), [ tbi ] ]
-    clinvar_benign_vcf        = SUBVAR.out.benign_vcf       // channel: [ val(meta), [ benign_vcf ] ]
-    clinvar_pathogenic_vcf    = SUBVAR.out.pathogenic_vcf   // channel: [ val(meta), [ pathogenic_vcf ] ]
+    clinvar_benign_vcf        = out_clinvar_benign_vcf       // channel: [ val(meta), [ benign_vcf ] ]
+    clinvar_pathogenic_vcf    = out_pathogenic_benign_vcf   // channel: [ val(meta), [ pathogenic_vcf ] ]
     clinvar_selected_vcf      = SUBVAR.out.selected_vcf     // channel: [ val(meta), [ selected_vcf ] ]
     versions = ch_versions                                  // channel: [ versions.yml ]
 }
