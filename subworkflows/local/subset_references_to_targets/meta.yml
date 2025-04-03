@@ -14,123 +14,242 @@ components:
   - local/subvar
 
 input:
-  - meta:
-      type: map
-      description: Metadata map
-  - ch_fasta:
-      type: file
-      description: |
-        The input channel containing the reference genome FASTA file
-        Structure: [ val(meta), [ fasta ] ]
-      pattern: "*.{fasta/fa}"
-  - ch_fai:
-      type: file
-      description: |
-        The input channel containing the FASTA index file
-        Structure: [ val(meta), [ fai ] ]
-      pattern: "*.{fasta/fa}"
-  - ch_get_sizes:
-      type: boolean
-      description: |
-        The input channel containing the boolean to generate chromosome .sizes file
-        Structure: [ get_sizes ]
-  - ch_capture_bed:
-      type: file
-      description: |
-        The input channel containing the capture regions BED file
-        Structure: [ capture_bed ]
-      pattern: "*.bed"
-  - chromosome:
-      type: value
-      description: |
-        The input channel containing the chromosome name
-      Structure: [ val(meta), val(chromosome) ]
-  - vcf:
-      type: file
-      description: |
-        GATK bundle VCF files
-      pattern: "*.vcf{,.gz}"
-  - vcf_idx:
-      type: file
-      description: VCF index file
-      pattern: "*.{tbi,csi}"
-  - intervals:
-      type: file
-      description: Intervals file for variant selection
-      pattern: "*.{bed}"
-  - clinvar_vcf:
-      type: file
-      description: |
-        ClinVar VCF file
-        Structure: [ val(meta), path(vcf) ]
-      pattern: "*.vcf{,.gz}"
-
+  - - meta:
+        type: map
+        description: [ id:'test', chromosome:'chr22', type: 'dnaseq']
+    - fasta:
+        type: file
+        description: Reference fasta file
+        pattern: "*.{fa,fasta}"
+  - - meta:
+        type: map
+        description: Metadata map
+    - fai:
+        type: file
+        description: Fasta index file
+        pattern: "*.fai"
+  - - get_sizes:
+        type: boolean
+        description: Boolean value to determine if sizes should be calculated
+  - - capture_bed:
+        type: file
+        description: Capture bed file
+        pattern: "*.bed"
+  - - meta:
+        type: map
+        description: Metadata map
+    - chromosome:
+        type: value
+        description: Chromosome information
+  - - meta:
+        type: map
+        description: Metadata map
+    - gnomad_vcf:
+        type: file
+        description: gnomAD VCF file
+        pattern: "*.vcf{.gz,}"
+    - gnomad_tbi:
+        type: file
+        description: gnomAD VCF index file
+        pattern: "*.{tbi,idx}"
+  - - meta:
+        type: map
+        description: Metadata map
+    - mills_vcf:
+        type: file
+        description: Mills VCF file
+        pattern: "*.vcf{.gz,}"
+    - mills_tbi:
+        type: file
+        description: Mills VCF index file
+        pattern: "*.{tbi,idx}"
+  - - meta:
+        type: map
+        description: Metadata map
+    - 1000g_vcf:
+        type: file
+        description: 1000G VCF file
+        pattern: "*.vcf{.gz,}"
+    - 1000g_tbi:
+        type: file
+        description: 1000G VCF index file
+        pattern: "*.{tbi,idx}"
+  - - meta:
+        type: map
+        description: Metadata map
+    - dbsnp_vcf:
+        type: file
+        description: dbSNP VCF file
+        pattern: "*.vcf{.gz,}"
+    - dbsnp_tbi:
+        type: file
+        description: dbSNP VCF index file
+        pattern: "*.{tbi,idx}"
+  - - meta:
+        type: map
+        description: Metadata map
+    - clinvar_vcf:
+        type: file
+        description: ClinVar VCF file
+        pattern: "*.vcf{.gz,}"
 output:
   - target_fa:
-      type: file
-      description: |
-        Subset reference genome FASTA file
-      pattern: "*.{fa,fasta}"
+      - meta:
+          type: map
+          description: Metadata map
+      - fa:
+          type: file
+          description: Subset fasta file
+          pattern: "*.{fa,fasta}"
   - target_fai:
-      type: file
-      description: |
-       Subset FASTA index file
-      pattern: "*.fai"
+      - meta:
+          type: map
+          description: Metadata map
+      - fai:
+          type: file
+          description: Subset fasta index file
+          pattern: "*.fai"
   - target_sizes:
-      type: file
-      description: |
-       Chromosome sizes file
-      pattern: "*.sizes"
+      - meta:
+          type: map
+          description: Metadata map
+      - sizes:
+          type: file
+          description: Subset sizes file
+          pattern: "*.sizes"
   - capture_bed_gz:
-      type: file
-      description: |
-       Compressed origin capture BED file
-      pattern: "*.bed.gz"
+      - meta:
+          type: map
+          description: Metadata map
+      - bed_gz:
+          type: file
+          description: Gzipped capture bed file
+          pattern: "*.bed.gz"
   - capture_bed_index:
-      type: file
-      description: |
-        Index for compressed origin capture BED file
-      pattern: "*.bed.gz.tbi"
+      - meta:
+          type: map
+          description: Metadata map
+      - bed_index:
+          type: file
+          description: Capture bed index file
+          pattern: "*.bed.gz.tbi"
   - target_bed:
-      type: file
-      description: |
-        Target regions BED file
-      pattern: "*.bed"
+      - meta:
+          type: map
+          description: Metadata map
+      - bed:
+          type: file
+          description: Target bed file
+          pattern: "*.bed"
   - target_bed_pad50:
-      type: file
-      description: |
-       Target regions BED file with 50bp padding
-      pattern: "*_pad50.bed"
+      - meta:
+          type: map
+          description: Metadata map
+      - bed_pad50:
+          type: file
+          description: Target bed file with 50bp padding
+          pattern: "*_pad50.bed"
   - target_bed_pad500:
-      type: file
-      description: |
-        Target regions BED file with 500bp padding
-      pattern: "*_pad500.bed"
-  - target_gatk_vcf:
-      type: file
-      description: |
-        Selected variants VCF file
-      pattern: "*.vcf{,.gz}"
-  - target_gatk_tbi:
-      type: file
-      description: |
-        Index for on target pathogenic variants from ClinVar
-      pattern: "*.{tbi,csi}"
+      - meta:
+          type: map
+          description: Metadata map
+      - bed_pad500:
+          type: file
+          description: Target bed file with 500bp padding
+          pattern: "*_pad500.bed"
+  - target_gnomad_vcf:
+      - meta:
+          type: map
+          description: Metadata map
+      - vcf:
+          type: file
+          description: Subset gnomAD VCF file
+          pattern: "*.vcf{.gz,}"
+  - target_gnomad_tbi:
+      - meta:
+          type: map
+          description: Metadata map
+      - tbi:
+          type: file
+          description: Subset gnomAD VCF index file
+          pattern: "*.{tbi,idx}"
+  - target_mills_vcf:
+      - meta:
+          type: map
+          description: Metadata map
+      - vcf:
+          type: file
+          description: Subset Mills VCF file
+          pattern: "*.vcf{.gz,}"
+  - target_mills_tbi:
+      - meta:
+          type: map
+          description: Metadata map
+      - tbi:
+          type: file
+          description: Subset Mills VCF index file
+          pattern: "*.{tbi,idx}"
+  - target_1000g_vcf:
+      - meta:
+          type: map
+          description: Metadata map
+      - vcf:
+          type: file
+          description: Subset 1000G VCF file
+          pattern: "*.vcf{.gz,}"
+  - target_1000g_tbi:
+      - meta:
+          type: map
+          description: Metadata map
+      - tbi:
+          type: file
+          description: Subset 1000G VCF index file
+          pattern: "*.{tbi,idx}"
+  - target_dbsnp_vcf:
+      - meta:
+          type: map
+          description: Metadata map
+      - vcf:
+          type: file
+          description: Subset dbSNP VCF file
+          pattern: "*.vcf{.gz,}"
+  - target_dbsnp_tbi:
+      - meta:
+          type: map
+          description: Metadata map
+      - tbi:
+          type: file
+          description: Subset dbSNP VCF index file
+          pattern: "*.{tbi,idx}"
   - clinvar_benign_vcf:
-      type: file
-      description: |
-        Subset of benign variants from ClinVar
-      pattern: "*_benign.vcf{,.gz}"
+      - meta:
+          type: map
+          description: Metadata map
+      - vcf:
+          type: file
+          description: Subset ClinVar benign VCF file
+          pattern: "*_benign.vcf{.gz,}"
   - clinvar_pathogenic_vcf:
-      type: file
-      description: |
-        Subset of pathogenic variants from ClinVar
-      pattern: "*_pathogenic.vcf{,.gz}"
+      - meta:
+          type: map
+          description: Metadata map
+      - vcf:
+          type: file
+          description: Subset ClinVar pathogenic VCF file
+          pattern: "*_pathogenic.vcf{.gz,}"
   - clinvar_selected_vcf:
-      type: file
-      description: |
-        Subset of pathogenic variants from ClinVar
-      pattern: "*_pathogenic.vcf{,.gz}"
+      - meta:
+          type: map
+          description: Metadata map
+      - vcf:
+          type: file
+          description: Subset ClinVar selected VCF file
+          pattern: "*_selected.vcf{.gz,}"
+  - versions:
+      - versions:
+          type: file
+          description: File containing software versions
+          pattern: "versions.yml"
 
 authors:
   - "@msantorsola"
