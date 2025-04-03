@@ -3,8 +3,8 @@ process SUBVAR {
     label 'process_low'
     conda "${moduleDir}/environment.yml"
     container "${workflow.containerEngine == 'singularity' && !task.ext.singularity_pull_docker_container ?
-        'https://depot.galaxyproject.org/singularity/htslib:1.20--h5efdd21_2' :
-        'biocontainers/htslib:1.20--h5efdd21_2'}"
+        'oras://community.wave.seqera.io/library/htslib_tabix:ef572dd1df9a29c1' :
+        'community.wave.seqera.io/library/htslib_tabix:9596dbe66ce87412'}"
 
     input:
     tuple val(meta), path(vcf)
@@ -13,8 +13,8 @@ process SUBVAR {
     output:
     tuple val(meta), path('*_benign.vcf')        , optional: true, emit: benign_vcf
     tuple val(meta), path('*_pathogenic.vcf')    , optional: true, emit: pathogenic_vcf
-    tuple val(meta), path('*_selected.vcf')         , optional: true, emit: selected_vcf
-    path 'versions.yml'                             , emit: versions
+    tuple val(meta), path('*_ontarget.vcf.gz')   , optional: true, emit: selected_vcf
+    path 'versions.yml'                          , emit: versions
 
     when:
     task.ext.when == null || task.ext.when
