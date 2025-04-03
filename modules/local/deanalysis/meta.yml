@@ -86,7 +86,7 @@ output:
   - versions:
       - versions.yml:
           type: file
-          description: "Software versions used in the analysis"
+          description: File containing software versions
           pattern: "versions.yml"
 authors:
   - "@LorenzoS96"
