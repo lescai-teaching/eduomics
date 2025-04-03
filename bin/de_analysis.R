@@ -10,10 +10,11 @@ argv <- commandArgs(trailingOnly = TRUE)
 
 
 #### Input selection ####
-replica <- as.numeric(argv[1])
-group <- as.numeric(argv[2])
-gff3 <- argv[3]
-counts <- argv[4]
+meta_id <- argv[1]
+replica <- as.numeric(argv[2])
+group <- as.numeric(argv[3])
+transcriptData <- argv[4]
+quant <- argv[5]
 
 
 #### Creation of input files ####
@@ -21,20 +22,18 @@ counts <- argv[4]
 # Dataset with samples and associated conditions
 group_labels <- c("control", "case")
 dataset <- as_tibble(expand.grid(replica = 1:replica, group = 1:group) %>%
-  mutate(sample = paste0("sample_", row_number()),
+  mutate(sample = paste0("sample_0", row_number()),
          condition = group_labels[group]) %>%
   dplyr::select(sample, condition))
 
 # tx2gene
-tx2gene <- readRDS(gff3) %>%
+tx2gene <- readRDS(transcriptData) %>%
   dplyr::select(transcript_id, gene_id)
 
 
 #### Load .quant files from Salmon  ####
-
-files <- list.files(counts, pattern = "quant.sf", recursive = T, full.names = T)
-names <- basename(dirname(files))
-names(files) <- names
+files <- file.path(quant, paste0(dataset$sample,".quant"), "quant.sf")
+names(files) <- dataset$sample
 
 txi <- tximport(files, type = "salmon", tx2gene = tx2gene)
 
@@ -63,15 +62,15 @@ dds <- DESeq(dds)
 res <- results(dds)
 resOrdered <- res[order(res$pvalue),]
 
-pdf("deseq2_ma_plot.pdf")
+pdf(paste0(meta_id, "_deanalysis/deseq2_ma_plot.pdf"))
 plotMA(res, ylim=c(-3,3))
 dev.off()
 
-pdf("deseq2_dispersion_plot.pdf")
+pdf(paste0(meta_id, "_deanalysis/deseq2_dispersion_plot.pdf"))
 plotDispEsts(dds)
 dev.off()
 
-pdf("deseq2_count_plot.pdf")
+pdf(paste0(meta_id, "_deanalysis/deseq2_count_plot.pdf"))
 plotCounts(dds, gene=which.min(res$padj), intgroup="condition")
 dev.off()
 
@@ -81,7 +80,7 @@ dev.off()
 resdata <- as_tibble(resOrdered)
 resdata$gene <- rownames(resOrdered)
 
-write_tsv(resdata, "deseq2_results.tsv")
+write_tsv(resdata, paste0(meta_id, "_deanalysis/deseq2_results.tsv"))
 
 
 #### Clustering ####
@@ -93,11 +92,11 @@ select <- order(rowMeans(counts(dds,normalized=TRUE)),
 
 df <- as.data.frame(colData(dds)[,c("condition")])
 
-pdf("deseq2_heatmap_plot.pdf")
+pdf(paste0(meta_id, "_deanalysis/deseq2_heatmap_plot.pdf"))
 pheatmap(assay(ntd)[select,],
          cluster_cols=FALSE, annotation_col=df$condition)
 dev.off()
 
-pdf("deseq2_pca_plot.pdf")
+pdf(paste0(meta_id, "_deanalysis/deseq2_pca_plot.pdf"))
 plotPCA(ntd, intgroup=c("condition"))
 dev.off()
