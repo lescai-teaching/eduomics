@@ -1,4 +1,3 @@
-//include { GATK4_SELECTVARIANTS                     } from '../../../modules/nf-core/gatk4/selectvariants/main'
 include { SUBVAR                                   } from '../../../modules/local/subvar/main'
 include { SUBSETCAPTURE                            } from '../../../modules/local/subsetcapture/main'
 //include { SAMTOOLS_FAIDX           } from '../../../modules/nf-core/samtools/faidx/main'
