@@ -17,7 +17,6 @@ nextflow_process {
         then {
             assert process.success
             assert snapshot(process.out).match()
-            assert path(process.out.target_chrom_size.get(0).get(1)).exists()
             assert path(process.out.capture_bed_gz.get(0).get(1)).exists()
             assert path(process.out.capture_bed_index.get(0).get(1)).exists()
             assert path(process.out.target_bed_pad50.get(0).get(1)).exists()
