@@ -4,8 +4,8 @@ process SUBSETCAPTURE {
 
     conda "${moduleDir}/environment.yml"
     container "${ workflow.containerEngine == 'singularity' && !task.ext.singularity_pull_docker_container ?
-        'oras://community.wave.seqera.io/library/bedtools_htslib:46c2f90c5e5c04ad':
-        'community.wave.seqera.io/library/bedtools_htslib:d780123314824c66' }"
+        'oras://community.wave.seqera.io/library/bedtools_htslib:62c15a7abca4d6b2':
+        'community.wave.seqera.io/library/bedtools_htslib:04fa82f202d44d67' }"
 
     input:
     tuple val(meta), val(chromosome)
