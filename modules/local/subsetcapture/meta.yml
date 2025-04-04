@@ -29,7 +29,7 @@ input:
   - chromosome:
       type: string
       description: Chromosome to subset
-  - chrom_sizes:
+  - target_chrom_size:
       type: file
       description: Chromosome sizes file
       pattern: "*.{txt,tsv}"
@@ -39,10 +39,6 @@ input:
       pattern: "*.{bed,bed.gz}"
 
 output:
-  - target_chrom_size:
-      type: file
-      description: Target chromosome size
-      pattern: "*.chrom.sizes"
   - capture_bed_gz:
       type: file
       description: Compressed origin capture BED
@@ -64,10 +60,10 @@ output:
       description: Padded target capture BED by 50 positions
       pattern: "*_target.pad500.bed"
   - versions:
-    - "versions.yml":
-        type: file
-        description: File containing software versions
-        pattern: "versions.yml"
+      - "versions.yml":
+          type: file
+          description: File containing software versions
+          pattern: "versions.yml"
 
 authors:
   - "@msantorsola"

@@ -17,7 +17,7 @@ argv <- commandArgs(trailingOnly = TRUE)
 #### Input selection ####
 chromosome_of_interest <- argv[1]
 gff3 <- argv[2]
-log_file <- "parsing_log.txt"
+log_file <- "subsetgff_parsing_log.txt"
 
 
 #### Parse GFF file ####

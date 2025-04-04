@@ -23,6 +23,7 @@ nextflow_process {
                     file('https://raw.githubusercontent.com/lescai-teaching/eduomics_testdata/refs/heads/main/dna/chr22_q11-21_GRCh38.fasta.fai', checkIfExists: true),
                 ]
                 input[2] = [
+                    [id: 'test', coverage: 50, simulatedvar: "chr22-1234-A-T"],
                     file('https://raw.githubusercontent.com/lescai-teaching/eduomics_testdata/refs/heads/main/dna/simureads/simvar_case_single.txt', checkIfExists: true),
                 ]
                 input[3] = [
@@ -42,7 +43,6 @@ nextflow_process {
 
     }
 
-    // TODO nf-core: Change the test name preferably indicating the test-data and file-format used but keep the " - stub" suffix.
     test("simulate reads - stub") {
 
         options "-stub"
@@ -59,6 +59,7 @@ nextflow_process {
                     file('https://raw.githubusercontent.com/lescai-teaching/eduomics_testdata/refs/heads/main/dna/chr22_q11-21_GRCh38.fasta.fai', checkIfExists: true),
                 ]
                 input[2] = [
+                    [id: 'test', coverage: 50, simulatedvar: "chr22-1234-A-T"],
                     file('https://raw.githubusercontent.com/lescai-teaching/eduomics_testdata/refs/heads/main/dna/simureads/simvar_case_single.txt', checkIfExists: true),
                 ]
                 input[3] = [

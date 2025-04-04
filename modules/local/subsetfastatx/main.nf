@@ -13,9 +13,9 @@ process SUBSETFASTATX {
     path(gff3)
 
     output:
-    path "*.fasta"                  , emit: fasta
-    path "parsing_log.txt"          , emit: log
-    path "versions.yml"             , emit: versions
+    path "*.fasta"                        , emit: fasta
+    path "subsetfastatx_parsing_log.txt"  , emit: log
+    path "versions.yml"                   , emit: versions
 
     when:
     task.ext.when == null || task.ext.when

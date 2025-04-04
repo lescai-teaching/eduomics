@@ -11,7 +11,7 @@ argv <- commandArgs(trailingOnly = TRUE)
 chromosome_of_interest <- argv[1]
 fasta <- argv[2]
 gff3 <- argv[3]
-log_file <- "parsing_log.txt"
+log_file <- "subsetfastatx_parsing_log.txt"
 
 
 #### Parse GFF file ####
