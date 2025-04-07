@@ -1,0 +1,91 @@
+{
+    "human - fasta/BED/VCF - subset by chr": {
+        "content": [
+            {
+                "0": [
+                    
+                ],
+                "1": [
+                    
+                ],
+                "10": [
+                    
+                ],
+                "11": [
+                    
+                ],
+                "12": [
+                    
+                ],
+                "2": [
+                    
+                ],
+                "3": [
+                    
+                ],
+                "4": [
+                    
+                ],
+                "5": [
+                    
+                ],
+                "6": [
+                    
+                ],
+                "7": [
+                    
+                ],
+                "8": [
+                    
+                ],
+                "9": [
+                    
+                ],
+                "benign_vcf": [
+                    
+                ],
+                "capture_bed_gz": [
+                    
+                ],
+                "capture_bed_index": [
+                    
+                ],
+                "fa": [
+                    
+                ],
+                "fai": [
+                    
+                ],
+                "pathogenic_vcf": [
+                    
+                ],
+                "selected_tbi": [
+                    
+                ],
+                "selected_vcf": [
+                    
+                ],
+                "sizes": [
+                    
+                ],
+                "target_bed": [
+                    
+                ],
+                "target_bed_pad50": [
+                    
+                ],
+                "target_bed_pad500": [
+                    
+                ],
+                "versions": [
+                    
+                ]
+            }
+        ],
+        "meta": {
+            "nf-test": "0.9.2",
+            "nextflow": "24.10.4"
+        },
+        "timestamp": "2025-03-27T14:28:10.368169865"
+    }
+}

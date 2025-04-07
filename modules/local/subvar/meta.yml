@@ -34,25 +34,38 @@ input:
         pattern: "*.bed"
 
 output:
-  - profile:
+  - benign_vcf:
       - meta:
           type: map
           description: |
             Groovy Map containing sample information
             e.g. [ id:'test_sample' ]
-      - benign_vcf:
+      - benign.vcf:
           type: file
           description: VCF file containing benign variants
           pattern: "*.{vcf,vcf.gz}"
-      - pathogenic_vcf:
+  - pathogenic_vcf:
+      - meta:
+          type: map
+          description: |
+            Groovy Map containing sample information
+            e.g. [ id:'test_sample' ]
+      - pathogenic.vcf:
           type: file
           description: VCF file containing pathogenic variants
           pattern: "*.{vcf,vcf.gz}"
-      - selected_vcf:
+  - selected_vcf:
+      - meta:
+          type: map
+          description: |
+            Groovy Map containing sample information
+            e.g. [ id:'test_sample' ]
+      - selected.vcf:
           type: file
           description: VCF file containing high quality pathogenic variants
-          pattern: ".{vcf,vcf.gz}"
-      - versions:
+          pattern: "*.{vcf,vcf.gz}"
+  - versions:
+      - versions.yml:
           type: file
           description: File containing software versions
           pattern: "versions.yml"
