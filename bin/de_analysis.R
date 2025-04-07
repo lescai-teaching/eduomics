@@ -12,7 +12,7 @@ argv <- commandArgs(trailingOnly = TRUE)
 meta_id <- argv[1]
 replica <- as.numeric(argv[2])
 group <- as.numeric(argv[3])
-transcriptData <- argv[4]
+tx2gene <- argv[4]
 quant_dirs <- strsplit(argv[5], ",")[[1]]
 outdir <- argv[6]
 
@@ -25,7 +25,7 @@ dataset <- as_tibble(expand.grid(replica = 1:replica, group = 1:group) %>%
          condition = group_labels[group]) %>%
   dplyr::select(sample, condition))
 
-tx2gene <- readRDS(transcriptData) %>%
+tx2gene <- readRDS(tx2gene) %>%
   dplyr::select(transcript_id, gene_id)
 
 #### Load .quant files from Salmon  ####

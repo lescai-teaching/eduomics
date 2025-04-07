@@ -9,7 +9,7 @@ process DESEQ2_SALMON {
 
     input:
     tuple val(meta), path(quant_dirs)
-    path transcriptData
+    path tx2gene
 
     output:
     tuple val(meta), path("${prefix}_deseq2_results"), emit: results
@@ -26,7 +26,7 @@ process DESEQ2_SALMON {
         '${prefix}' \\
         '${meta.reps}' \\
         '${meta.groups}' \\
-        '${transcriptData}' \\
+        '${tx2gene}' \\
         '${quant_dirs.join(',')}' \\
         '${prefix}_deseq2_results'
 
