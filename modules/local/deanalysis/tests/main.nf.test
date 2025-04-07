@@ -15,12 +15,26 @@ nextflow_process {
             script "../../../nf-core/salmon/quant/main.nf"
             process {
                 """
-                input[0] = Channel.fromFilePairs('/workspaces/eduomics/testdata/raw_reads/sample_*_{1,2}.fasta.gz', checkIfExists: true)
+                input[0] = Channel.fromFilePairs(
+                    [
+                        file('https://raw.githubusercontent.com/lescai-teaching/eduomics_testdata/refs/heads/main/rnaseq/salmonquantify/raw_reads/sample_01_1.fasta.gz', checkIfExists: true),
+                        file('https://raw.githubusercontent.com/lescai-teaching/eduomics_testdata/refs/heads/main/rnaseq/salmonquantify/raw_reads/sample_01_2.fasta.gz', checkIfExists: true),
+                        file('https://raw.githubusercontent.com/lescai-teaching/eduomics_testdata/refs/heads/main/rnaseq/salmonquantify/raw_reads/sample_02_1.fasta.gz', checkIfExists: true),
+                        file('https://raw.githubusercontent.com/lescai-teaching/eduomics_testdata/refs/heads/main/rnaseq/salmonquantify/raw_reads/sample_02_2.fasta.gz', checkIfExists: true),
+                        file('https://raw.githubusercontent.com/lescai-teaching/eduomics_testdata/refs/heads/main/rnaseq/salmonquantify/raw_reads/sample_03_1.fasta.gz', checkIfExists: true),
+                        file('https://raw.githubusercontent.com/lescai-teaching/eduomics_testdata/refs/heads/main/rnaseq/salmonquantify/raw_reads/sample_03_2.fasta.gz', checkIfExists: true),
+                        file('https://raw.githubusercontent.com/lescai-teaching/eduomics_testdata/refs/heads/main/rnaseq/salmonquantify/raw_reads/sample_04_1.fasta.gz', checkIfExists: true),
+                        file('https://raw.githubusercontent.com/lescai-teaching/eduomics_testdata/refs/heads/main/rnaseq/salmonquantify/raw_reads/sample_04_2.fasta.gz', checkIfExists: true),
+                        file('https://raw.githubusercontent.com/lescai-teaching/eduomics_testdata/refs/heads/main/rnaseq/salmonquantify/raw_reads/sample_05_1.fasta.gz', checkIfExists: true),
+                        file('https://raw.githubusercontent.com/lescai-teaching/eduomics_testdata/refs/heads/main/rnaseq/salmonquantify/raw_reads/sample_05_2.fasta.gz', checkIfExists: true),
+                        file('https://raw.githubusercontent.com/lescai-teaching/eduomics_testdata/refs/heads/main/rnaseq/salmonquantify/raw_reads/sample_06_1.fasta.gz', checkIfExists: true),
+                        file('https://raw.githubusercontent.com/lescai-teaching/eduomics_testdata/refs/heads/main/rnaseq/salmonquantify/raw_reads/sample_06_2.fasta.gz', checkIfExists: true)
+                    ]
                     .map { sample_id, files ->
                         def meta = [id: 'simtest', sample: sample_id, single_end: false, reps: 3, groups: 2]
                         [meta, files]
                     }
-                input[1] = Channel.value(file('/workspaces/eduomics/testdata/chr22_transcripts_index', checkIfExists: true))
+                input[1] = Channel.fromPath('https://raw.githubusercontent.com/lescai-teaching/eduomics_testdata/refs/heads/main/rnaseq/salmonquantify/chr22_transcripts_index/', type: 'dir')
                 input[2] = Channel.value(file('/workspaces/eduomics/testdata/chr22.gff3', checkIfExists: true))
                 input[3] = Channel.value(file('/workspaces/eduomics/testdata/gencode_transcripts_noversion_chr22.fasta', checkIfExists: true))
                 input[4] = false
