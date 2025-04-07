@@ -1,0 +1,33 @@
+[2025-04-02 11:41:42.718] [puff::index::jointLog] [info] Running fixFasta
+[2025-04-02 11:41:42.719] [puff::index::jointLog] [error] The decoy file decoys.txt does not exist.
+[2025-04-02 11:41:56.438] [puff::index::jointLog] [info] Running fixFasta
+[2025-04-02 11:41:56.580] [puff::index::jointLog] [warning] Removed 3 transcripts that were sequence duplicates of indexed transcripts.
+[2025-04-02 11:41:56.580] [puff::index::jointLog] [warning] If you wish to retain duplicate transcripts, please use the `--keepDuplicates` flag
+[2025-04-02 11:41:56.581] [puff::index::jointLog] [info] Replaced 0 non-ATCG nucleotides
+[2025-04-02 11:41:56.581] [puff::index::jointLog] [info] Clipped poly-A tails from 19 transcripts
+[2025-04-02 11:41:56.606] [puff::index::jointLog] [info] Filter size not provided; estimating from number of distinct k-mers
+[2025-04-02 11:41:56.711] [puff::index::jointLog] [info] ntHll estimated 2165381 distinct k-mers, setting filter size to 2^26
+[2025-04-02 11:41:57.893] [puff::index::jointLog] [info] Starting the Pufferfish indexing by reading the GFA binary file.
+[2025-04-02 11:41:57.896] [puff::index::jointLog] [info] Setting the index/BinaryGfa directory prova
+[2025-04-02 11:41:57.901] [puff::index::jointLog] [info] Done wrapping the rank vector with a rank9sel structure.
+[2025-04-02 11:41:57.901] [puff::index::jointLog] [info] contig count for validation: 17,383
+[2025-04-02 11:41:57.903] [puff::index::jointLog] [info] Total # of Contigs : 17,383
+[2025-04-02 11:41:57.903] [puff::index::jointLog] [info] Total # of numerical Contigs : 17,383
+[2025-04-02 11:41:57.904] [puff::index::jointLog] [info] Total # of contig vec entries: 89,836
+[2025-04-02 11:41:57.904] [puff::index::jointLog] [info] bits per offset entry 17
+[2025-04-02 11:41:57.904] [puff::index::jointLog] [info] Done constructing the contig vector. 17384
+[2025-04-02 11:41:57.907] [puff::index::jointLog] [info] # segments = 17,383
+[2025-04-02 11:41:57.907] [puff::index::jointLog] [info] total length = 2,732,345
+[2025-04-02 11:41:57.907] [puff::index::jointLog] [info] Reading the reference files ...
+[2025-04-02 11:41:57.928] [puff::index::jointLog] [info] positional integer width = 22
+[2025-04-02 11:41:57.928] [puff::index::jointLog] [info] seqSize = 2,732,345
+[2025-04-02 11:41:57.928] [puff::index::jointLog] [info] rankSize = 2,732,345
+[2025-04-02 11:41:57.928] [puff::index::jointLog] [info] edgeVecSize = 0
+[2025-04-02 11:41:57.928] [puff::index::jointLog] [info] num keys = 2,210,855
+[2025-04-02 11:41:57.997] [puff::index::jointLog] [info] mphf size = 1.38165 MB
+[2025-04-02 11:41:57.998] [puff::index::jointLog] [info] chunk size = 1,366,173
+[2025-04-02 11:41:57.998] [puff::index::jointLog] [info] chunk 0 = [0, 1,366,173)
+[2025-04-02 11:41:57.998] [puff::index::jointLog] [info] chunk 1 = [1,366,173, 2,732,315)
+[2025-04-02 11:41:58.060] [puff::index::jointLog] [info] finished populating pos vector
+[2025-04-02 11:41:58.060] [puff::index::jointLog] [info] writing index components
+[2025-04-02 11:41:58.073] [puff::index::jointLog] [info] finished writing dense pufferfish index

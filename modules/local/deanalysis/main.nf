@@ -1,6 +1,6 @@
-process DEANALYSIS {
+process DESEQ2_SALMON {
     tag "$meta.id"
-    label 'process_single'
+    label 'process_medium'
 
     conda "${moduleDir}/environment.yml"
     container "${ workflow.containerEngine == 'singularity' && !task.ext.singularity_pull_docker_container ?
@@ -8,28 +8,28 @@ process DEANALYSIS {
         'community.wave.seqera.io/library/bioconductor-deseq2_bioconductor-tximport_r-pheatmap_r-tidyverse:3db5891c323469dc' }"
 
     input:
-    tuple val(meta), path(quant)
-    path (transcriptData)             // tibble resulting from subsetgff module
+    tuple val(meta), path(quant_dirs)
+    path transcriptData
 
     output:
-    tuple val(meta), path("${meta.id}_deanalysis/deseq2_ma_plot.pdf")            , emit: ma_plot
-    tuple val(meta), path("${meta.id}_deanalysis/deseq2_dispersion_plot.pdf")    , emit: dispersion_plot
-    tuple val(meta), path("${meta.id}_deanalysis/deseq2_count_plot.pdf")         , emit: count_plot
-    tuple val(meta), path("${meta.id}_deanalysis/deseq2_results.tsv")            , emit: results
-    tuple val(meta), path("${meta.id}_deanalysis/deseq2_heatmap_plot.pdf")       , emit: heatmap_plot
-    tuple val(meta), path("${meta.id}_deanalysis/deseq2_pca_plot.pdf")           , emit: pca_plot
-    path "versions.yml"                                                          , emit: versions
+    tuple val(meta), path("${prefix}_deseq2_results"), emit: results
+    path "versions.yml"                              , emit: versions
 
     when:
     task.ext.when == null || task.ext.when
 
     script:
     def args = task.ext.args ?: ''
-    def prefix = task.ext.prefix ?: "${meta.id}"
-
+    prefix = task.ext.prefix ?: "${meta.id}"
     """
-    mkdir -p ${prefix}_deanalysis
-    Rscript ${baseDir}/bin/de_analysis.R ${prefix} ${meta.reps} ${meta.groups} ${transcriptData} ${quant}
+    Rscript ${baseDir}/bin/de_analysis.R \\
+        '${prefix}' \\
+        '${meta.reps}' \\
+        '${meta.groups}' \\
+        '${transcriptData}' \\
+        '${quant_dirs.join(',')}' \\
+        '${prefix}_deseq2_results'
+
     cat <<-END_VERSIONS > versions.yml
     "${task.process}":
         bioconductor-deseq2: \$(Rscript -e "cat(as.character(packageVersion('DESeq2')))")
@@ -40,17 +40,15 @@ process DEANALYSIS {
     """
 
     stub:
-    def args = task.ext.args ?: ''
-    def prefix = task.ext.prefix ?: "${meta.id}"
-
+    prefix = task.ext.prefix ?: "${meta.id}"
     """
-    mkdir -p ${prefix}_deanalysis
-    touch ${prefix}_deanalysis/deseq2_ma_plot.pdf
-    touch ${prefix}_deanalysis/deseq2_dispersion_plot.pdf
-    touch ${prefix}_deanalysis/deseq2_count_plot.pdf
-    touch ${prefix}_deanalysis/deseq2_results.tsv
-    touch ${prefix}_deanalysis/deseq2_heatmap_plot.pdf
-    touch ${prefix}_deanalysis/deseq2_pca_plot.pdf
+    mkdir -p ${prefix}_deseq2_results
+    touch ${prefix}_deseq2_results/deseq2_results.tsv
+    touch ${prefix}_deseq2_results/ma_plot.pdf
+    touch ${prefix}_deseq2_results/dispersion_plot.pdf
+    touch ${prefix}_deseq2_results/count_plot.pdf
+    touch ${prefix}_deseq2_results/heatmap_plot.pdf
+    touch ${prefix}_deseq2_results/pca_plot.pdf
 
     cat <<-END_VERSIONS > versions.yml
     "${task.process}":
