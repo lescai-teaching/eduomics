@@ -36,7 +36,7 @@ nextflow_process {
             process {
                 """
                 input[0] = SALMON_QUANT.out.results.map{ m, folder ->
-                              def newmap = [id: m.id, genes: m.genes, groups: m.groups]
+                              def newmap = [id: m.id, genes: m.genes, reps:m.reps, groups: m.groups]
                               [newmap, folder]
                            }
                            .groupTuple(by: 0)
@@ -46,15 +46,24 @@ nextflow_process {
         }
 
         then {
-            assert process.success
-            assert path("deseq2_results").exists()
-            assert path("deseq2_results/deseq2_results.tsv").exists()
-            assert path("deseq2_results/ma_plot.pdf").exists()
-            assert path("deseq2_results/dispersion_plot.pdf").exists()
-            assert path("deseq2_results/count_plot.pdf").exists()
-            assert path("deseq2_results/heatmap_plot.pdf").exists()
-            assert path("deseq2_results/pca_plot.pdf").exists()
-            assert path("versions.yml").exists()
+            assertAll(
+                { assert process.success },
+                {
+                    def outputDir = new File(process.out.results.get(0)[1].toString())
+                    def requiredFiles = [
+                        'count_plot.pdf',
+                        'deseq2_results.tsv',
+                        'dispersion_plot.pdf',
+                        'heatmap_plot.pdf',
+                        'ma_plot.pdf',
+                        'pca_plot.pdf'
+                    ]
+                    requiredFiles.each { fileName ->
+                        assert new File(outputDir, fileName).exists()
+                    }
+                },
+                { assert process.out.versions }
+            )
         }
     }
 
@@ -65,22 +74,35 @@ nextflow_process {
         when {
             process {
                 """
-                input[0] = SALMON_QUANT.out.results.collect()
+                input[0] = SALMON_QUANT.out.results.map{ m, folder ->
+                              def newmap = [id: m.id, genes: m.genes, reps:m.reps, groups: m.groups]
+                              [newmap, folder]
+                           }
+                           .groupTuple(by: 0)
                 input[1] = file("https://raw.githubusercontent.com/lescai-teaching/eduomics_testdata/refs/heads/main/rnaseq/countmatrices/gff3_chr22.rds", checkIfExists: true)
                 """
             }
         }
 
         then {
-            assert process.success
-            assert path("deseq2_results").exists()
-            assert path("deseq2_results/deseq2_results.tsv").exists()
-            assert path("deseq2_results/ma_plot.pdf").exists()
-            assert path("deseq2_results/dispersion_plot.pdf").exists()
-            assert path("deseq2_results/count_plot.pdf").exists()
-            assert path("deseq2_results/heatmap_plot.pdf").exists()
-            assert path("deseq2_results/pca_plot.pdf").exists()
-            assert path("versions.yml").exists()
+            assertAll(
+                { assert process.success },
+                {
+                    def outputDir = new File(process.out.results.get(0)[1].toString())
+                    def requiredFiles = [
+                        'count_plot.pdf',
+                        'deseq2_results.tsv',
+                        'dispersion_plot.pdf',
+                        'heatmap_plot.pdf',
+                        'ma_plot.pdf',
+                        'pca_plot.pdf'
+                    ]
+                    requiredFiles.each { fileName ->
+                        assert new File(outputDir, fileName).exists()
+                    }
+                },
+                { assert process.out.versions }
+            )
         }
     }
 }

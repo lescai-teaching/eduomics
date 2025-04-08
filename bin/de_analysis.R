@@ -21,9 +21,10 @@ dir.create(outdir, showWarnings = FALSE)
 #### Creation of input files ####
 group_labels <- c("control", "case")
 dataset <- as_tibble(expand.grid(replica = 1:replica, group = 1:group) %>%
-  mutate(sample = paste0("sample_0", row_number()),
-         condition = group_labels[group]) %>%
-  dplyr::select(sample, condition))
+                       mutate(sample = paste0("sample_0", row_number()),
+                              condition = factor(group, levels = 1:2, labels = group_labels)) %>%
+                       dplyr::select(sample, condition))
+
 
 tx2gene <- readRDS(tx2gene) %>%
   dplyr::select(transcript_id, gene_id)
