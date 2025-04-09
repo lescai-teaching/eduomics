@@ -40,7 +40,7 @@ process SUBSETFASTATX {
     def prefix = task.ext.prefix ?: "${meta.id}"
     """
     touch gencode_transcripts_noversion_${meta.chromosome}.fasta
-    touch parsing_log.txt
+    touch subsetfastatx_parsing_log.txt
 
     cat <<-END_VERSIONS > versions.yml
     "${task.process}":
