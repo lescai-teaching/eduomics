@@ -67,7 +67,7 @@ nextflow_process {
                     'https://raw.githubusercontent.com/lescai-teaching/eduomics_testdata/refs/heads/main/rnaseq/salmonquantify/chr22_transcripts_index/seq.bin',
                     'https://raw.githubusercontent.com/lescai-teaching/eduomics_testdata/refs/heads/main/rnaseq/salmonquantify/chr22_transcripts_index/versionInfo.json'
                 ]
-                def index_dir = file("\${params.outdir}/salmon_index")
+                def index_dir = file("\${workDir}/salmon_index")
                 index_dir.mkdirs()
 
                 index_urls.each { url ->
