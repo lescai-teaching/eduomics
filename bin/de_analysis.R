@@ -6,9 +6,11 @@ library(tximport)
 library(tidyverse)
 library(pheatmap)
 
-argv <- commandArgs(trailingOnly = TRUE)
 
 #### Input selection ####
+
+argv <- commandArgs(trailingOnly = TRUE)
+
 replica <- as.numeric(argv[1])
 group <- as.numeric(argv[2])
 tx2gene <- argv[3]
@@ -16,6 +18,7 @@ quant_dirs <- strsplit(argv[4], ",")[[1]]
 outdir <- argv[5]
 
 dir.create(outdir, showWarnings = FALSE)
+
 
 #### Creation of input files ####
 group_labels <- c("control", "case")
@@ -43,17 +46,20 @@ txi <- tximport(files, type = "salmon", tx2gene = tx2gene)
 colnames(txi$counts)
 rownames(dataset) <- colnames(txi$counts)
 
+
+##### Differential expression analysis #####
+
 dds <- DESeqDataSetFromTximport(txi, dataset, ~condition)
 
-#### Prefilter min counts >10 ####
+# prefilter min counts >10
 keep <- rowSums(counts(dds)) >= 10
 dds <- dds[keep,]
 
-### make sure base level is control
+# make sure base level is control
 dds$condition <- relevel(dds$condition, ref = "control")
 
-##### Differential expression analysis #####
 dds <- DESeq(dds)
+
 
 #### Extract the results #####
 res <- results(dds)
@@ -71,11 +77,13 @@ pdf(file.path(outdir, "count_plot.pdf"))
 plotCounts(dds, gene=which.min(res$padj), intgroup="condition")
 dev.off()
 
+
 #### Save the results of the analysis ####
 resdata <- as_tibble(resOrdered)
 resdata$gene <- rownames(resOrdered)
 
 write_tsv(resdata, file.path(outdir, "deseq2_results.tsv"))
+
 
 #### Clustering ####
 ntd <- normTransform(dds)
