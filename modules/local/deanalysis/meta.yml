@@ -1,4 +1,4 @@
-name: "ddeanalysis"
+name: "deanalysis"
 description: Runs a differential expression analysis with DESeq2
 keywords:
   - differential
