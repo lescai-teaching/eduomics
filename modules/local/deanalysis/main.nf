@@ -1,4 +1,4 @@
-process DESEQ2_SALMON {
+process DEANALYSIS {
     tag "$meta.id"
     label 'process_medium'
 
@@ -23,7 +23,6 @@ process DESEQ2_SALMON {
     prefix = task.ext.prefix ?: "${meta.id}"
     """
     Rscript ${baseDir}/bin/de_analysis.R \\
-        '${prefix}' \\
         '${meta.reps}' \\
         '${meta.groups}' \\
         '${tx2gene}' \\
@@ -49,6 +48,7 @@ process DESEQ2_SALMON {
     touch ${prefix}_deseq2_results/count_plot.pdf
     touch ${prefix}_deseq2_results/heatmap_plot.pdf
     touch ${prefix}_deseq2_results/pca_plot.pdf
+    touch ${prefix}_deseq2_results/tx2gene.tsv
 
     cat <<-END_VERSIONS > versions.yml
     "${task.process}":

@@ -9,12 +9,11 @@ library(pheatmap)
 argv <- commandArgs(trailingOnly = TRUE)
 
 #### Input selection ####
-meta_id <- argv[1]
-replica <- as.numeric(argv[2])
-group <- as.numeric(argv[3])
-tx2gene <- argv[4]
-quant_dirs <- strsplit(argv[5], ",")[[1]]
-outdir <- argv[6]
+replica <- as.numeric(argv[1])
+group <- as.numeric(argv[2])
+tx2gene <- argv[3]
+quant_dirs <- strsplit(argv[4], ",")[[1]]
+outdir <- argv[5]
 
 dir.create(outdir, showWarnings = FALSE)
 
@@ -28,6 +27,9 @@ dataset <- as_tibble(expand.grid(replica = 1:replica, group = 1:group) %>%
 
 tx2gene <- readRDS(tx2gene) %>%
   dplyr::select(transcript_id, gene_id)
+
+write.table(tx2gene, file = file.path(outdir, "tx2gene.tsv"), sep = "\t", row.names = FALSE)
+
 
 #### Load .quant files from Salmon  ####
 files <- sapply(dataset$sample, function(sample) {
