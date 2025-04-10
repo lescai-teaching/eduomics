@@ -11,16 +11,17 @@ library(jsonlite)
 library(clusterProfiler)
 library(Matrix)
 
-argv <- commandArgs(trailingOnly = TRUE)
-
 
 #### Input selection ####
+
+argv <- commandArgs(trailingOnly = TRUE)
+
 chromosome_of_interest <- argv[1]
 gff3 <- argv[2]
 log_file <- "subsetgff_parsing_log.txt"
 
 
-#### Parse GFF file ####
+#### Import the GFF file ####
 gff_data <- import.gff3(gff3)
 
 
@@ -46,6 +47,7 @@ cat("1) Annotation parsing\nExtracted", nrow(transcript_data),
     "protein-coding transcripts from", paste0(chromosome_of_interest),
     "\n", file = log_file, append = TRUE)
 
+
 #### RETRIEVE GO ANNOTATIONS USING org.Hs.eg.db ####
 
 # Use gene names as keys (SYMBOL) to retrieve GO annotations.
@@ -65,11 +67,11 @@ cat("\n2) Number of Gene Ontologies\nRetrieved", nrow(go_annotations),
 
 #### CREATE TRANSCRIPT-TO-GO MAPPING ####
 
-# Merge transcript data with GO annotations using gene_name.
+# Merge transcript data with GO annotations using gene_name
 transcript_go <- transcript_data %>%
 inner_join(go_annotations, by = c("gene_name" = "SYMBOL"))
 
-# Build a list mapping each transcript to its set of GO terms.
+# Build a list mapping each transcript to its set of GO terms
 transcript_go_list <- split(transcript_go$GOALL, transcript_go$transcript_id)
 transcript_go_list <- transcript_go_list[sapply(transcript_go_list, length) > 0]
 
@@ -115,7 +117,7 @@ diag(jaccard_matrix) <- NA
 similarity_threshold <- 0.3  # Adjust as needed
 idx <- which(jaccard_matrix >= similarity_threshold & upper.tri(jaccard_matrix), arr.ind = TRUE)
 
-# Create an edge list from these indices.
+# Create an edge list from these indices
 edges <- data.frame(
 transcript1 = rownames(jaccard_matrix)[idx[, 1]],
 transcript2 = colnames(jaccard_matrix)[idx[, 2]],
@@ -123,12 +125,12 @@ weight = jaccard_matrix[idx],
 stringsAsFactors = FALSE
 )
 
+# Build an undirected, weighted graph of transcripts.
+g <- graph_from_data_frame(d = edges, directed = FALSE, vertices = transcript_ids)
+
 cat("\n3) Number of edges\nConstructed an edge list with",
     nrow(edges), "edges based on vectorised GO similarity",
     "\n", file = log_file, append = TRUE)
-
-# Build an undirected, weighted graph of transcripts.
-g <- graph_from_data_frame(d = edges, directed = FALSE, vertices = transcript_ids)
 
 
 #### GRAPH-BASED CLUSTERING (LOUVAIN ALGORITHM) ####
@@ -155,6 +157,7 @@ percent_de_genes <- 0.1
 # now left join with the original transcript_data tibble and filter out genes with NA in the membership column
 transcript_data <- transcript_data %>%
 left_join(membership_tb, by = "transcript_id")
+
 
 #### PHENOTYPE DATA FROM MONARCH ####
 
@@ -197,7 +200,6 @@ mutate(
     phenotype_description = map_chr(phenotypes, ~ .x[2])
 ) %>%
 dplyr::select(-phenotypes)
-
 
 # Tidy the data before enrichment
 transcript_data_pheno_filt <- transcript_data_pheno %>%
@@ -245,13 +247,10 @@ res <- enrichGO(
 return(res)
 }
 
-
 # Initialise an empty list to store significant results (both positive and negative)
 significant_results <- list()
 
-# Write the title "5) GO enrichment" to the log file
 write("\n5) GO enrichment", file = log_file, append = TRUE)
-
 for (i in 1:nrow(gene_lists)) {
 sig_genes <- gene_lists$unique_genes[[i]]  # Extract the unique genes for the group
 universe <- unique(transcript_data$gene_name)  # Define the universe
@@ -284,18 +283,13 @@ if (length(enriched_categories) > 0) {
 write(msg, file = log_file, append = TRUE)
 }
 
-message("Log file updated: ", log_file)
-
 
 ##### Extract final gene lists ####
 
 # Initialise an empty list to store valid gene lists
 valid_gene_lists <- list()
 
-# Write the title "5) Valid gene sets" to the log file and print it to the console
 write("\n6) Valid gene sets", file = log_file, append = TRUE)
-
-# Loop through the significant results
 for (i in 1:length(significant_results)) {
 
 # Create a variable to store enriched categories for the current gene list

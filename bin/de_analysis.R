@@ -20,7 +20,7 @@ outdir <- argv[5]
 dir.create(outdir, showWarnings = FALSE)
 
 
-#### Creation of input files ####
+#### Load the input files ####
 group_labels <- c("control", "case")
 dataset <- as_tibble(expand.grid(replica = 1:replica, group = 1:group) %>%
                        mutate(sample = paste0("sample_0", row_number()),
