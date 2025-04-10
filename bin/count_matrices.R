@@ -1,13 +1,14 @@
 #!/usr/bin/env Rscript
 
-#### Load the library ####
+#### Load the libraries ####
 library(tidyverse)
 library(Biostrings)
 
-argv <- commandArgs(trailingOnly = TRUE)
-
 
 #### Input selection ####
+
+argv <- commandArgs(trailingOnly = TRUE)
+
 meta_id <- argv[1]
 coverage <- as.numeric(argv[2])
 replica <- as.numeric(argv[3])
@@ -17,23 +18,21 @@ gff3 <- argv[6]
 geneList <- argv[7]
 
 
-#### Load the input file ####
+#### Load the input files ####
 fasta_annotated = readDNAStringSet(fasta)
 annotation_data = readRDS(gff3)
 geneList = readRDS(geneList)
 
 
+#### BASE COUNT MATRIX ####
+
 # coverage ----> reads per transcript = transcriptlength/readlength * coverage
 # here all transcripts will have ~equal FPKM
 readspertx = round(coverage * width(fasta_annotated) / 100)
-
 if(any(readspertx <= 0)){ stop("Reads_per_transcript contains zero or negative values") }
 
-
-### BASE COUNT MATRIX
 num_timepoints = replica * group
 countmat = matrix(readspertx, nrow=length(fasta_annotated), ncol=num_timepoints)
-
 
 ### Create a list of possible fold changes
 ### cannot put fold changes too low in negative ==> risk to create negative read counts
@@ -42,6 +41,8 @@ up_changes <- c(4, 6, 8, 10, 14)
 down_changes <- c(0.20, 0.40, 0.60, 0.80, 0.90)
 varchange <- c(1, 1.2, 1.5, 2, 0.9, 0.8, 0.6)
 
+
+#### Functions to create the expected outputs ####
 
 introduce_var <- function(countmatrix, varget, replica, group){
   base = countmatrix

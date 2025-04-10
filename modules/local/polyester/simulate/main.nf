@@ -27,6 +27,7 @@ process POLYESTER_SIMULATE {
     def repsList = (1..groups).collect { "${reps}" }.join(',')
     def numRepsString = "num_reps=c(${repsList})"
     def readData = countmatrix ? "countmat = readRDS('${countmatrix}')" : "fold_changes = readRDS('${foldchange}')"
+    def readsPerTxFactor = meta.coverage ?: 30
     def simulation_function = countmatrix ?
         "simulate_experiment_countmat('${txfasta}', readmat=countmat, outdir='simulated_reads')" :
         "simulate_experiment('${txfasta}', reads_per_transcript=readspertx, ${numRepsString}, fold_changes=fold_changes, outdir='simulated_reads')"
@@ -40,7 +41,7 @@ process POLYESTER_SIMULATE {
 
     # Load the fasta
     fasta <- readDNAStringSet("${txfasta}")
-    readspertx = round(30 * width(fasta) / 100)
+    readspertx = round(${readsPerTxFactor} * width(fasta) / 100)
 
     # Load the count matrix or fold changes
     ${readData}

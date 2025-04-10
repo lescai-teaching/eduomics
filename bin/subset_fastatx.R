@@ -5,16 +5,18 @@ library(rtracklayer)
 library(tidyverse)
 library(Biostrings)
 
-argv <- commandArgs(trailingOnly = TRUE)
 
 #### Input selection ####
+
+argv <- commandArgs(trailingOnly = TRUE)
+
 chromosome_of_interest <- argv[1]
 fasta <- argv[2]
 gff3 <- argv[3]
 log_file <- "subsetfastatx_parsing_log.txt"
 
 
-#### Parse GFF file ####
+#### Import the GFF file ####
 gff_data <- import.gff3(gff3)
 
 
@@ -24,7 +26,7 @@ gff_data <- import.gff3(gff3)
 selected_transcripts <- gff_data[gff_data$type == "transcript" & seqnames(gff_data) == chromosome_of_interest]
 length(unique(selected_transcripts$transcript_id))
 
-# Convert to tibble and filter for protein-coding transcripts; select relevant columns.
+# Convert to tibble and filter for protein-coding transcripts; select relevant columns
 transcript_data <- as_tibble(as.data.frame(selected_transcripts)) %>%
 filter(gene_type == "protein_coding") %>%
 dplyr::select(transcript_id, gene_id, gene_name, gene_type)

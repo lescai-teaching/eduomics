@@ -49,7 +49,7 @@ process SUBSETGFF {
     """
     touch valid_gene_lists.rds
     touch transcript_data.rds
-    touch parsing_log.txt
+    touch subsetgff_parsing_log.txt
 
     cat <<-END_VERSIONS > versions.yml
     "${task.process}":
