@@ -59,7 +59,7 @@ go_annotations <- subset(go_annotations, !is.na(ONTOLOGYALL))
 go_annotations <- unique(go_annotations[, c("SYMBOL", "GOALL", "ONTOLOGYALL")])
 
 cat("\n2) Number of Gene Ontologies\nRetrieved", nrow(go_annotations),
-    "unique GO annotations (ALL) for", length(unique_genes),
+    "unique GO annotations (ALL) for", length(unique_genes), "genes",
     "\n", file = log_file, append = TRUE)
 
 
@@ -124,7 +124,7 @@ stringsAsFactors = FALSE
 )
 
 cat("\n3) Number of edges\nConstructed an edge list with",
-    nrow(edges), "edges based on vectorised GO similarity\n",
+    nrow(edges), "edges based on vectorised GO similarity",
     "\n", file = log_file, append = TRUE)
 
 # Build an undirected, weighted graph of transcripts.
@@ -225,6 +225,10 @@ mutate(
     gene_list = paste0("list", row_number())
 )
 
+cat("\n4) Number of Gene Lists\nRetrieved", nrow(gene_lists),
+    "gene lists from", paste0(chromosome_of_interest),
+    "\n", file = log_file, append = TRUE)
+
 
 # EnrichGO function
 executeGO <- function(sig_genes, universe, ontology) {
@@ -245,8 +249,8 @@ return(res)
 # Initialise an empty list to store significant results (both positive and negative)
 significant_results <- list()
 
-# Write the title "4) GO enrichment" to the log file
-write("4) GO enrichment", file = log_file, append = TRUE)
+# Write the title "5) GO enrichment" to the log file
+write("\n5) GO enrichment", file = log_file, append = TRUE)
 
 for (i in 1:nrow(gene_lists)) {
 sig_genes <- gene_lists$unique_genes[[i]]  # Extract the unique genes for the group
@@ -289,7 +293,7 @@ message("Log file updated: ", log_file)
 valid_gene_lists <- list()
 
 # Write the title "5) Valid gene sets" to the log file and print it to the console
-write("\n5) Valid gene sets", file = log_file, append = TRUE)
+write("\n6) Valid gene sets", file = log_file, append = TRUE)
 
 # Loop through the significant results
 for (i in 1:length(significant_results)) {
