@@ -3,6 +3,7 @@ library(tidyverse)
 library(clusterProfiler)
 library(org.Hs.eg.db)
 
+
 #### Input selection ####
 
 argv <- commandArgs(trailingOnly = TRUE)
@@ -18,12 +19,13 @@ tx2gene = read_tsv(deseq2_tx2gene) %>%
 # Extract significant genes
 sig_genes <- resdata$gene[which(resdata$padj < 0.05)]
 
+
 #### Enrich GO analysis #####
 
 ontologies <- c("BP", "MF", "CC")
 enrichment_results <- list()
 
-#### Enrich GO loop ####
+# Enrich GO loop
 for (ont in ontologies) {
   ego <- tryCatch(
     enrichGO(
