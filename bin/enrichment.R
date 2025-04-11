@@ -10,9 +10,6 @@ argv <- commandArgs(trailingOnly = TRUE)
 
 deseq2_resdata <- argv[1]
 deseq2_tx2gene <- argv[2]
-outdir <- argv[3]
-
-dir.create(outdir, showWarnings = FALSE)
 
 
 # Read the input files
@@ -51,7 +48,7 @@ for (ont in ontologies) {
     # Dotplot for each ontology
     tryCatch(
       {
-        file_name <- file.path(outdir, paste0("dotplot_", ont, ".png"))
+        file_name <- paste0("dotplot_", ont, ".png")
         png(file_name)
         print(dotplot(ego, showCategory = 10))
         dev.off()
@@ -62,7 +59,7 @@ for (ont in ontologies) {
     # Cnetplot for each ontology
     tryCatch(
       {
-        file_name <- file.path(outdir, paste0("cnetplot_", ont, ".png"))
+        file_name <- paste0("cnetplot_", ont, ".png")
         png(file_name)
         print(cnetplot(ego, foldChange = resdata$log2FoldChange[which(resdata$padj < 0.05)]))
         dev.off()
@@ -73,4 +70,4 @@ for (ont in ontologies) {
 }
 
 # Save the enrichment results
-saveRDS(enrichment_results, file = file.path(outdir, "enrichment_results.rds"))
+saveRDS(enrichment_results, file = "enrichment_results.rds")

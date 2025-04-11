@@ -17,7 +17,10 @@ nextflow_process {
                     [id: 'simtest', chromosome: 'chr22', genes: 'A, B, C', reps: 3, groups: 2], // meta map
                     file('https://raw.githubusercontent.com/LorenzoS96/eduomics_testdata-dev/refs/heads/main/rnaseq/deanalysis/resdata.rds', checkIfExists: true)
                 ]
-                input[1] = file('https://raw.githubusercontent.com/LorenzoS96/eduomics_testdata-dev/refs/heads/main/rnaseq/deanalysis/tx2gene.tsv', checkIfExists: true)
+                input[1] = [
+                    [id: 'simtest', chromosome: 'chr22', genes: 'A, B, C', reps: 3, groups: 2], // meta map
+                    file('https://raw.githubusercontent.com/LorenzoS96/eduomics_testdata-dev/refs/heads/main/rnaseq/deanalysis/tx2gene.tsv', checkIfExists: true)
+                ]
                 """
             }
         }
@@ -25,18 +28,9 @@ nextflow_process {
         then {
             assertAll(
                 { assert process.success },
-                {
-                    def outputDir = new File(process.out.results.get(0)[1].toString())
-
-                    // Check that the enrichment_results.rds file always exists
-                    assert new File(outputDir, 'enrichment_results.rds').exists()
-
-                    // Check for the existence of potential plot files
-                    ['BP', 'MF', 'CC'].each { ont ->
-                        assert new File(outputDir, "dotplot_${ont}.png").exists() || !new File(outputDir, "dotplot_${ont}.png").exists()
-                        assert new File(outputDir, "cnetplot_${ont}.png").exists() || !new File(outputDir, "cnetplot_${ont}.png").exists()
-                    }
-                },
+                { assert process.out.dotplot },
+                { assert process.out.cnetplot },
+                { assert process.out.enrichment_results },
                 { assert process.out.versions }
             )
         }
@@ -53,7 +47,10 @@ nextflow_process {
                     [id: 'simtest', chromosome: 'chr22', genes: 'A, B, C', reps: 3, groups: 2], // meta map
                     file('https://raw.githubusercontent.com/LorenzoS96/eduomics_testdata-dev/refs/heads/main/rnaseq/deanalysis/resdata.rds', checkIfExists: true)
                 ]
-                input[1] = file('https://raw.githubusercontent.com/LorenzoS96/eduomics_testdata-dev/refs/heads/main/rnaseq/deanalysis/tx2gene.tsv', checkIfExists: true)
+                input[1] = [
+                    [id: 'simtest', chromosome: 'chr22', genes: 'A, B, C', reps: 3, groups: 2], // meta map
+                    file('https://raw.githubusercontent.com/LorenzoS96/eduomics_testdata-dev/refs/heads/main/rnaseq/deanalysis/tx2gene.tsv', checkIfExists: true)
+                ]
                 """
             }
         }
@@ -61,18 +58,9 @@ nextflow_process {
         then {
             assertAll(
                 { assert process.success },
-                {
-                    def outputDir = new File(process.out.results.get(0)[1].toString())
-
-                    // Check that the enrichment_results.rds file exists
-                    assert new File(outputDir, 'enrichment_results.rds').exists()
-
-                    // In stub mode, all potential plot files should exist
-                    ['BP', 'MF', 'CC'].each { ont ->
-                        assert new File(outputDir, "dotplot_${ont}.png").exists()
-                        assert new File(outputDir, "cnetplot_${ont}.png").exists()
-                    }
-                },
+                { assert process.out.dotplot },
+                { assert process.out.cnetplot },
+                { assert process.out.enrichment_results },
                 { assert process.out.versions }
             )
         }

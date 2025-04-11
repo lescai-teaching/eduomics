@@ -1,17 +1,17 @@
-name: ENRICHMENT
-description: Performs enrichment analysis on DE genes
+name: "enrichment"
+description: performs enrichment analysis on DE genes
 keywords:
   - enrichment
   - gene ontology
   - pathway analysis
 tools:
   - tidyverse:
-      description: "An opinionated collection of R packages designed for data science"
+      description: "A collection of R packages designed for data science"
       homepage: "https://www.tidyverse.org/"
       documentation: "https://www.tidyverse.org/packages/"
       tool_dev_url: "https://github.com/tidyverse"
       doi: "10.21105/joss.01686"
-      licence: "MIT"
+      licence: ["MIT"]
       identifier: "r-tidyverse"
   - org.Hs.eg.db:
       description: "Genome wide annotation for Human"
@@ -19,7 +19,7 @@ tools:
       documentation: "https://bioconductor.org/packages/release/data/annotation/manuals/org.Hs.eg.db/man/org.Hs.eg.db.pdf"
       tool_dev_url: "https://github.com/Bioconductor/org.Hs.eg.db"
       doi: "10.18129/B9.bioc.org.Hs.eg.db"
-      licence: "Artistic-2.0"
+      licence: ["Artistic-2.0"]
       identifier: "bioconductor-org.hs.eg.db"
   - clusterProfiler:
       description: "Statistical analysis and visualization of functional profiles for genes and gene clusters"
@@ -27,7 +27,7 @@ tools:
       documentation: "https://yulab-smu.top/biomedical-knowledge-mining-book/"
       tool_dev_url: "https://github.com/YuLab-SMU/clusterProfiler"
       doi: "10.1016/j.xinn.2021.100141"
-      licence: "Artistic-2.0"
+      licence: ["Artistic-2.0"]
       identifier: "bioconductor-clusterprofiler"
 input:
   - - meta:
@@ -37,26 +37,52 @@ input:
           e.g. `[ id: 'simulation_id', chromosome: 'chr_number', genes: 'A, B, C', reps: 3, groups: 2 ]`
     - resdata:
         type: file
-        description: RDS file containing the DESeq2 for the genes of the simulated chromosome
+        description: RDS file containing the DESeq2 results for the genes from the selected chromosome
         pattern: "resdata.rds"
-  - - tx2gene:
+    - - meta2:
+        type: map
+        description: |
+          Groovy Map containing sample information
+          e.g. `[ id: 'simulation_id', chromosome: 'chr_number', genes: 'A, B, C', reps: 3, groups: 2 ]`
+      - tx2gene:
         type: file
         description: File mapping transcripts to genes
         pattern: "tx2gene.tsv"
 output:
-  - meta:
-      type: map
-      description: |
-        Groovy Map containing sample information
-        e.g. `[ id: 'simulation_id', chromosome: 'chr_number', genes: 'A, B, C', reps: 3, groups: 2 ]`
-  - results:
-      type: directory
-      description: Directory containing enrichment analysis results
-      pattern: "${prefix}_enrichment_results"
+  - dotplot:
+      - meta:
+          type: map
+          description: |
+            Groovy Map containing sample information
+            e.g. `[ id: 'simulation_id', chromosome: 'chr_number', genes: 'A, B, C', reps: 3, groups: 2 ]`
+      - "dotplot_*.png":
+          type: file
+          description: Dotplot of enriched GO terms
+          pattern: "dotplot_{BP,MF,CC}.png"
+  - cnetplot:
+      - meta:
+          type: map
+          description: |
+            Groovy Map containing sample information
+            e.g. `[ id: 'simulation_id', chromosome: 'chr_number', genes: 'A, B, C', reps: 3, groups: 2 ]`
+      - "cnetplot_*.png":
+          type: file
+          description: Cnetplot of enriched GO terms
+          pattern: "cnetplot_{BP,MF,CC}.png"
+  - enrichment_results:
+      - meta:
+          type: map
+          description: |
+            Groovy Map containing sample information
+            e.g. `[ id: 'simulation_id', chromosome: 'chr_number', genes: 'A, B, C', reps: 3, groups: 2 ]`
+      - "enrichment_results.rds":
+          type: file
+          description: RDS file containing enrichment results
+          pattern: "enrichment_results.rds"
   - versions:
-      type: file
-      description: File containing software versions
-      pattern: "versions.yml"
-
+      - versions.yml:
+          type: file
+          description: File containing software versions
+          pattern: "versions.yml"
 authors:
   - "LorenzoS96"
