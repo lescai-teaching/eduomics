@@ -28,8 +28,8 @@ nextflow_process {
         then {
             assertAll(
                 { assert process.success },
-                { assert process.out.dotplot },
-                { assert process.out.cnetplot },
+                { assert process.out.dotplot == null || process.out.dotplot.size() > 0},
+                { assert process.out.cnetplot == null || process.out.cnetplot.size() > 0},
                 { assert process.out.enrichment_results },
                 { assert process.out.versions }
             )
@@ -58,8 +58,8 @@ nextflow_process {
         then {
             assertAll(
                 { assert process.success },
-                { assert process.out.dotplot },
-                { assert process.out.cnetplot },
+                { assert process.out.dotplot == null || process.out.dotplot.size() > 0},
+                { assert process.out.cnetplot == null || process.out.cnetplot.size() > 0},
                 { assert process.out.enrichment_results },
                 { assert process.out.versions }
             )

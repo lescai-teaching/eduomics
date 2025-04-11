@@ -39,36 +39,76 @@ input:
         type: file
         description: RDS file containing the DESeq2 results for the genes from the selected chromosome
         pattern: "resdata.rds"
-    - - meta2:
+  - - meta2:
         type: map
         description: |
           Groovy Map containing sample information
           e.g. `[ id: 'simulation_id', chromosome: 'chr_number', genes: 'A, B, C', reps: 3, groups: 2 ]`
-      - tx2gene:
+    - tx2gene:
         type: file
         description: File mapping transcripts to genes
         pattern: "tx2gene.tsv"
 output:
-  - dotplot:
+  - dotplot_BP:
       - meta:
           type: map
           description: |
             Groovy Map containing sample information
             e.g. `[ id: 'simulation_id', chromosome: 'chr_number', genes: 'A, B, C', reps: 3, groups: 2 ]`
-      - "dotplot_*.png":
+      - "dotplot_BP.png":
           type: file
-          description: Dotplot of enriched GO terms
-          pattern: "dotplot_{BP,MF,CC}.png"
-  - cnetplot:
+          description: Optional, dotplot of enriched biological processes
+          pattern: "dotplot_BP.png"
+  - dotplot_MF:
       - meta:
           type: map
           description: |
             Groovy Map containing sample information
             e.g. `[ id: 'simulation_id', chromosome: 'chr_number', genes: 'A, B, C', reps: 3, groups: 2 ]`
-      - "cnetplot_*.png":
+      - "dotplot_MF.png":
           type: file
-          description: Cnetplot of enriched GO terms
-          pattern: "cnetplot_{BP,MF,CC}.png"
+          description: Optional, dotplot of enriched molecolar functions
+          pattern: "dotplot_MF.png"
+  - dotplot_CC:
+      - meta:
+          type: map
+          description: |
+            Groovy Map containing sample information
+            e.g. `[ id: 'simulation_id', chromosome: 'chr_number', genes: 'A, B, C', reps: 3, groups: 2 ]`
+      - "dotplot_CC.png":
+          type: file
+          description: Optional, dotplot of enriched cellular components
+          pattern: "dotplot_CC.png"
+  - cnetplot_BP:
+      - meta:
+          type: map
+          description: |
+            Groovy Map containing sample information
+            e.g. `[ id: 'simulation_id', chromosome: 'chr_number', genes: 'A, B, C', reps: 3, groups: 2 ]`
+      - "cnetplot_BP.png":
+          type: file
+          description: Optional, cnetplot of enriched biological processes
+          pattern: "cnetplot_BP.png"
+  - cnetplot_MF:
+      - meta:
+          type: map
+          description: |
+            Groovy Map containing sample information
+            e.g. `[ id: 'simulation_id', chromosome: 'chr_number', genes: 'A, B, C', reps: 3, groups: 2 ]`
+      - "cnetplot_MF.png":
+          type: file
+          description: Optional, cnetplot of enriched molecular functions
+          pattern: "cnetplot_MF.png"
+  - cnetplot_CC:
+      - meta:
+          type: map
+          description: |
+            Groovy Map containing sample information
+            e.g. `[ id: 'simulation_id', chromosome: 'chr_number', genes: 'A, B, C', reps: 3, groups: 2 ]`
+      - "cnetplot_CC.png":
+          type: file
+          description: Optional, cnetplot of enriched cellular components
+          pattern: "cnetplot_CC.png"
   - enrichment_results:
       - meta:
           type: map

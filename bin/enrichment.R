@@ -3,14 +3,12 @@ library(tidyverse)
 library(clusterProfiler)
 library(org.Hs.eg.db)
 
-
 #### Input selection ####
 
 argv <- commandArgs(trailingOnly = TRUE)
 
 deseq2_resdata <- argv[1]
 deseq2_tx2gene <- argv[2]
-
 
 # Read the input files
 resdata = readRDS(deseq2_resdata)
@@ -19,7 +17,6 @@ tx2gene = read_tsv(deseq2_tx2gene) %>%
 
 # Extract significant genes
 sig_genes <- resdata$gene[which(resdata$padj < 0.05)]
-
 
 #### Enrich GO analysis #####
 
@@ -41,9 +38,9 @@ for (ont in ontologies) {
     error = function(e) NULL
   )
 
-  if (!is.null(ego) && any(ego@result$p.adjust < 0.05, na.rm = TRUE)) {
-    ego@result <- ego@result[ego@result$p.adjust < 0.05, , drop = FALSE]
-    enrichment_results[[ont]] <- ego
+  enrichment_results[[ont]] <- ego
+
+  if (!is.null(ego) && dim(ego)[1] > 3) {
 
     # Dotplot for each ontology
     tryCatch(

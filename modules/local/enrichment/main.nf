@@ -12,10 +12,14 @@ process ENRICHMENT {
     tuple val(meta2), path(tx2gene)
 
     output:
-    tuple val(meta), path("dotplot_*.png")            , optional: true, emit: dotplot
-    tuple val(meta), path("cnetplot_*.png")           , optional: true, emit: cnetplot
-    tuple val(meta), path("enrichment_results.rds")   , emit: enrichment_results
-    path "versions.yml"                               , emit: versions
+    tuple val(meta), path("dotplot_BP.png")            , optional: true, emit: dotplot_BP
+    tuple val(meta), path("dotplot_MF.png")            , optional: true, emit: dotplot_MF
+    tuple val(meta), path("dotplot_CC.png")            , optional: true, emit: dotplot_CC
+    tuple val(meta), path("cnetplot_BP.png")           , optional: true, emit: cnetplot_BP
+    tuple val(meta), path("cnetplot_MF.png")           , optional: true, emit: cnetplot_MF
+    tuple val(meta), path("cnetplot_CC.png")           , optional: true, emit: cnetplot_CC
+    tuple val(meta), path("enrichment_results.rds")    , emit: enrichment_results
+    path "versions.yml"                                , emit: versions
 
     when:
     task.ext.when == null || task.ext.when
