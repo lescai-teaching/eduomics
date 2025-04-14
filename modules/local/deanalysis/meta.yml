@@ -14,6 +14,30 @@ tools:
       doi: "10.1186/s13059-014-0550-8"
       licence: ["LGPL >=3"]
       identifier: "biotools:deseq2"
+  - tximport:
+      description: "Import and summarize transcript-level estimates for gene-level analysis"
+      homepage: "https://bioconductor.org/packages/release/bioc/html/tximport.html"
+      documentation: "https://bioconductor.org/packages/release/bioc/vignettes/tximport/inst/doc/tximport.html"
+      tool_dev_url: "https://github.com/mikelove/tximport"
+      doi: "10.12688/f1000research.7563.2"
+      licence: ["GPL-3"]
+      identifier: "bioconductor-tximport"
+  - tidyverse:
+      description: "A collection of R packages designed for data science"
+      homepage: "https://www.tidyverse.org/"
+      documentation: "https://www.tidyverse.org/packages/"
+      tool_dev_url: "https://github.com/tidyverse"
+      doi: "10.21105/joss.01686"
+      licence: ["MIT"]
+      identifier: "r-tidyverse"
+  - pheatmap:
+      description: "A package to generate heatmaps for data visualization"
+      homepage: "https://cran.r-project.org/package=pheatmap"
+      documentation: "https://cran.r-project.org/web/packages/pheatmap/pheatmap.pdf"
+      tool_dev_url: "https://github.com/raivokolde/pheatmap"
+      doi: "10.32614/CRAN.package.pheatmap"
+      licence: ["GPL-2"]
+      identifier: "r-pheatmap"
 input:
   - - meta:
         type: map
