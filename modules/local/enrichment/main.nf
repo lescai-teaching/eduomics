@@ -1,0 +1,62 @@
+process ENRICHMENT {
+    tag "$meta.id"
+    label 'process_single'
+
+    conda "${moduleDir}/environment.yml"
+    container "${ workflow.containerEngine == 'singularity' && !task.ext.singularity_pull_docker_container ?
+        'oras://community.wave.seqera.io/library/bioconductor-clusterprofiler_bioconductor-org.hs.eg.db_r-tidyverse:d8812438cb8ebb59':
+        'community.wave.seqera.io/library/bioconductor-clusterprofiler_bioconductor-org.hs.eg.db_r-tidyverse:2a42661ad4d31ae0' }"
+
+    input:
+    tuple val(meta),  path(resdata)
+    tuple val(meta2), path(tx2gene)
+
+    output:
+    tuple val(meta), path("dotplot_BP.png")            , optional: true, emit: dotplot_BP
+    tuple val(meta), path("dotplot_MF.png")            , optional: true, emit: dotplot_MF
+    tuple val(meta), path("dotplot_CC.png")            , optional: true, emit: dotplot_CC
+    tuple val(meta), path("cnetplot_BP.png")           , optional: true, emit: cnetplot_BP
+    tuple val(meta), path("cnetplot_MF.png")           , optional: true, emit: cnetplot_MF
+    tuple val(meta), path("cnetplot_CC.png")           , optional: true, emit: cnetplot_CC
+    tuple val(meta), path("enrichment_results.rds")    , emit: enrichment_results
+    path "versions.yml"                                , emit: versions
+
+    when:
+    task.ext.when == null || task.ext.when
+
+    script:
+    def args = task.ext.args ?: ''
+    def prefix = task.ext.prefix ?: "${meta.id}"
+
+    """
+    Rscript ${baseDir}/bin/enrichment.R \\
+        '${resdata}' \\
+        '${tx2gene}'
+
+    cat <<-END_VERSIONS > versions.yml
+    "${task.process}":
+        bioconductor-tximport: \$(Rscript -e "cat(as.character(packageVersion('tximport')))")
+        bioconductor-org.hs.eg.db: \$(Rscript -e "cat(as.character(packageVersion('org.Hs.eg.db')))")
+        bioconductor-clusterprofiler: \$(Rscript -e "cat(as.character(packageVersion('clusterProfiler')))")
+    END_VERSIONS
+    """
+
+    stub:
+    def args = task.ext.args ?: ''
+    def prefix = task.ext.prefix ?: "${meta.id}"
+
+    """
+    touch enrichment_results.rds
+    for ont in BP MF CC; do
+        touch dotplot_\${ont}.png
+        touch cnetplot_\${ont}.png
+    done
+
+    cat <<-END_VERSIONS > versions.yml
+    "${task.process}":
+        bioconductor-tximport: \$(Rscript -e "cat(as.character(packageVersion('tximport')))")
+        bioconductor-org.hs.eg.db: \$(Rscript -e "cat(as.character(packageVersion('org.hs.eg.db')))")
+        bioconductor-clusterprofiler: \$(Rscript -e "cat(as.character(packageVersion('clusterProfiler')))")
+    END_VERSIONS
+    """
+}

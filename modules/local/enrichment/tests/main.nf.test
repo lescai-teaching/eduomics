@@ -1,0 +1,68 @@
+nextflow_process {
+
+    name "Test Process ENRICHMENT"
+    script "../main.nf"
+    process "ENRICHMENT"
+
+    tag "modules"
+    tag "modules_"
+    tag "enrichment"
+
+    test("enrichment - run") {
+
+        when {
+            process {
+                """
+                input[0] = [
+                    [id: 'simtest', chromosome: 'chr22', genes: 'A, B, C', reps: 3, groups: 2], // meta map
+                    file('https://raw.githubusercontent.com/LorenzoS96/eduomics_testdata-dev/refs/heads/main/rnaseq/deanalysis/resdata.rds', checkIfExists: true)
+                ]
+                input[1] = [
+                    [id: 'simtest', chromosome: 'chr22', genes: 'A, B, C', reps: 3, groups: 2], // meta map
+                    file('https://raw.githubusercontent.com/LorenzoS96/eduomics_testdata-dev/refs/heads/main/rnaseq/deanalysis/tx2gene.tsv', checkIfExists: true)
+                ]
+                """
+            }
+        }
+
+        then {
+            assertAll(
+                { assert process.success },
+                { assert process.out.dotplot == null || process.out.dotplot.size() > 0},
+                { assert process.out.cnetplot == null || process.out.cnetplot.size() > 0},
+                { assert process.out.enrichment_results },
+                { assert process.out.versions }
+            )
+        }
+    }
+
+    test("enrichment - stub") {
+
+        options "-stub"
+
+        when {
+            process {
+                """
+                input[0] = [
+                    [id: 'simtest', chromosome: 'chr22', genes: 'A, B, C', reps: 3, groups: 2], // meta map
+                    file('https://raw.githubusercontent.com/LorenzoS96/eduomics_testdata-dev/refs/heads/main/rnaseq/deanalysis/resdata.rds', checkIfExists: true)
+                ]
+                input[1] = [
+                    [id: 'simtest', chromosome: 'chr22', genes: 'A, B, C', reps: 3, groups: 2], // meta map
+                    file('https://raw.githubusercontent.com/LorenzoS96/eduomics_testdata-dev/refs/heads/main/rnaseq/deanalysis/tx2gene.tsv', checkIfExists: true)
+                ]
+                """
+            }
+        }
+
+        then {
+            assertAll(
+                { assert process.success },
+                { assert process.out.dotplot == null || process.out.dotplot.size() > 0},
+                { assert process.out.cnetplot == null || process.out.cnetplot.size() > 0},
+                { assert process.out.enrichment_results },
+                { assert process.out.versions }
+            )
+        }
+    }
+}

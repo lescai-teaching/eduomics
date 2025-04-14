@@ -27,7 +27,14 @@ process COUNTMATRICES {
     def prefix = task.ext.prefix ?: "${meta.id}"
 
     """
-    Rscript ${baseDir}/bin/count_matrices.R ${prefix} ${meta.coverage} ${meta.reps} ${meta.groups} ${txfasta} ${gff3} ${geneList}
+    Rscript ${baseDir}/bin/count_matrices.R \\
+        '${prefix}' \\
+        '${meta.coverage}' \\
+        '${meta.reps}' \\
+        '${meta.groups}' \\
+        '${txfasta}' \\
+        '${gff3}' \\
+        '${geneList}'
 
     cat <<-END_VERSIONS > versions.yml
     "${task.process}":
