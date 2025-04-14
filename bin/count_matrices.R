@@ -9,13 +9,12 @@ library(Biostrings)
 
 argv <- commandArgs(trailingOnly = TRUE)
 
-meta_id <- argv[1]
-coverage <- as.numeric(argv[2])
-replica <- as.numeric(argv[3])
-group <- as.numeric(argv[4])
-fasta <- argv[5]
-gff3 <- argv[6]
-geneList <- argv[7]
+coverage <- as.numeric(argv[1])
+replica <- as.numeric(argv[2])
+group <- as.numeric(argv[3])
+fasta <- argv[4]
+gff3 <- argv[5]
+geneList <- argv[6]
 
 
 #### Load the input files ####
@@ -63,7 +62,7 @@ introduce_fold_change <- function(countmatrix, index_tx, fold_changes, replica, 
   return(countmatrix)
 }
 
-createCountMatrices <- function(meta_id, basematrix, variancechange, up_changes,
+createCountMatrices <- function(basematrix, variancechange, up_changes,
                                 down_changes, genesSelectionList, annotationData,
                                 replica, group) {
   countMatrices = list()
@@ -89,9 +88,8 @@ createCountMatrices <- function(meta_id, basematrix, variancechange, up_changes,
     simulationAnnotation$expMeanCTRL <- rowMeans(simulationMatrix[index_in_simulationMatrix, control_indices])
     simulationAnnotation$expLog2FC <- log2(simulationAnnotation$expMeanCASE) - log2(simulationAnnotation$expMeanCTRL)
     cleanSelectionListName <- gsub(" ", "", selectionListName)
-    saveRDS(simulationMatrix, paste0(meta_id, "_countMatrix_", cleanSelectionListName, ".rds"))
-    saveRDS(simulationAnnotation, paste0(meta_id, "_expected_", cleanSelectionListName, ".rds"))
-    write_tsv(simulationAnnotation, paste0(meta_id, "_expected_", cleanSelectionListName, ".tsv"))
+    saveRDS(simulationMatrix, paste0("countMatrix_", cleanSelectionListName, ".rds"))
+    saveRDS(simulationAnnotation, paste0("expected_", cleanSelectionListName, ".rds"))
     countMatrices[[selectionListName]] <- simulationMatrix
     write(selectionListName, file="datasets_simulated.txt", append=TRUE)
   }
@@ -100,5 +98,5 @@ createCountMatrices <- function(meta_id, basematrix, variancechange, up_changes,
 }
 
 
-all_simulated_counts <- createCountMatrices(meta_id, countmat, varchange, up_changes,
-                                            down_changes, geneList, annotation_data, replica, group)
+all_simulated_counts <- createCountMatrices(countmat, varchange, up_changes, down_changes,
+                                            geneList, annotation_data, replica, group)
