@@ -16,7 +16,7 @@ nextflow_process {
             process {
                 """
 
-                input[0] = [ id:'test', chromosome:'chr22' ]
+                input[0] = [ id:'test', chromosome:'chr22', simthreshold: '0.3' ]
                 input[1] = file('https://raw.githubusercontent.com/lescai-teaching/eduomics_testdata/refs/heads/main/rnaseq/subsetfastatx/gencode_chr21_chr22_v47.gff3', checkIfExists: true)
 
                 """
@@ -42,7 +42,7 @@ nextflow_process {
             process {
                 """
 
-                input[0] = [ id:'test', chromosome:'chr22' ]
+                input[0] = [ id:'test', chromosome:'chr22', simthreshold: '0.3' ]
                 input[1] = file('https://raw.githubusercontent.com/lescai-teaching/eduomics_testdata/refs/heads/main/rnaseq/subsetfastatx/gencode_chr21_chr22_v47.gff3', checkIfExists: true)
 
                 """
