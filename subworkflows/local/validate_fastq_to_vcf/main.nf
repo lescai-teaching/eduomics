@@ -27,19 +27,18 @@ workflow VALIDATE_FASTQ_TO_VCF {
     //known_sites_ch // channel: [ val(meta), known_sites_vcf ], use different channels for mills and dbsnp
 
     main:
+    ch_versions = Channel.empty()
+
+
     //Alignment
-    BWA_MEM( reads_ch, bwa_index, fasta, true )
+    BWA_MEM( fastq, bwa_index, fasta, true )
     ch_versions = ch_versions.mix(BWA_MEM.out.versions.first())
 
     SAMTOOLS_INDEX(BWA_MEM.out.bam)
     ch_versions = ch_versions.mix(SAMTOOLS_INDEX.out.versions.first())
 
-// marking duplicates
-    GATK4_MARKDUPLICATES(
-        BWA_MEM.out.bam,
-        reference_ch.map{ meta, fasta, fai, dict -> [ fasta ] },
-        reference_ch.map{ meta, fasta, fai, dict -> [ fai ] }
-    )
+    // marking duplicates
+    GATK4_MARKDUPLICATES(BWA_MEM.out.bam, fasta, fai)
     ch_versions = ch_versions.mix(GATK4_MARKDUPLICATES.out.versions)
 
     INDEX_MD(GATK4_MARKDUPLICATES.out.bam)
@@ -56,12 +55,11 @@ workflow VALIDATE_FASTQ_TO_VCF {
 
     GATK4_BASERECALIBRATOR(
         bam_for_recal,
-        //reference_ch,
         fasta,
         fai,
         dict,
-        known_sites_vcf_ch.map{ meta, vcf, tbi -> [ [ id: 'known_sites' ], vcf ] },
-        known_sites_tbi_ch.map{ meta, vcf, tbi -> [ [ id: 'known_sites' ], tbi ] }
+        known_sites_vcf_ch.map{ meta, vcf, tbi -> [ [ id: 'sites' ], vcf ] },
+        known_sites_tbi_ch.map{ meta, vcf, tbi -> [ [ id: 'sites' ], tbi ] }
     )
     ch_versions = ch_versions.mix(GATK4_BASERECALIBRATOR.out.versions)
 
@@ -69,16 +67,17 @@ workflow VALIDATE_FASTQ_TO_VCF {
     bam_for_applybqsr = GATK4_MARKDUPLICATES.out.bam
         .combine(INDEX_MD.out.bai, by: 0)
         .combine(GATK4_BASERECALIBRATOR.out.table, by: 0)
-        .combine(Channel.value([[]]))
+        //.combine(Channel.value([[]]))
+        .map { meta, bam, bai, table -> [ meta, bam, bai, table, [] ] }
 
     GATK4_APPLYBQSR(
         bam_for_applybqsr,
-        //reference_ch.map{ meta, fasta, fai, dict -> [ fasta ] },
-        //reference_ch.map{ meta, fasta, fai, dict -> [ fai ] },
-        //reference_ch.map{ meta, fasta, fai, dict -> [ dict ] }
-        fasta.map{ meta, it -> [ it ] },
-        fai.map{ meta, it -> [ it ] },
-        dict.map{ meta, it -> [ it ] }
+        //fasta.map{ meta, it -> [ it ] },
+        //fai.map{ meta, it -> [ it ] },
+        //dict.map{ meta, it -> [ it ] }
+        fasta,
+        fai,
+        dict
     )
     ch_versions = ch_versions.mix(GATK4_APPLYBQSR.out.versions)
 
@@ -88,22 +87,35 @@ workflow VALIDATE_FASTQ_TO_VCF {
     // HaplotypeCaller, joint variant calling!!!
     bam_for_calling = GATK4_APPLYBQSR.out.bam
         .combine(INDEX_RECAL.out.bai, by: 0)
-        .combine(empty_intervals_ch) // check for intervals or target capture?
-        .combine(empty_models_ch)
+        //.combine(empty_intervals_ch) // check for intervals or target capture?
+        //.combine(empty_models_ch)
+        .map { meta, bam, bai -> [ meta, bam, bai, [], [] ] }
 
-    GATK4_HAPLOTYPECALLER(GATK4_APPLYBQSR.out.bam, fasta, fai, dict,  dbsnp.map{ it -> [[id:'test'], it] },dbsnp_tbi.map{ it -> [[id:'test'], it] })
+    GATK4_HAPLOTYPECALLER(
+        GATK4_APPLYBQSR.out.bam,
+        fasta,
+        fai,
+        dict,
+        dbsnp.map{ it -> [[id:'test'], it] },
+        dbsnp_tbi.map{ it -> [[id:'test'], it] })
+    ch_versions = ch_versions.mix(GATK4_HAPLOTYPECALLER.out.versions)
 
 
 
-    ch_vcf          = GATK4_HAPLOTYPECALLER.out.vcf.collect{it[1]}.toList()
-    ch_index        = GATK4_HAPLOTYPECALLER.out.tbi.collect{it[1]}.toList()
-    ch_dict_gendb   = ch_dict.map{meta, dict -> return dict}.toList()
+    //ch_vcf          = GATK4_HAPLOTYPECALLER.out.vcf.collect{it[1]}.toList()
+    //ch_index        = GATK4_HAPLOTYPECALLER.out.tbi.collect{it[1]}.toList()
+    ch_vcf = GATK4_HAPLOTYPECALLER.out.vcf.map { meta, vcf -> vcf }.collect()
+    ch_index = GATK4_HAPLOTYPECALLER.out.tbi.map { meta, tbi -> tbi }.collect()
 
-    ch_gendb_input  = Channel.of([id:genomicsdb])
+    //ch_dict_gendb   = ch_dict.map{meta, dict -> return dict}.toList()
+
+    ch_gendb_input  = Channel.value()
         .combine(ch_vcf)
         .combine(ch_index)
-        .combine(ch_gendb_intervals)
-        .combine(ch_dict_gendb)
+        .combine(target_bed)
+        //.combine(ch_dict_gendb)
+        .combine(Channel.value([]))  // empty interval_value
+        .combine(Channel.value([]))  // empty workspace
         .map{meta, vcf, tbi, interval, dict -> [meta, vcf, tbi, interval, [], dict]}
 
     GATK4_GENOMICSDBIMPORT ( ch_gendb_input, false, false, false )
@@ -112,11 +124,11 @@ workflow VALIDATE_FASTQ_TO_VCF {
 
     GATK4_GENOTYPEGVCFS(
         GATK4_GENOMICSDBIMPORT.out.genomicsdb,
-        ///reference_ch, GATK4_GENOTYPEGVCFS has 6 inputs!
-        tuple val(meta), path(input), path(gvcf_index), path(intervals), path(intervals_index)
         fasta,
         fai,
         dict,
+        //dbsnp.map{ it -> [[id:'test'], it] },
+        //dbsnp_tbi.map{ it -> [[id:'test'], it] }
         dbsnp,
         dbsnp_tbi
     )
@@ -127,5 +139,5 @@ workflow VALIDATE_FASTQ_TO_VCF {
     vcf             = GATK4_GENOTYPEGVCFS.out.vcf    // channel: [ val(meta), [ vcf ] ]
     vcf_index       = GATK4_GENOTYPEGVCFS.out.tbi    // channel: [ val(meta), [ tbi ] ]
     versions        = ch_versions                    // channel: [ versions.yml ]
-    // compare .solution and obtained gvcf --> variants and also GT, e.g. 0/0, 0|0
+    // create .solution with deleterious variant
 }
