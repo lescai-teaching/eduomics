@@ -17,7 +17,8 @@ library(Matrix)
 argv <- commandArgs(trailingOnly = TRUE)
 
 chromosome_of_interest <- argv[1]
-gff3 <- argv[2]
+simthreshold <- as.numeric(argv[2])
+gff3 <- argv[3]
 log_file <- "subsetgff_parsing_log.txt"
 
 
@@ -114,7 +115,7 @@ diag(jaccard_matrix) <- NA
 # Now, we can extract transcript pairs that meet the similarity threshold
 # We'll extract the upper triangle only (to avoid duplicates)
 # this is the parameter we set already at the beginning
-similarity_threshold <- 0.3  # Adjust as needed
+similarity_threshold <-  simthreshold
 idx <- which(jaccard_matrix >= similarity_threshold & upper.tri(jaccard_matrix), arr.ind = TRUE)
 
 # Create an edge list from these indices
@@ -161,48 +162,50 @@ left_join(membership_tb, by = "transcript_id")
 
 #### PHENOTYPE DATA FROM MONARCH ####
 
-get_phenotypes_for_gene <- function(gene_id) {
-# Ensure gene_id is in CURIE format. If missing ":", assume it's an ENSG id and prepend "ENSEMBL:"
-parse_url <- "&limit=20&offset=0"
-# Construct the query URL using the new API endpoint.
-base_url <- "https://api-v3.monarchinitiative.org/v3/api/search?q=ENSEMBL%3A"
-query_url <- paste0(base_url, gene_id, parse_url)
+# This step has been silenced because it is very time-consuming and for the first release is not necessary
 
-# Query the API.
-res <- GET(query_url)
-if (res$status_code != 200) {
-    warning("Query failed for gene: ", gene_id)
-    return(NA_character_)
-}
-
-# Parse the JSON response
-res_text <- content(res, as = "text", encoding = "UTF-8")
-json_data <- fromJSON(res_text, flatten = TRUE)
-
-# Extract the 'has_phenotype_label' from all returned docs
-phenos_description <- paste0(json_data$items$has_phenotype_label[[1]], collapse = ";")
-phenos_hpo <- paste0(json_data$items$has_phenotype[[1]], collapse = ";")
-
-if (length(phenos_description) == 0) {
-    return(NA_character_)
-}
-
-# Return unique phenotype labels
-return(c(phenos_hpo,phenos_description))
-}
-
-transcript_data_pheno <- transcript_data %>%
-rowwise() %>%
-mutate(phenotypes = list(get_phenotypes_for_gene(gene_id))) %>%
-ungroup() %>%
-mutate(
-    phenotype_hpo = map_chr(phenotypes, ~ .x[1]),
-    phenotype_description = map_chr(phenotypes, ~ .x[2])
-) %>%
-dplyr::select(-phenotypes)
+# get_phenotypes_for_gene <- function(gene_id) {
+#   # Ensure gene_id is in CURIE format. If missing ":", assume it's an ENSG id and prepend "ENSEMBL:"
+#   parse_url <- "&limit=20&offset=0"
+#   # Construct the query URL using the new API endpoint.
+#   base_url <- "https://api-v3.monarchinitiative.org/v3/api/search?q=ENSEMBL%3A"
+#   query_url <- paste0(base_url, gene_id, parse_url)
+#
+#   # Query the API.
+#   res <- GET(query_url)
+#   if (res$status_code != 200) {
+#     warning("Query failed for gene: ", gene_id)
+#     return(NA_character_)
+#   }
+#
+#   # Parse the JSON response
+#   res_text <- content(res, as = "text", encoding = "UTF-8")
+#   json_data <- fromJSON(res_text, flatten = TRUE)
+#
+#   # Extract the 'has_phenotype_label' from all returned docs
+#   phenos_description <- paste0(json_data$items$has_phenotype_label[[1]], collapse = ";")
+#   phenos_hpo <- paste0(json_data$items$has_phenotype[[1]], collapse = ";")
+#
+#   if (length(phenos_description) == 0) {
+#     return(NA_character_)
+#   }
+#
+#   # Return unique phenotype labels
+#   return(c(phenos_hpo,phenos_description))
+# }
+#
+# transcript_data_pheno <- transcript_data %>%
+#   rowwise() %>%
+#   mutate(phenotypes = list(get_phenotypes_for_gene(gene_id))) %>%
+#   ungroup() %>%
+#   mutate(
+#     phenotype_hpo = map_chr(phenotypes, ~ .x[1]),
+#     phenotype_description = map_chr(phenotypes, ~ .x[2])
+#   ) %>%
+#   dplyr::select(-phenotypes)
 
 # Tidy the data before enrichment
-transcript_data_pheno_filt <- transcript_data_pheno %>%
+transcript_data <- transcript_data %>%
 filter(!is.na(membership)) %>%
 group_by(membership) %>%
 mutate(
@@ -217,7 +220,7 @@ filter(gene_number > 3 & gene_number < (chr_genes * percent_de_genes))
 #### Enrichment with EnrichGO ####
 
 # Construct the gene list
-gene_lists <- transcript_data_pheno_filt %>%
+gene_lists <- transcript_data %>%
 group_by(membership) %>%
 summarise(
     unique_genes = list(unique(gene_name)),
@@ -323,6 +326,6 @@ if (length(enriched_categories) > 0) {
 }
 }
 
-# Save the resulting files
+# Saving files
 saveRDS(valid_gene_lists, "valid_gene_lists.rds")
-saveRDS(transcript_data_pheno, "transcript_data.rds")
+saveRDS(transcript_data, "transcript_data.rds")

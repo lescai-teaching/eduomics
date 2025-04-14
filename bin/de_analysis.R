@@ -15,9 +15,6 @@ replica <- as.numeric(argv[1])
 group <- as.numeric(argv[2])
 tx2gene <- argv[3]
 quant_dirs <- strsplit(argv[4], ",")[[1]]
-outdir <- argv[5]
-
-dir.create(outdir, showWarnings = FALSE)
 
 
 #### Load the input files ####
@@ -31,7 +28,7 @@ dataset <- as_tibble(expand.grid(replica = 1:replica, group = 1:group) %>%
 tx2gene <- readRDS(tx2gene) %>%
   dplyr::select(transcript_id, gene_id)
 
-write.table(tx2gene, file = file.path(outdir, "tx2gene.tsv"), sep = "\t", row.names = FALSE)
+write.table(tx2gene, file = "deseq2_tx2gene.tsv", sep = "\t", row.names = FALSE)
 
 
 #### Load .quant files from Salmon  ####
@@ -65,15 +62,15 @@ dds <- DESeq(dds)
 res <- results(dds)
 resOrdered <- res[order(res$pvalue),]
 
-pdf(file.path(outdir, "ma_plot.pdf"))
+pdf("deseq2_ma_plot.pdf")
 plotMA(res, ylim=c(-3,3))
 dev.off()
 
-pdf(file.path(outdir, "dispersion_plot.pdf"))
+pdf("deseq2_dispersion_plot.pdf")
 plotDispEsts(dds)
 dev.off()
 
-pdf(file.path(outdir, "count_plot.pdf"))
+pdf("deseq2_count_plot.pdf")
 plotCounts(dds, gene=which.min(res$padj), intgroup="condition")
 dev.off()
 
@@ -82,7 +79,7 @@ dev.off()
 resdata <- as_tibble(resOrdered)
 resdata$gene <- rownames(resOrdered)
 
-write_tsv(resdata, file.path(outdir, "deseq2_results.tsv"))
+write_tsv(resdata, "deseq2_results.tsv")
 
 
 #### Clustering ####
@@ -93,11 +90,11 @@ select <- order(rowMeans(counts(dds,normalized=TRUE)),
 
 df <- as.data.frame(colData(dds)[,c("condition")])
 
-pdf(file.path(outdir, "heatmap_plot.pdf"))
+pdf("deseq2_heatmap_plot.pdf")
 pheatmap(assay(ntd)[select,],
          cluster_cols=FALSE, annotation_col=df$condition)
 dev.off()
 
-pdf(file.path(outdir, "pca_plot.pdf"))
+pdf("deseq2_pca_plot.pdf")
 plotPCA(ntd, intgroup=c("condition"))
 dev.off()

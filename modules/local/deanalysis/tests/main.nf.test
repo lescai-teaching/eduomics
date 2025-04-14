@@ -102,21 +102,13 @@ nextflow_process {
         then {
             assertAll(
                 { assert process.success },
-                {
-                    def outputDir = new File(process.out.results.get(0)[1].toString())
-                    def requiredFiles = [
-                        'count_plot.pdf',
-                        'deseq2_results.tsv',
-                        'dispersion_plot.pdf',
-                        'heatmap_plot.pdf',
-                        'ma_plot.pdf',
-                        'pca_plot.pdf',
-                        'tx2gene.tsv'
-                    ]
-                    requiredFiles.each { fileName ->
-                        assert new File(outputDir, fileName).exists()
-                    }
-                },
+                { assert process.out.results },
+                { assert process.out.ma_plot },
+                { assert process.out.dispersion_plot },
+                { assert process.out.count_plot },
+                { assert process.out.heatmap_plot },
+                { assert process.out.pca_plot },
+                { assert process.out.tx2gene },
                 { assert process.out.versions }
             )
         }
@@ -142,21 +134,13 @@ nextflow_process {
         then {
             assertAll(
                 { assert process.success },
-                {
-                    def outputDir = new File(process.out.results.get(0)[1].toString())
-                    def requiredFiles = [
-                        'count_plot.pdf',
-                        'deseq2_results.tsv',
-                        'dispersion_plot.pdf',
-                        'heatmap_plot.pdf',
-                        'ma_plot.pdf',
-                        'pca_plot.pdf',
-                        'tx2gene.tsv'
-                    ]
-                    requiredFiles.each { fileName ->
-                        assert new File(outputDir, fileName).exists()
-                    }
-                },
+                { assert process.out.results },
+                { assert process.out.ma_plot },
+                { assert process.out.dispersion_plot },
+                { assert process.out.count_plot },
+                { assert process.out.heatmap_plot },
+                { assert process.out.pca_plot },
+                { assert process.out.tx2gene },
                 { assert process.out.versions }
             )
         }

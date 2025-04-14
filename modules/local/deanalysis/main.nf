@@ -1,6 +1,6 @@
 process DEANALYSIS {
     tag "$meta.id"
-    label 'process_medium'
+    label 'process_single'
 
     conda "${moduleDir}/environment.yml"
     container "${ workflow.containerEngine == 'singularity' && !task.ext.singularity_pull_docker_container ?
@@ -12,22 +12,28 @@ process DEANALYSIS {
     path tx2gene
 
     output:
-    tuple val(meta), path("${prefix}_deseq2_results"), emit: results
-    path "versions.yml"                              , emit: versions
+    tuple val(meta), path("deseq2_results.tsv")            , emit: results
+    tuple val(meta), path("deseq2_ma_plot.pdf")            , emit: ma_plot
+    tuple val(meta), path("deseq2_dispersion_plot.pdf")    , emit: dispersion_plot
+    tuple val(meta), path("deseq2_count_plot.pdf")         , emit: count_plot
+    tuple val(meta), path("deseq2_heatmap_plot.pdf")       , emit: heatmap_plot
+    tuple val(meta), path("deseq2_pca_plot.pdf")           , emit: pca_plot
+    tuple val(meta), path("deseq2_tx2gene.tsv")            , emit: tx2gene
+    path "versions.yml"                                    , emit: versions
 
     when:
     task.ext.when == null || task.ext.when
 
     script:
     def args = task.ext.args ?: ''
-    prefix = task.ext.prefix ?: "${meta.id}"
+    def prefix = task.ext.prefix ?: "${meta.id}"
+
     """
     Rscript ${baseDir}/bin/de_analysis.R \\
         '${meta.reps}' \\
         '${meta.groups}' \\
         '${tx2gene}' \\
-        '${quant_dirs.join(',')}' \\
-        '${prefix}_deseq2_results'
+        '${quant_dirs.join(',')}'
 
     cat <<-END_VERSIONS > versions.yml
     "${task.process}":
@@ -39,16 +45,16 @@ process DEANALYSIS {
     """
 
     stub:
-    prefix = task.ext.prefix ?: "${meta.id}"
+    def prefix = task.ext.prefix ?: "${meta.id}"
+
     """
-    mkdir -p ${prefix}_deseq2_results
-    touch ${prefix}_deseq2_results/deseq2_results.tsv
-    touch ${prefix}_deseq2_results/ma_plot.pdf
-    touch ${prefix}_deseq2_results/dispersion_plot.pdf
-    touch ${prefix}_deseq2_results/count_plot.pdf
-    touch ${prefix}_deseq2_results/heatmap_plot.pdf
-    touch ${prefix}_deseq2_results/pca_plot.pdf
-    touch ${prefix}_deseq2_results/tx2gene.tsv
+    touch deseq2_results.tsv
+    touch deseq2_ma_plot.pdf
+    touch deseq2_dispersion_plot.pdf
+    touch deseq2_count_plot.pdf
+    touch deseq2_heatmap_plot.pdf
+    touch deseq2_pca_plot.pdf
+    touch deseq2_tx2gene.tsv
 
     cat <<-END_VERSIONS > versions.yml
     "${task.process}":
