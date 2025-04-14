@@ -162,6 +162,8 @@ left_join(membership_tb, by = "transcript_id")
 
 #### PHENOTYPE DATA FROM MONARCH ####
 
+# This step has been silenced because it is very time-consuming and for the first release is not necessary
+
 # get_phenotypes_for_gene <- function(gene_id) {
 #   # Ensure gene_id is in CURIE format. If missing ":", assume it's an ENSG id and prepend "ENSEMBL:"
 #   parse_url <- "&limit=20&offset=0"
@@ -324,6 +326,6 @@ if (length(enriched_categories) > 0) {
 }
 }
 
-# Save the resulting files
+# Saving files
 saveRDS(valid_gene_lists, "valid_gene_lists.rds")
-saveRDS(transcript_data_pheno, "transcript_data.rds")
+saveRDS(transcript_data, "transcript_data.rds")
