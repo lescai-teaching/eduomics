@@ -1,5 +1,4 @@
----
-name: COUNTMATRICES
+name: "countmatrices"
 description: Count matrices generation for simulation of RNA-seq data
 keywords:
   - count
@@ -7,14 +6,22 @@ keywords:
   - simulation
   - rna-seq
 tools:
-  - r-tidyverse:
-      description: Collection of R packages for data science
-      homepage: https://www.tidyverse.org/
-      documentation: https://www.tidyverse.org/packages/
+  - tidyverse:
+      description: "A collection of R packages designed for data science"
+      homepage: "https://www.tidyverse.org/"
+      documentation: "https://www.tidyverse.org/packages/"
+      tool_dev_url: "https://github.com/tidyverse"
+      doi: "10.21105/joss.01686"
+      licence: ["MIT"]
+      identifier: "r-tidyverse"
   - bioconductor-biostrings:
-      description: Efficient manipulation of biological strings
-      homepage: https://bioconductor.org/packages/release/bioc/html/Biostrings.html
-      documentation: https://bioconductor.org/packages/release/bioc/vignettes/Biostrings/inst/doc/BiostringsQuickOverview.pdf
+      description: "Efficient manipulation of biological strings in R, including DNA, RNA, and amino acid sequences"
+      homepage: "https://bioconductor.org/packages/release/bioc/html/Biostrings.html"
+      documentation: "https://bioconductor.org/packages/release/bioc/vignettes/Biostrings/inst/doc/Biostrings2Classes.pdf"
+      tool_dev_url: "https://github.com/Bioconductor/Biostrings"
+      doi: "10.18129/B9.bioc.Biostrings"
+      licence: ["Artistic-2.0"]
+      identifier: "bioconductor-biostrings"
 input:
   - meta:
       type: map
@@ -26,24 +33,32 @@ input:
   - gff3:
       type: file
       description: GFF3 annotation file
-      pattern: "*.{gff3}"
+      pattern: "*.gff3"
   - geneList:
       type: file
-      description: Gene list file
+      description: Gene list file that should give an enrichment
       pattern: "*.rds"
 output:
   - simcountMatrix:
-      type: file
-      description: RDS file containing the count matrices
-      pattern: "*_countMatrix_*.rds"
+      - meta:
+          type: map
+          description: |
+            Groovy Map containing sample information
+            e.g. `[ id: 'simulation_id', chromosome: 'chr_number', genes: 'A, B, C', reps: 3, groups: 2 ]`
+      - "countmatrix_*.rds":
+          type: file
+          description: RDS file containing the count matrices
+          pattern: "countmatrix_*.rds"
   - simAnnords:
-      type: file
-      description: Gene info and expected log2 fold change in RDS format
-      pattern: "*_expected_*.rds"
-  - simAnnotsv:
-      type: file
-      description: Gene info and expected log2 fold change in TSV format
-      pattern: "*_expected_*.tsv"
+      - meta:
+          type: map
+          description: |
+            Groovy Map containing sample information
+            e.g. `[ id: 'simulation_id', chromosome: 'chr_number', genes: 'A, B, C', reps: 3, groups: 2 ]`
+      - "expected_*.rds":
+          type: file
+          description: Gene info and expected log2 fold change in RDS format
+          pattern: "expected_*.rds"
   - versions:
       type: file
       description: File containing software versions
