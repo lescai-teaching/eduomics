@@ -256,7 +256,7 @@ significant_results <- list()
 write("\n5) GO enrichment", file = log_file, append = TRUE)
 for (i in 1:nrow(gene_lists)) {
 sig_genes <- gene_lists$unique_genes[[i]]  # Extract the unique genes for the group
-universe <- unique(transcript_data$gene_name)  # Define the universe
+universe <- unique_genes                   # Define the universe
 
 # Perform enrichment for BP, MF, and CC
 ego_bp <- executeGO(sig_genes, universe, "BP")
@@ -265,9 +265,9 @@ ego_cc <- executeGO(sig_genes, universe, "CC")
 
 # Check if the results are NULL, and if so, assign "No enrichment"
 enrichment_results <- list(
-    BP = if (!is.null(ego_bp) && nrow(ego_bp) >= 3) ego_bp else "No enrichment",
-    MF = if (!is.null(ego_mf) && nrow(ego_mf) >= 3) ego_mf else "No enrichment",
-    CC = if (!is.null(ego_cc) && nrow(ego_cc) >= 3) ego_cc else "No enrichment"
+    BP = if (!is.null(ego_bp) && dim(ego_bp)[1] >= 3) ego_bp else "No enrichment",
+    MF = if (!is.null(ego_mf) && dim(ego_mf)[1] >= 3) ego_mf else "No enrichment",
+    CC = if (!is.null(ego_cc) && dim(ego_cc)[1] >= 3) ego_cc else "No enrichment"
 )
 
 # Add the enrichment results to significant_results with the gene list ID
@@ -314,7 +314,7 @@ if (!is.character(significant_results[[i]][["CC"]]) && nrow(significant_results[
 
 # If there are any enriched categories, store the gene list in valid_gene_lists
 if (length(enriched_categories) > 0) {
-    valid_gene_lists[[paste("list", i)]] <- gene_lists$unique_genes[[i]]
+    valid_gene_lists[[paste0("list", i)]] <- gene_lists$unique_genes[[i]]
 
     # Create a message for enrichment and write it to the log file
     msg <- paste("Gene set", i, "has enriched categories:", paste(enriched_categories, collapse = ", "))
@@ -326,6 +326,14 @@ if (length(enriched_categories) > 0) {
 }
 }
 
-# Saving files
+# Tibble for valid gene lists
+valid_gene_lists_df <- tibble(
+gene_list = names(valid_gene_lists),
+genes = sapply(valid_gene_lists, function(x) paste(x, collapse = ","))
+)
+
+
+#### Save the resulting key files ####
+write.table(valid_gene_lists_df, file = "list_gene_association.tsv", sep = "\t", row.names = FALSE, quote = FALSE)
 saveRDS(valid_gene_lists, "valid_gene_lists.rds")
 saveRDS(transcript_data, "transcript_data.rds")

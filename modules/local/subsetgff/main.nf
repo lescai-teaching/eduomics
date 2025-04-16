@@ -12,10 +12,11 @@ process SUBSETGFF {
     path(gff3)
 
     output:
-    path "valid_gene_lists.rds"       , emit: geneLists
-    path "transcript_data.rds"        , emit: transcriptData
-    path "subsetgff_parsing_log.txt"  , emit: log
-    path "versions.yml"               , emit: versions
+    tuple val(meta), path("valid_gene_lists.rds")        , emit: geneLists
+    tuple val(meta), path("list_gene_association.tsv")   , emit: genes_list_association
+    tuple val(meta), path("transcript_data.rds")         , emit: transcriptData
+    tuple val(meta), path("subsetgff_parsing_log.txt")   , emit: log
+    path "versions.yml"                                  , emit: versions
 
     when:
     task.ext.when == null || task.ext.when
@@ -48,6 +49,7 @@ process SUBSETGFF {
 
     """
     touch valid_gene_lists.rds
+    touch list_gene_association.tsv
     touch transcript_data.rds
     touch subsetgff_parsing_log.txt
 

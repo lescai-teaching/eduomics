@@ -101,21 +101,46 @@ input:
       pattern: "*.{gff,gff3}"
 output:
   - geneLists:
-      type: file
-      description: RDS file containing valid gene lists
-      pattern: "valid_gene_lists.rds"
+      - meta:
+          type: file
+          description: RDS file containing valid gene lists
+          pattern: "valid_gene_lists.rds"
+      - "valid_gene_lists.rds":
+          type: file
+          description: RDS file containing valid gene lists
+          pattern: "valid_gene_lists.rds"
+  - genes_list_association:
+      - meta:
+          type: file
+          description: TSV file containing the association between genes and the corrisponding list
+          pattern: "list_gene_association.tsv"
+      - "list_gene_association.tsv":
+          type: file
+          description: TSV file containing the association between genes and the corrisponding list
+          pattern: "list_gene_association.tsv"
   - transcriptData:
-      type: file
-      description: RDS file containing transcript data
-      pattern: "transcript_data.rds"
+      - meta:
+          type: file
+          description: RDS file containing transcript data
+          pattern: "list_gene_association.tsv"
+      - "transcript_data.rds":
+          type: file
+          description: RDS file containing transcript data
+          pattern: "transcript_data.rds"
   - log:
-      type: file
-      description: Log file containing parsing and analysis information
-      pattern: "parsing_log.txt"
+      - meta:
+          type: file
+          description: Log file containing parsing and analysis information
+          pattern: "subsetgff_parsing_log.txt"
+      - "subsetgff_parsing_log.txt":
+          type: file
+          description: Log file containing parsing and analysis information
+          pattern: "subsetgff_parsing_log.txt"
   - versions:
       type: file
       description: File containing software versions
       pattern: "versions.yml"
+
 authors:
   - "@carpanz"
   - "@LorenzoS96"
