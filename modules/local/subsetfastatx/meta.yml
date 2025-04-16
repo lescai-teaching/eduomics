@@ -33,13 +33,23 @@ input:
       pattern: "*.{gff3}"
 output:
   - fasta:
-      type: file
-      description: Subset FASTA file containing transcripts from the specified chromosome
-      pattern: "gencode_transcripts_noversion_dummy.fasta"
+      - meta:
+          type: file
+          description: Subset FASTA file containing transcripts from the specified chromosome
+          pattern: "gencode_transcripts_noversion_dummy.fasta"
+      - "gencode_transcripts_noversion_dummy.fasta":
+          type: file
+          description: Subset FASTA file containing transcripts from the specified chromosome
+          pattern: "gencode_transcripts_noversion_dummy.fasta"
   - log:
-      type: file
-      description: Log file containing parsing information
-      pattern: "parsing_log.txt"
+      - meta:
+          type: file
+          description: Log file containing parsing and analysis information
+          pattern: "subsetfastatx_parsing_log.txt"
+      - "subsetfastatx_parsing_log.txt":
+          type: file
+          description: Log file containing parsing and analysis information
+          pattern: "subsetfastatx_parsing_log.txt"
   - versions:
       type: file
       description: File containing software versions
