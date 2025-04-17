@@ -28,10 +28,10 @@ input:
         description: |
           Groovy Map containing sample information
           e.g. `[ id:'test', chromosome: 'chr22', coverage: 30, reps: 3, groups: 2, simthreshold: 0.3 ]`
-    - txfasta:
+    - filtered_txfasta:
         type: file
         description: Transcriptome FASTA file containing transcripts from the specified chromosome
-        pattern: "*.{fa,fasta}"
+        pattern: "gencode_transcripts_noversion.fasta"
   - - meta2:
         type: map
         description: |
@@ -40,7 +40,7 @@ input:
     - filtered_gff3:
         type: file
         description: RDS file containing transcript data from the specified chromosome
-        pattern: "*.rds"
+        pattern: "filtered_gff3.rds"
   - - meta3:
         type: map
         description: |
@@ -49,7 +49,7 @@ input:
     - geneList:
       type: file
       description: RDS file containing valid gene lists
-      pattern: "*.rds"
+      pattern: "valid_gene_lists.rds"
 output:
   - simcountMatrix:
       - meta:

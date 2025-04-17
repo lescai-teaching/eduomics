@@ -29,7 +29,7 @@ process COUNTMATRICES {
         '${meta.coverage}' \\
         '${meta.reps}' \\
         '${meta.groups}' \\
-        '${txfasta}' \\
+        '${filtered_txfasta}' \\
         '${filtered_gff3}' \\
         '${geneList}'
 
