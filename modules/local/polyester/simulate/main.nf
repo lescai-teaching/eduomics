@@ -8,9 +8,9 @@ process POLYESTER_SIMULATE {
         'community.wave.seqera.io/library/bioconductor-biostrings_bioconductor-polyester:e85f578a0b8f70ca' }"
 
     input:
-    tuple val(meta), path(countmatrix)
+    tuple val(meta),  path(countmatrix)
     tuple val(meta2), path(foldchange)
-    path(txfasta)
+    tuple val(meta3), path(filtered_txfasta)
 
     output:
     tuple val(meta), path('simulated_reads/*.fasta.gz'), emit: reads
@@ -29,8 +29,8 @@ process POLYESTER_SIMULATE {
     def readData = countmatrix ? "countmat = readRDS('${countmatrix}')" : "fold_changes = readRDS('${foldchange}')"
     def readsPerTxFactor = meta.coverage ?: 30
     def simulation_function = countmatrix ?
-        "simulate_experiment_countmat('${txfasta}', readmat=countmat, outdir='simulated_reads')" :
-        "simulate_experiment('${txfasta}', reads_per_transcript=readspertx, ${numRepsString}, fold_changes=fold_changes, outdir='simulated_reads')"
+        "simulate_experiment_countmat('${filtered_txfasta}', readmat=countmat, outdir='simulated_reads')" :
+        "simulate_experiment('${filtered_txfasta}', reads_per_transcript=readspertx, ${numRepsString}, fold_changes=fold_changes, outdir='simulated_reads')"
 
     """
     cat <<EOF >simulate_reads.R
@@ -40,7 +40,7 @@ process POLYESTER_SIMULATE {
     library(Biostrings)
 
     # Load the fasta
-    fasta <- readDNAStringSet("${txfasta}")
+    fasta <- readDNAStringSet("${filtered_txfasta}")
     readspertx = round(${readsPerTxFactor} * width(fasta) / 100)
 
     # Load the count matrix or fold changes
