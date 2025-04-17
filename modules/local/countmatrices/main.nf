@@ -8,7 +8,7 @@ process COUNTMATRICES {
         'community.wave.seqera.io/library/bioconductor-biostrings_r-tidyverse:4645f56e7256e01f' }"
 
     input:
-    tuple val(meta),  path(txfasta)
+    tuple val(meta),  path(filtered_txfasta)
     tuple val(meta2), path(filtered_gff3)
     tuple val(meta3), path(geneList)
 
