@@ -77,4 +77,4 @@ cat("\n3) Number of transcripts in FASTA after filtering: ", length(fasta_annota
 
 
 #### Save the filtered FASTA sequences using the specified chromosome of interest ####
-writeXStringSet(fasta_annotated, paste0("gencode_transcripts_noversion_", chromosome_of_interest, ".fasta"), format = "fasta")
+writeXStringSet(fasta_annotated, "gencode_transcripts_noversion.fasta", format = "fasta")
