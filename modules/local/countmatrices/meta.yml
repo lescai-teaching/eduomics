@@ -23,20 +23,32 @@ tools:
       licence: ["Artistic-2.0"]
       identifier: "bioconductor-biostrings"
 input:
-  - meta:
-      type: map
-      description: Metadata map
-  - txfasta:
+  - - meta:
+        type: map
+        description: |
+          Groovy Map containing sample information
+          e.g. `[ id:'test', chromosome: 'chr22', coverage: 30, reps: 3, groups: 2, simthreshold: 0.3 ]`
+    - txfasta:
+        type: file
+        description: Transcriptome FASTA file containing transcripts from the specified chromosome
+        pattern: "*.{fa,fasta}"
+  - - meta2:
+        type: map
+        description: |
+          Groovy Map containing sample information
+          e.g. `[ id:'test', chromosome: 'chr22', coverage: 30, reps: 3, groups: 2, simthreshold: 0.3 ]`
+    - filtered_gff3:
+        type: file
+        description: RDS file containing transcript data from the specified chromosome
+        pattern: "*.rds"
+  - - meta3:
+        type: map
+        description: |
+          Groovy Map containing sample information
+          e.g. `[ id:'test', chromosome: 'chr22', coverage: 30, reps: 3, groups: 2, simthreshold: 0.3 ]`
+    - geneList:
       type: file
-      description: Transcriptome FASTA file
-      pattern: "*.{fa,fasta}"
-  - gff3:
-      type: file
-      description: GFF3 annotation file
-      pattern: "*.gff3"
-  - geneList:
-      type: file
-      description: Gene list file that should give an enrichment
+      description: RDS file containing valid gene lists
       pattern: "*.rds"
 output:
   - simcountMatrix:
@@ -44,17 +56,17 @@ output:
           type: map
           description: |
             Groovy Map containing sample information
-            e.g. `[ id: 'simulation_id', chromosome: 'chr_number', genes: 'A, B, C', reps: 3, groups: 2 ]`
-      - "countmatrix_*.rds":
+            e.g. `[ id:'test', chromosome: 'chr22', coverage: 30, reps: 3, groups: 2, simthreshold: 0.3 ]`
+      - "countMatrix_*.rds":
           type: file
           description: RDS file containing the count matrices
-          pattern: "countmatrix_*.rds"
+          pattern: "countMatrix_*.rds"
   - simAnnords:
       - meta:
           type: map
           description: |
             Groovy Map containing sample information
-            e.g. `[ id: 'simulation_id', chromosome: 'chr_number', genes: 'A, B, C', reps: 3, groups: 2 ]`
+            e.g. `[ id:'test', chromosome: 'chr22', coverage: 30, reps: 3, groups: 2, simthreshold: 0.3 ]`
       - "expected_*.rds":
           type: file
           description: Gene info and expected log2 fold change in RDS format

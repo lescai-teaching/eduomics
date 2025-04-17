@@ -8,10 +8,9 @@ process COUNTMATRICES {
         'community.wave.seqera.io/library/bioconductor-biostrings_r-tidyverse:4645f56e7256e01f' }"
 
     input:
-    val(meta)
-    path(txfasta)
-    path(gff3)
-    path(geneList)
+    tuple val(meta),  path(txfasta)
+    tuple val(meta2), path(filtered_gff3)
+    tuple val(meta3), path(geneList)
 
     output:
     tuple val(meta), path ("countMatrix_*.rds")    , emit: simcountMatrix
@@ -31,7 +30,7 @@ process COUNTMATRICES {
         '${meta.reps}' \\
         '${meta.groups}' \\
         '${txfasta}' \\
-        '${gff3}' \\
+        '${filtered_gff3}' \\
         '${geneList}'
 
     cat <<-END_VERSIONS > versions.yml
