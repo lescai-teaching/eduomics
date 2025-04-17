@@ -336,4 +336,4 @@ genes = sapply(valid_gene_lists, function(x) paste(x, collapse = ","))
 #### Save the resulting key files ####
 write.table(valid_gene_lists_df, file = "list_gene_association.tsv", sep = "\t", row.names = FALSE, quote = FALSE)
 saveRDS(valid_gene_lists, "valid_gene_lists.rds")
-saveRDS(transcript_data, "transcript_data.rds")
+saveRDS(transcript_data, "filtered_gff3.rds")

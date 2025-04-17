@@ -22,7 +22,9 @@ tools:
 input:
   - meta:
       type: map
-      description: Metadata map
+      description: |
+        Groovy Map containing sample information
+        e.g. `[ id:'test', chromosome: 'chr22', coverage: 30, reps: 3, groups: 2, simthreshold: 0.3 ]`
   - txfasta:
       type: file
       description: Transcriptome FASTA file
@@ -32,11 +34,12 @@ input:
       description: GFF3 annotation file
       pattern: "*.{gff3}"
 output:
-  - fasta:
+  - filtered_fasta:
       - meta:
           type: file
-          description: Subset FASTA file containing transcripts from the specified chromosome
-          pattern: "gencode_transcripts_noversion.fasta"
+          description: |
+            Groovy Map containing sample information
+            e.g. `[ id:'test', chromosome: 'chr22', coverage: 30, reps: 3, groups: 2, simthreshold: 0.3 ]`
       - "gencode_transcripts_noversion.fasta":
           type: file
           description: Subset FASTA file containing transcripts from the specified chromosome
@@ -44,8 +47,9 @@ output:
   - log:
       - meta:
           type: file
-          description: Log file containing parsing and analysis information
-          pattern: "subsetfastatx_parsing_log.txt"
+          description: |
+            Groovy Map containing sample information
+            e.g. `[ id:'test', chromosome: 'chr22', coverage: 30, reps: 3, groups: 2, simthreshold: 0.3 ]`
       - "subsetfastatx_parsing_log.txt":
           type: file
           description: Log file containing parsing and analysis information
