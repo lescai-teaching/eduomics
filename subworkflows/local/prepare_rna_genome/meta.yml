@@ -46,7 +46,7 @@ output:
   - filtered_txfasta:
       description: |
         Channel containing the filtered txfasta file with the transcripts from the specified chromosome
-        Structure: [ val(meta), path(txfasta) ]
+        Structure: [ val(meta), path(filtered_txfasta) ]
       structure:
         - meta:
             type: map
