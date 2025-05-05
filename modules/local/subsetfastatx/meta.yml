@@ -1,5 +1,5 @@
 name: SUBSETFASTATX
-description: Subsets a FASTA file based on a specified chromosome and GFF3 annotations
+description: subsets a FASTA file based on a specified chromosome and GFF3 annotations
 keywords:
   - fasta
   - subset
@@ -34,7 +34,7 @@ input:
       description: GFF3 annotation file
       pattern: "*.{gff3}"
 output:
-  - filtered_fasta:
+  - filtered_txfasta:
       - meta:
           type: file
           description: |

@@ -23,7 +23,7 @@ nextflow_process {
         then {
             assertAll(
                 { assert process.success },
-                { assert process.out.filtered_fasta.get(0).get(1).endsWith('.fasta') },
+                { assert process.out.filtered_txfasta.get(0).get(1).endsWith('.fasta') },
                 { assert process.out.versions }
             )
         }
@@ -47,7 +47,7 @@ nextflow_process {
         then {
             assertAll(
                 { assert process.success },
-                { assert process.out.filtered_fasta.get(0).get(1).endsWith('.fasta') },
+                { assert process.out.filtered_txfasta.get(0).get(1).endsWith('.fasta') },
                 { assert process.out.versions }
             )
         }
