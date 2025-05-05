@@ -4,7 +4,6 @@ nextflow_workflow {
     script "../main.nf"
     workflow "PREPARE_RNA_GENOME"
 
-    config "./test.config"
     options "-dump-channels"
 
     tag "subworkflows"
@@ -23,10 +22,10 @@ nextflow_workflow {
             workflow {
                 """
 
-                input[0] = Channel.of(file('https://raw.githubusercontent.com/lescai-teaching/eduomics_testdata/refs/heads/main/dna/whole_chr22/Homo_sapiens.GRCh38.dna.chromosome.22.fa', checkIfExists: true))
+                input[0] = Channel.value(file('https://raw.githubusercontent.com/lescai-teaching/eduomics_testdata/refs/heads/main/dna/whole_chr22/Homo_sapiens.GRCh38.dna.chromosome.22.fa', checkIfExists: true))
                 input[1] = Channel.value(file('https://raw.githubusercontent.com/lescai-teaching/eduomics_testdata/refs/heads/main/rnaseq/subsetfastatx/gencode_transcripts_noversion_chr21_chr22.fasta', checkIfExists: true))
                 input[2] = Channel.value(file('https://raw.githubusercontent.com/lescai-teaching/eduomics_testdata/refs/heads/main/rnaseq/subsetfastatx/gencode_chr21_chr22_v47.gff3', checkIfExists: true))
-                input[3] = Channel.of([ id:'test', chromosome:'chr22', simthreshold: '0.3' ])
+                input[3] = Channel.of([ id:'test', chromosome: 'chr22', coverage: 30, reps: 3, groups: 2, simthreshold: 0.3 ])
 
                 """
             }
@@ -35,10 +34,17 @@ nextflow_workflow {
         then {
             assertAll(
                 { assert workflow.success },
-                { assert workflow.out.txfasta.get(0).endsWith('.fasta') },
-                { assert workflow.out.gene_lists.get(0).endsWith('.rds') },
-                { assert workflow.out.transcript_data.get(0).endsWith('.rds') },
-                { assert workflow.out.log_files.flatten().every { it.toString().endsWith('.txt') } }
+                {
+                    def indexDir = path(workflow.out.txfasta_index[0]).toFile()
+                    assert indexDir.exists()
+                    assert indexDir.isDirectory()
+                    assert indexDir.listFiles().size() > 0
+                },
+                { assert workflow.out.filtered_txfasta.get(0).get(1).endsWith('.fasta') },
+                { assert workflow.out.gene_lists.get(0).get(1).endsWith('.rds') },
+                { assert workflow.out.genes_list_associations.get(0).get(1).endsWith('.tsv') },
+                { assert workflow.out.filtered_gff3.get(0).get(1).endsWith('.rds') },
+                { assert workflow.out.log_files.collect { it[1] }.every { it.endsWith('.txt') } }
             )
         }
     }

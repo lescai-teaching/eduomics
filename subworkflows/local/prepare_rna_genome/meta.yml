@@ -1,6 +1,6 @@
 # yaml-language-server: $schema=https://raw.githubusercontent.com/nf-core/modules/master/subworkflows/yaml-schema.json
 name: "prepare_rna_genome"
-description: Prepares RNA genome data by subsetting FASTA and GFF files, and creating a Salmon index
+description: prepares RNA genome data by subsetting FASTA and GFF files, and creating a Salmon index
 keywords:
   - rna
   - genome
@@ -43,37 +43,86 @@ output:
         Channel containing Salmon index directory
         Structure: [ path(salmon_index) ]
       pattern: "salmon_index"
-  - txfasta:
-      type: file
+  - filtered_txfasta:
       description: |
-        Channel containing subset transcript FASTA file
-        Structure: [ path(txfasta) ]
-      pattern: "*.{fa,fasta}"
+        Channel containing the filtered txfasta file with the transcripts from the specified chromosome
+        Structure: [ val(meta), path(txfasta) ]
+      structure:
+        - meta:
+            type: map
+            description: |
+              Groovy Map containing sample information
+              e.g. `[ id:'test', chromosome: 'chr22', coverage: 30, reps: 3, groups: 2, simthreshold: 0.3 ]`
+        - filtered_txfasta:
+            type: file
+            description: Subset FASTA file containing transcripts from the specified chromosome
+            pattern: "gencode_transcripts_noversion.fasta"
   - gene_lists:
-      type: file
       description: |
         Channel containing gene lists from subset GFF
-        Structure: [ path(gene_lists) ]
-      pattern: "*.{rds}"
-  - transcript_data:
-      type: file
+        Structure: [ val(meta), path(gene_lists)  ]
+      structure:
+        - meta:
+            type: map
+            description: |
+              Groovy Map containing sample information
+              e.g. `[ id:'test', chromosome: 'chr22', coverage: 30, reps: 3, groups: 2, simthreshold: 0.3 ]`
+        - gene_lists:
+            type: file
+            description: RDS file containing valid gene lists
+            pattern: "valid_gene_lists.rds"
+  - genes_list_associations:
       description: |
-        Channel containing transcript data from subset GFF
-        Structure: [ path(transcript_data) ]
-      pattern: "*.{rds}"
+        Channel containing the association between a list and its gene
+        Structure: [ val(meta), path(genes_list_associations)  ]
+      structure:
+        - meta:
+            type: map
+            description: |
+              Groovy Map containing sample information
+              e.g. `[ id:'test', chromosome: 'chr22', coverage: 30, reps: 3, groups: 2, simthreshold: 0.3 ]`
+        - genes_list_associations:
+            type: file
+            description: TSV file containing the association between genes and the corrisponding list
+            pattern: "list_gene_association.tsv"
+  - filtered_gff3:
+      description: |
+        Channel containing the filtered gff3 file with the transcripts from the specified chromosome
+        Structure: [ val(meta), path(filtered_gff3)  ]
+      structure:
+        - meta:
+            type: map
+            description: |
+              Groovy Map containing sample information
+              e.g. `[ id:'test', chromosome: 'chr22', coverage: 30, reps: 3, groups: 2, simthreshold: 0.3 ]`
+        - filtered_gff3:
+            type: file
+            description: RDS file containing transcript data from the specified chromosome
+            pattern: "filtered_gff3.rds"
   - log_files:
-      type: file
       description: |
-        Channel containing log files from the local modules subsetfastatx and subsetgff
-        Structure: [ path(log_files) ]
-      pattern: "*.txt"
+        Channel containing log files from the modules subsetfastatx and subsetgff
+        Structure: [ val(meta), path(log_files)  ]
+      structure:
+        - meta:
+            type: map
+            description: |
+              Groovy Map containing sample information
+              e.g. `[ id:'test', chromosome: 'chr22', coverage: 30, reps: 3, groups: 2, simthreshold: 0.3 ]`
+        - log_files:
+            type: file
+            description: TXT file containing containing parsing and analysis information
+            pattern: "*.txt"
   - versions:
-      type: file
       description: |
-        File containing software versions
-        Structure: [ path(versions.yml) ]
-      pattern: "versions.yml"
+        Channel containing software versions file
+      structure:
+        - versions.yml:
+            type: file
+            description: File containing versions of the software used
 authors:
   - "@carpanz"
+  - "@LorenzoS96"
 maintainers:
   - "@carpanz"
+  - "@LorenzoS96"
