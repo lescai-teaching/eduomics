@@ -13,7 +13,7 @@ process SUBSETFASTATX {
     path(gff3)
 
     output:
-    tuple val(meta), path ("gencode_transcripts_noversion.fasta")    , emit: filtered_fasta
+    tuple val(meta), path ("gencode_transcripts_noversion.fasta")    , emit: filtered_txfasta
     tuple val(meta), path ("subsetfastatx_parsing_log.txt")          , emit: log
     path "versions.yml"                                              , emit: versions
 
