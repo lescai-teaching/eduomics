@@ -27,9 +27,11 @@ nextflow_workflow {
 
                 // paired fastq files [mandatory]
                 input[0] = Channel.value([
-                    [ id:'test' ],
-                    [file('https://raw.githubusercontent.com/lescai-teaching/eduomics_testdata/refs/heads/main/dna/wgsim/chr22_q11-21_GRCh38_reads_1.fq.gz'),
-                    file('https://raw.githubusercontent.com/lescai-teaching/eduomics_testdata/refs/heads/main/dna/wgsim/chr22_q11-21_GRCh38_reads_2.fq.gz')]
+                    [ id:'test',],
+                    [file('https://raw.githubusercontent.com/lescai-teaching/eduomics_testdata/refs/heads/main/dna/simureads/fastq_output/normal_0.000+disease_1.000_1.fq.gz'),
+                    file('https://raw.githubusercontent.com/lescai-teaching/eduomics_testdata/refs/heads/main/dna/simureads/fastq_output/normal_0.000+disease_1.000_2.fq.gz')],
+                    [file('https://raw.githubusercontent.com/lescai-teaching/eduomics_testdata/refs/heads/main/dna/simureads/fastq_output/normal_1.000+disease_0.000_1.fq.gz'),
+                    file('https://raw.githubusercontent.com/lescai-teaching/eduomics_testdata/refs/heads/main/dna/simureads/fastq_output/normal_2.000+disease_0.000_1.fq.gz')]
                 ])
 
                 // fasta       [mandatory] [ val(meta), [ fasta ] ]
