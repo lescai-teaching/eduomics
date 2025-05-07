@@ -1,5 +1,5 @@
 process RNASEQVALIDATION {
-    tag '$meta.id'
+    tag "$meta.id"
     label 'process_single'
 
     conda "${moduleDir}/environment.yml"
@@ -37,12 +37,12 @@ process RNASEQVALIDATION {
 
         for (cat in categories) {
             if (dim(enrichment_results[[cat]])[1] > 3) {
-                write("VALIDATION GOOD", file = "validation_result.txt")
+                write("GOOD SIMULATION", file = "validation_result.txt")
                 return(invisible(NULL))
             }
         }
 
-        write("VALIDATION NOT GOOD", file = "validation_result.txt")
+        write("SIMULATION NOT GOOD", file = "validation_result.txt")
         return(invisible(NULL))
     }
 
@@ -51,7 +51,7 @@ process RNASEQVALIDATION {
 
     Rscript validate_enrichment.R
 
-    if [ "\$(cat validation_result.txt)" == "VALIDATION GOOD" ]; then
+    if [ "\$(cat validation_result.txt)" == "GOOD SIMULATION" ]; then
         mkdir -p validated_reads
         for read_file in ${reads}; do
             ln -s "\$(readlink -f "\$read_file")" validated_reads/

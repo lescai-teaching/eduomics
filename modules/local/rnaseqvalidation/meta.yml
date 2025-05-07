@@ -39,7 +39,7 @@ input:
         description: |
           Groovy Map containing sample information
           e.g. `[ id: 'simulation_id', chromosome: 'chr_number', coverage: 30, reps: 3, groups: 2, simthreshold: 0.3, genes: 'A,B,C' ]`
-    - reads:
+    - de_genes:
         type: file
         description: file containing differentially expressed genes
         pattern: "de_genes.txt"
@@ -62,7 +62,7 @@ output:
             e.g. `[ id: 'simulation_id', chromosome: 'chr_number', coverage: 30, reps: 3, groups: 2, simthreshold: 0.3, genes: 'A,B,C' ]`
       - "validated_de_genes.txt":
           type: file
-          description: validated DE genes
+          description: file containing validated DE genes
           pattern: "validated_de_genes.txt"
   - validation_result:
       - meta:
@@ -72,12 +72,12 @@ output:
             e.g. `[ id: 'simulation_id', chromosome: 'chr_number', coverage: 30, reps: 3, groups: 2, simthreshold: 0.3, genes: 'A,B,C' ]`
       - "validation_result.txt":
           type: file
-          description: File containing the result of the validation process, e.g (VALIDATION GOOD or VALIDATION NOT GOOD)
+          description: file containing the result of the validation process, e.g (SIMULATION GOOD or SIMULATION NOT GOOD)
           pattern: "validation_result.txt"
   - versions:
       - versions.yml:
           type: file
-          description: File containing software versions
+          description: file containing software versions
           pattern: "versions.yml"
 authors:
   - "@LorenzoS96"

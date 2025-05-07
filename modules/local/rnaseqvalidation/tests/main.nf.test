@@ -17,7 +17,7 @@ test("validation - positive simulation") {
                     [ id: 'simtest', chromosome: 'chr22', coverage: 30, reps: 3, groups: 2, simthreshold: 0.3, genes: 'A,B,C' ], // meta map
                     file('https://raw.githubusercontent.com/lescai-teaching/eduomics_testdata/refs/heads/main/rnaseq/validation/positive_enrichment_results.rds', checkIfExists: true)
                 ]
-            input[1] = [
+                input[1] = [
                 [ id: 'simtest', chromosome: 'chr22', coverage: 30, reps: 3, groups: 2, simthreshold: 0.3, genes: 'A,B,C' ],
                     [
                         file('https://raw.githubusercontent.com/lescai-teaching/eduomics_testdata/refs/heads/main/rnaseq/salmonquantify/raw_reads/sample_01_1.fasta.gz', checkIfExists: true),
