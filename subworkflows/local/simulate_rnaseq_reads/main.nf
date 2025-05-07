@@ -1,0 +1,51 @@
+include { COUNTMATRICES      } from '../../../modules/local/countmatrices/main'
+include { POLYESTER_SIMULATE } from '../../../modules/local/polyester/simulate/main'
+
+workflow SIMULATE_RNASEQ_READS {
+
+    take:
+    ch_filtered_txfasta            // channel: [ val(meta), path(filtered_txfasta)        ]
+    ch_filtered_gff3               // channel: [ val(meta), path(filtered_gff3)           ]
+    ch_genelists                   // channel: [ val(meta), path(genelists)               ]. This is an RDS file containing a list of lists
+    ch_foldchange                  // channel: [ val(meta), path(foldchange)              ]
+    ch_genes_list_associations     // channel: [ val(meta), path(genes_list_associations) ]. This is a TSV file containing the association between a specific list and its genes. Necessary to add genes in meta by coupling the genes with a specific countMatrix
+
+    main:
+
+    ch_versions = Channel.empty()
+
+// Generate count matrices
+    COUNTMATRICES(ch_filtered_txfasta, ch_filtered_gff3, ch_genelists)
+    ch_versions = ch_versions.mix(COUNTMATRICES.out.versions.first())
+
+    // Build gene map
+    genesMap = ch_genes_list_associations
+        .splitCsv(header:true, sep:'\t')
+        .map { row ->
+            def list_name = row[1].gene_list
+            def genes = row[1].genes.split(',')
+            [list_name, genes]
+        }
+
+    // Associate the genes to countmatrices and define a new meta
+    ch_matrices_with_genes = COUNTMATRICES.out.simcountMatrix
+        .combine(genesMap)
+        .flatMap { meta, path_list, list_key, genes ->
+            path_list
+                .findAll { path -> list_key == "list${path.name.replaceAll(/\D+/, '')}" }
+                .collect { filterd_path ->
+                def newmeta = meta + [genes: genes.join(',')]
+                [newmeta, filterd_path] }
+        }
+
+    // Simulate the reads
+    POLYESTER_SIMULATE(ch_matrices_with_genes, ch_foldchange, ch_filtered_txfasta)
+    ch_versions = ch_versions.mix(POLYESTER_SIMULATE.out.versions.first())
+
+    emit:
+    countMatrix    = COUNTMATRICES.out.simcountMatrix  // channel: [ val(meta),    path(countMatrix)    ]
+    expectedLog2FC = COUNTMATRICES.out.simAnnords      // channel: [ val(meta),    path(expectedLog2FC) ]. RDS containing the expected log2foldchange for each DE gene
+    simreads       = POLYESTER_SIMULATE.out.reads      // channel: [ val(newmeta), path(simreads)       ]. The newmeta will look like this [ id: 'test', chromosome: 'chr22', coverage: 30, reps: 3, groups: 2, simthreshold: 0.3, genes: 'A,B,C' ]
+    versions       = ch_versions                       // channel: [ versions.yml                       ]
+}
+

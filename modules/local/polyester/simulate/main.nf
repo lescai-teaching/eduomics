@@ -58,6 +58,7 @@ process POLYESTER_SIMULATE {
     cat <<-END_VERSIONS > versions.yml
     "${task.process}":
         polyester: \$(Rscript -e 'cat(as.character(packageVersion("polyester")))')
+        bioconductor-biostrings: \$(Rscript -e "cat(as.character(packageVersion('Biostrings')))")
     END_VERSIONS
     """
 
@@ -71,6 +72,7 @@ process POLYESTER_SIMULATE {
     cat <<-END_VERSIONS > versions.yml
     "${task.process}":
         polyester: \$(Rscript -e 'cat(as.character(packageVersion("polyester")))')
+        bioconductor-biostrings: \$(Rscript -e "cat(as.character(packageVersion('Biostrings')))")
     END_VERSIONS
     """
 }
