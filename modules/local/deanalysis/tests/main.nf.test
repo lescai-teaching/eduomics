@@ -46,7 +46,7 @@ nextflow_process {
                     .map { entry ->
                         def sample_id = entry.key
                         def urls = entry.value
-                        def meta = [id: 'simtest', sample: sample_id, chromosome: 'chr22', genes: 'A, B, C', reps: 3, groups: 2]
+                        def meta = [ id: 'simtest', sample: sample_id, chromosome: 'chr22', genes: 'A,B,C', reps: 3, groups: 2 ]
                         def files = urls.collect { file(it) }
                         [meta, files]
                     }
@@ -90,11 +90,14 @@ nextflow_process {
             process {
                 """
                 input[0] = SALMON_QUANT.out.results.map{ m, folder ->
-                              def newmap = [id: m.id, chromosome: m.chromosome, genes: m.genes, reps:m.reps, groups: m.groups]
-                              [newmap, folder]
-                           }
-                           .groupTuple(by: 0)
-                input[1] = file("https://raw.githubusercontent.com/lescai-teaching/eduomics_testdata/refs/heads/main/rnaseq/countmatrices/gff3_chr22.rds", checkIfExists: true)
+                                def newmap = [id: m.id, chromosome: m.chromosome, genes: m.genes, reps:m.reps, groups: m.groups]
+                                [newmap, folder]
+                }
+                .groupTuple(by: 0)
+                input[1] = [
+                    [ id: 'simtest', chromosome: 'chr22', coverage: 30, reps: 3, groups: 2 ], // meta map
+                    file("https://raw.githubusercontent.com/lescai-teaching/eduomics_testdata/refs/heads/main/rnaseq/countmatrices/transcriptData_chr22.rds", checkIfExists: true)
+                ]
                 """
             }
         }
@@ -102,13 +105,7 @@ nextflow_process {
         then {
             assertAll(
                 { assert process.success },
-                { assert process.out.results },
-                { assert process.out.ma_plot },
-                { assert process.out.dispersion_plot },
-                { assert process.out.count_plot },
-                { assert process.out.heatmap_plot },
-                { assert process.out.pca_plot },
-                { assert process.out.tx2gene },
+                { assert process.out.deseq2_results },
                 { assert process.out.versions }
             )
         }
@@ -122,11 +119,14 @@ nextflow_process {
             process {
                 """
                 input[0] = SALMON_QUANT.out.results.map{ m, folder ->
-                              def newmap = [id: m.id, chromosome: m.chromosome, genes: m.genes, reps:m.reps, groups: m.groups]
-                              [newmap, folder]
-                           }
-                           .groupTuple(by: 0)
-                input[1] = file("https://raw.githubusercontent.com/lescai-teaching/eduomics_testdata/refs/heads/main/rnaseq/countmatrices/gff3_chr22.rds", checkIfExists: true)
+                                def newmap = [id: m.id, chromosome: m.chromosome, genes: m.genes, reps:m.reps, groups: m.groups]
+                                [newmap, folder]
+                }
+                .groupTuple(by: 0)
+                input[1] = [
+                    [ id: 'simtest', chromosome: 'chr22', coverage: 30, reps: 3, groups: 2 ], // meta map
+                    file("https://raw.githubusercontent.com/lescai-teaching/eduomics_testdata/refs/heads/main/rnaseq/countmatrices/transcriptData_chr22.rds", checkIfExists: true)
+                ]
                 """
             }
         }
@@ -134,13 +134,7 @@ nextflow_process {
         then {
             assertAll(
                 { assert process.success },
-                { assert process.out.results },
-                { assert process.out.ma_plot },
-                { assert process.out.dispersion_plot },
-                { assert process.out.count_plot },
-                { assert process.out.heatmap_plot },
-                { assert process.out.pca_plot },
-                { assert process.out.tx2gene },
+                { assert process.out.deseq2_results },
                 { assert process.out.versions }
             )
         }
