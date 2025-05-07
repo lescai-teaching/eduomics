@@ -1,0 +1,151 @@
+nextflow_process {
+
+    name "Test Process RNASEQVALIDATION"
+    script "../main.nf"
+    process "RNASEQVALIDATION"
+
+    tag "modules"
+    tag "modules_"
+    tag "rnaseqvalidation"
+
+test("validation - positive simulation") {
+
+        when {
+            process {
+                """
+                input[0] = [
+                    [ id: 'simtest', chromosome: 'chr22', coverage: 30, reps: 3, groups: 2, simthreshold: 0.3, genes: 'A,B,C' ], // meta map
+                    file('https://raw.githubusercontent.com/lescai-teaching/eduomics_testdata/refs/heads/main/rnaseq/validation/positive_enrichment_results.rds', checkIfExists: true)
+                ]
+            input[1] = [
+                [ id: 'simtest', chromosome: 'chr22', coverage: 30, reps: 3, groups: 2, simthreshold: 0.3, genes: 'A,B,C' ],
+                    [
+                        file('https://raw.githubusercontent.com/lescai-teaching/eduomics_testdata/refs/heads/main/rnaseq/salmonquantify/raw_reads/sample_01_1.fasta.gz', checkIfExists: true),
+                        file('https://raw.githubusercontent.com/lescai-teaching/eduomics_testdata/refs/heads/main/rnaseq/salmonquantify/raw_reads/sample_01_2.fasta.gz', checkIfExists: true),
+                        file('https://raw.githubusercontent.com/lescai-teaching/eduomics_testdata/refs/heads/main/rnaseq/salmonquantify/raw_reads/sample_02_1.fasta.gz', checkIfExists: true),
+                        file('https://raw.githubusercontent.com/lescai-teaching/eduomics_testdata/refs/heads/main/rnaseq/salmonquantify/raw_reads/sample_02_2.fasta.gz', checkIfExists: true),
+                        file('https://raw.githubusercontent.com/lescai-teaching/eduomics_testdata/refs/heads/main/rnaseq/salmonquantify/raw_reads/sample_03_1.fasta.gz', checkIfExists: true),
+                        file('https://raw.githubusercontent.com/lescai-teaching/eduomics_testdata/refs/heads/main/rnaseq/salmonquantify/raw_reads/sample_03_2.fasta.gz', checkIfExists: true),
+                        file('https://raw.githubusercontent.com/lescai-teaching/eduomics_testdata/refs/heads/main/rnaseq/salmonquantify/raw_reads/sample_04_1.fasta.gz', checkIfExists: true),
+                        file('https://raw.githubusercontent.com/lescai-teaching/eduomics_testdata/refs/heads/main/rnaseq/salmonquantify/raw_reads/sample_04_2.fasta.gz', checkIfExists: true),
+                        file('https://raw.githubusercontent.com/lescai-teaching/eduomics_testdata/refs/heads/main/rnaseq/salmonquantify/raw_reads/sample_05_1.fasta.gz', checkIfExists: true),
+                        file('https://raw.githubusercontent.com/lescai-teaching/eduomics_testdata/refs/heads/main/rnaseq/salmonquantify/raw_reads/sample_05_2.fasta.gz', checkIfExists: true),
+                        file('https://raw.githubusercontent.com/lescai-teaching/eduomics_testdata/refs/heads/main/rnaseq/salmonquantify/raw_reads/sample_06_1.fasta.gz', checkIfExists: true),
+                        file('https://raw.githubusercontent.com/lescai-teaching/eduomics_testdata/refs/heads/main/rnaseq/salmonquantify/raw_reads/sample_06_2.fasta.gz', checkIfExists: true)
+                    ]
+                ]
+                input[2] = [
+                    [ id: 'simtest', chromosome: 'chr22', coverage: 30, reps: 3, groups: 2, simthreshold: 0.3, genes: 'A,B,C' ], // meta map
+                    file('https://raw.githubusercontent.com/lescai-teaching/eduomics_testdata/refs/heads/main/rnaseq/validation/positive_deseq2_de_genes.txt', checkIfExists: true)
+                ]
+                """
+            }
+        }
+
+        then {
+            assertAll(
+                { assert process.success },
+                { assert process.out.validation_result },
+                { assert process.out.valid_reads.get(0).get(1).first().endsWith('.fasta.gz') },
+                { assert process.out.valid_de_genes },
+                { assert process.out.versions }
+            )
+        }
+
+    }
+
+    test("validation - negative simulation") {
+
+        when {
+            process {
+                """
+                input[0] = [
+                    [ id: 'simtest', chromosome: 'chr22', coverage: 30, reps: 3, groups: 2, simthreshold: 0.3, genes: 'A,B,C' ], // meta map
+                    file('https://raw.githubusercontent.com/lescai-teaching/eduomics_testdata/refs/heads/main/rnaseq/validation/negative_enrichment_results.rds', checkIfExists: true)
+                ]
+                input[1] = [
+                    [ id: 'simtest', chromosome: 'chr22', coverage: 30, reps: 3, groups: 2, simthreshold: 0.3, genes: 'A,B,C' ],
+                    [
+                        file('https://raw.githubusercontent.com/lescai-teaching/eduomics_testdata/refs/heads/main/rnaseq/salmonquantify/raw_reads/sample_01_1.fasta.gz', checkIfExists: true),
+                        file('https://raw.githubusercontent.com/lescai-teaching/eduomics_testdata/refs/heads/main/rnaseq/salmonquantify/raw_reads/sample_01_2.fasta.gz', checkIfExists: true),
+                        file('https://raw.githubusercontent.com/lescai-teaching/eduomics_testdata/refs/heads/main/rnaseq/salmonquantify/raw_reads/sample_02_1.fasta.gz', checkIfExists: true),
+                        file('https://raw.githubusercontent.com/lescai-teaching/eduomics_testdata/refs/heads/main/rnaseq/salmonquantify/raw_reads/sample_02_2.fasta.gz', checkIfExists: true),
+                        file('https://raw.githubusercontent.com/lescai-teaching/eduomics_testdata/refs/heads/main/rnaseq/salmonquantify/raw_reads/sample_03_1.fasta.gz', checkIfExists: true),
+                        file('https://raw.githubusercontent.com/lescai-teaching/eduomics_testdata/refs/heads/main/rnaseq/salmonquantify/raw_reads/sample_03_2.fasta.gz', checkIfExists: true),
+                        file('https://raw.githubusercontent.com/lescai-teaching/eduomics_testdata/refs/heads/main/rnaseq/salmonquantify/raw_reads/sample_04_1.fasta.gz', checkIfExists: true),
+                        file('https://raw.githubusercontent.com/lescai-teaching/eduomics_testdata/refs/heads/main/rnaseq/salmonquantify/raw_reads/sample_04_2.fasta.gz', checkIfExists: true),
+                        file('https://raw.githubusercontent.com/lescai-teaching/eduomics_testdata/refs/heads/main/rnaseq/salmonquantify/raw_reads/sample_05_1.fasta.gz', checkIfExists: true),
+                        file('https://raw.githubusercontent.com/lescai-teaching/eduomics_testdata/refs/heads/main/rnaseq/salmonquantify/raw_reads/sample_05_2.fasta.gz', checkIfExists: true),
+                        file('https://raw.githubusercontent.com/lescai-teaching/eduomics_testdata/refs/heads/main/rnaseq/salmonquantify/raw_reads/sample_06_1.fasta.gz', checkIfExists: true),
+                        file('https://raw.githubusercontent.com/lescai-teaching/eduomics_testdata/refs/heads/main/rnaseq/salmonquantify/raw_reads/sample_06_2.fasta.gz', checkIfExists: true)
+                    ]
+                ]
+                input[2] = [
+                    [ id: 'simtest', chromosome: 'chr22', coverage: 30, reps: 3, groups: 2, simthreshold: 0.3, genes: 'A,B,C' ], // meta map
+                    file('https://raw.githubusercontent.com/lescai-teaching/eduomics_testdata/refs/heads/main/rnaseq/validation/negative_deseq2_de_genes.txt', checkIfExists: true)
+                ]
+                """
+            }
+        }
+
+        then {
+            assertAll(
+                { assert process.success },
+                { assert process.out.validation_result },
+                { assert !process.out.valid_reads },
+                { assert !process.out.valid_de_genes },
+                { assert process.out.versions }
+            )
+        }
+
+    }
+
+    test("validation - stub") {
+
+        options "-stub"
+
+        when {
+            process {
+                """
+                input[0] = [
+                    [ id: 'simtest', chromosome: 'chr22', coverage: 30, reps: 3, groups: 2, simthreshold: 0.3, genes: 'A,B,C' ], // meta map
+                    file('https://raw.githubusercontent.com/lescai-teaching/eduomics_testdata/refs/heads/main/rnaseq/validation/positive_enrichment_results.rds', checkIfExists: true)
+                ]
+                input[1] = [
+                    [ id: 'simtest', chromosome: 'chr22', coverage: 30, reps: 3, groups: 2, simthreshold: 0.3, genes: 'A,B,C' ],
+                    [
+                        file('https://raw.githubusercontent.com/lescai-teaching/eduomics_testdata/refs/heads/main/rnaseq/salmonquantify/raw_reads/sample_01_1.fasta.gz', checkIfExists: true),
+                        file('https://raw.githubusercontent.com/lescai-teaching/eduomics_testdata/refs/heads/main/rnaseq/salmonquantify/raw_reads/sample_01_2.fasta.gz', checkIfExists: true),
+                        file('https://raw.githubusercontent.com/lescai-teaching/eduomics_testdata/refs/heads/main/rnaseq/salmonquantify/raw_reads/sample_02_1.fasta.gz', checkIfExists: true),
+                        file('https://raw.githubusercontent.com/lescai-teaching/eduomics_testdata/refs/heads/main/rnaseq/salmonquantify/raw_reads/sample_02_2.fasta.gz', checkIfExists: true),
+                        file('https://raw.githubusercontent.com/lescai-teaching/eduomics_testdata/refs/heads/main/rnaseq/salmonquantify/raw_reads/sample_03_1.fasta.gz', checkIfExists: true),
+                        file('https://raw.githubusercontent.com/lescai-teaching/eduomics_testdata/refs/heads/main/rnaseq/salmonquantify/raw_reads/sample_03_2.fasta.gz', checkIfExists: true),
+                        file('https://raw.githubusercontent.com/lescai-teaching/eduomics_testdata/refs/heads/main/rnaseq/salmonquantify/raw_reads/sample_04_1.fasta.gz', checkIfExists: true),
+                        file('https://raw.githubusercontent.com/lescai-teaching/eduomics_testdata/refs/heads/main/rnaseq/salmonquantify/raw_reads/sample_04_2.fasta.gz', checkIfExists: true),
+                        file('https://raw.githubusercontent.com/lescai-teaching/eduomics_testdata/refs/heads/main/rnaseq/salmonquantify/raw_reads/sample_05_1.fasta.gz', checkIfExists: true),
+                        file('https://raw.githubusercontent.com/lescai-teaching/eduomics_testdata/refs/heads/main/rnaseq/salmonquantify/raw_reads/sample_05_2.fasta.gz', checkIfExists: true),
+                        file('https://raw.githubusercontent.com/lescai-teaching/eduomics_testdata/refs/heads/main/rnaseq/salmonquantify/raw_reads/sample_06_1.fasta.gz', checkIfExists: true),
+                        file('https://raw.githubusercontent.com/lescai-teaching/eduomics_testdata/refs/heads/main/rnaseq/salmonquantify/raw_reads/sample_06_2.fasta.gz', checkIfExists: true)
+                    ]
+                ]
+                input[2] = [
+                    [ id: 'simtest', chromosome: 'chr22', coverage: 30, reps: 3, groups: 2, simthreshold: 0.3, genes: 'A,B,C' ], // meta map
+                    file('https://raw.githubusercontent.com/lescai-teaching/eduomics_testdata/refs/heads/main/rnaseq/validation/positive_deseq2_de_genes.txt', checkIfExists: true)
+                ]
+                """
+            }
+        }
+
+        then {
+            assertAll(
+                { assert process.success },
+                { assert process.out.validation_result },
+                { assert process.out.valid_reads },
+                { assert process.out.valid_reads.get(0).get(1).first().endsWith('.fasta.gz') },
+                { assert process.out.versions }
+            )
+        }
+
+    }
+
+}
