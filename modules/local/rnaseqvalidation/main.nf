@@ -8,15 +8,13 @@ process RNASEQVALIDATION {
         'community.wave.seqera.io/library/bioconductor-dose:4.0.0--57136ca31aaf6317' }"
 
     input:
-    tuple val(meta),  path(enrichment_results)
-    tuple val(meta2), path(reads)
-    tuple val(meta3), path(de_genes)
+    tuple val(meta),  path(reads)
+    tuple val(meta2), path(deseq2_results)
+    tuple val(meta3), path(enrichment_results)
 
     output:
-    tuple val(meta), path("validated_reads/*.fasta.gz")    , optional: true, emit: valid_reads
-    tuple val(meta), path("validated_de_genes.txt")        , optional: true, emit: valid_de_genes
-    tuple val(meta), path("validation_result.txt")         , emit: validation_result
-    path "versions.yml"                                    , emit: versions
+    tuple val(meta), path("rnaseq_validation/validated_reads/*.fasta.gz"), path("rnaseq_validation/deseq2_results.tsv"), path("rnaseq_validation/deseq2_tx2gene.tsv"), path("rnaseq_validation/deseq2_de_genes.txt"), path("rnaseq_validation/*.pdf"), path("rnaseq_validation/enrichment_results.rds"), path("rnaseq_validation/*.png"), path("rnaseq_validation/validation_result.txt")    , optional: true, emit: rnaseq_validated_results
+    path "versions.yml"                                                                                                                                                                                                                                                                                                                                                                      , emit: versions
 
     when:
     task.ext.when == null || task.ext.when
@@ -52,11 +50,20 @@ process RNASEQVALIDATION {
     Rscript validate_enrichment.R
 
     if [ "\$(cat validation_result.txt)" == "GOOD SIMULATION" ]; then
-        mkdir -p validated_reads
+        mkdir -p rnaseq_validation/validated_reads
+
         for read_file in ${reads}; do
-            ln -s "\$(readlink -f "\$read_file")" validated_reads/
+            cp $\{read_file} rnaseq_validation/validated_reads
         done
-        cp ${de_genes} validated_de_genes.txt
+
+        for f in ${deseq2_results}; do
+            cp "\$f" rnaseq_validation/;
+        done
+
+        for f in ${enrichment_results}; do
+            cp "\$f" rnaseq_validation/;
+        done
+
     fi
 
     cat <<-END_VERSIONS > versions.yml
@@ -70,9 +77,22 @@ process RNASEQVALIDATION {
     def prefix = task.ext.prefix ?: "${meta.id}"
 
     """
-    mkdir -p validated_reads
+    mkdir -p rnaseq_validation/validated_reads
     touch validated_reads/${prefix}_1.fasta.gz
     touch validated_reads/${prefix}_2.fasta.gz
+    touch deseq2_results.tsv
+    touch deseq2_tx2gene.tsv
+    touch deseq2_de_genes.txt
+    touch deseq2_ma_plot.pdf
+    touch deseq2_dispersion_plot.pdf
+    touch deseq2_count_plot.pdf
+    touch deseq2_heatmap_plot.pdf
+    touch deseq2_pca_plot.pdf
+    touch enrichment_results.rds
+    for ont in BP MF CC; do
+        touch dotplot_\${ont}.png
+        touch cnetplot_\${ont}.png
+    done
     touch validated_de_genes.txt
     touch validation_result.txt
 
