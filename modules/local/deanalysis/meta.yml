@@ -44,7 +44,7 @@ input:
         description: |
           Groovy Map containing sample information
           e.g. `[ id: 'simulation_id', chromosome: 'chr_number', genes: 'A,B,C', reps: 3, groups: 2 ]`
-    - quant:
+    - quant_dirs:
         type: path
         description: Path to the Salmon quantification files
         pattern: "quant.sf"
@@ -53,16 +53,12 @@ input:
         description: |
           Groovy Map containing sample information
           e.g. `[ id: 'simulation_id', chromosome: 'chr_number', genes: 'A,B,C', reps: 3, groups: 2 ]`
-    - quant:
-        type: path
-        description: Path to the Salmon quantification files
-        pattern: "quant.sf"
-  - - transcriptData:
+    - transcriptData:
         type: file
         description: RDS containing transcript data emitted by the subsetgff module
         pattern: "*.rds"
 output:
-  - results:
+  - deseq2_results:
       - meta:
           type: map
           description: |

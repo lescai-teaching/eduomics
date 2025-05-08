@@ -26,15 +26,15 @@ tools:
       homepage: "https://bioconductor.org/packages/release/bioc/html/clusterProfiler.html"
       documentation: "https://yulab-smu.top/biomedical-knowledge-mining-book/"
       tool_dev_url: "https://github.com/YuLab-SMU/clusterProfiler"
-      doi: "10.1016/j.xinn.2021.100141"
+      doi: "10.1089/omi.2011.0118"
       licence: ["Artistic-2.0"]
-      identifier: "bioconductor-clusterprofiler"
+      identifier: "biotools:clusterprofiler"
 input:
   - - meta:
         type: map
         description: |
           Groovy Map containing sample information
-          e.g. `[ id: 'simulation_id', chromosome: 'chr_number', genes: 'A, B, C', reps: 3, groups: 2 ]`
+          e.g. `[ id: 'simulation_id', chromosome: 'chr_number', genes: 'A,B,C', reps: 3, groups: 2 ]`
     - resdata:
         type: file
         description: RDS file containing the DESeq2 results for the genes from the selected chromosome
@@ -43,86 +43,52 @@ input:
         type: map
         description: |
           Groovy Map containing sample information
-          e.g. `[ id: 'simulation_id', chromosome: 'chr_number', genes: 'A, B, C', reps: 3, groups: 2 ]`
+          e.g. `[ id: 'simulation_id', chromosome: 'chr_number', genes: 'A,B,C', reps: 3, groups: 2 ]`
     - tx2gene:
         type: file
         description: File mapping transcripts to genes
         pattern: "tx2gene.tsv"
 output:
-  - dotplot_BP:
-      - meta:
-          type: map
-          description: |
-            Groovy Map containing sample information
-            e.g. `[ id: 'simulation_id', chromosome: 'chr_number', genes: 'A, B, C', reps: 3, groups: 2 ]`
-      - "dotplot_BP.png":
-          type: file
-          description: Optional, dotplot of enriched biological processes
-          pattern: "dotplot_BP.png"
-  - dotplot_MF:
-      - meta:
-          type: map
-          description: |
-            Groovy Map containing sample information
-            e.g. `[ id: 'simulation_id', chromosome: 'chr_number', genes: 'A, B, C', reps: 3, groups: 2 ]`
-      - "dotplot_MF.png":
-          type: file
-          description: Optional, dotplot of enriched molecolar functions
-          pattern: "dotplot_MF.png"
-  - dotplot_CC:
-      - meta:
-          type: map
-          description: |
-            Groovy Map containing sample information
-            e.g. `[ id: 'simulation_id', chromosome: 'chr_number', genes: 'A, B, C', reps: 3, groups: 2 ]`
-      - "dotplot_CC.png":
-          type: file
-          description: Optional, dotplot of enriched cellular components
-          pattern: "dotplot_CC.png"
-  - cnetplot_BP:
-      - meta:
-          type: map
-          description: |
-            Groovy Map containing sample information
-            e.g. `[ id: 'simulation_id', chromosome: 'chr_number', genes: 'A, B, C', reps: 3, groups: 2 ]`
-      - "cnetplot_BP.png":
-          type: file
-          description: Optional, cnetplot of enriched biological processes
-          pattern: "cnetplot_BP.png"
-  - cnetplot_MF:
-      - meta:
-          type: map
-          description: |
-            Groovy Map containing sample information
-            e.g. `[ id: 'simulation_id', chromosome: 'chr_number', genes: 'A, B, C', reps: 3, groups: 2 ]`
-      - "cnetplot_MF.png":
-          type: file
-          description: Optional, cnetplot of enriched molecular functions
-          pattern: "cnetplot_MF.png"
-  - cnetplot_CC:
-      - meta:
-          type: map
-          description: |
-            Groovy Map containing sample information
-            e.g. `[ id: 'simulation_id', chromosome: 'chr_number', genes: 'A, B, C', reps: 3, groups: 2 ]`
-      - "cnetplot_CC.png":
-          type: file
-          description: Optional, cnetplot of enriched cellular components
-          pattern: "cnetplot_CC.png"
   - enrichment_results:
       - meta:
           type: map
           description: |
             Groovy Map containing sample information
-            e.g. `[ id: 'simulation_id', chromosome: 'chr_number', genes: 'A, B, C', reps: 3, groups: 2 ]`
+            e.g. `[ id: 'simulation_id', chromosome: 'chr_number', genes: 'A,B,C', reps: 3, groups: 2 ]`
       - "enrichment_results.rds":
           type: file
           description: RDS file containing enrichment results
           pattern: "enrichment_results.rds"
+      - "dotplot_BP.png":
+          type: file
+          description: optional, dotplot of enriched biological processes
+          pattern: "dotplot_BP.png"
+      - "dotplot_MF.png":
+          type: file
+          description: optional, dotplot of enriched molecolar functions
+          pattern: "dotplot_MF.png"
+      - "dotplot_CC.png":
+          type: file
+          description: optional, dotplot of enriched cellular components
+          pattern: "dotplot_CC.png"
+      - "cnetplot_BP.png":
+          type: file
+          description: optional, cnetplot of enriched biological processes
+          pattern: "cnetplot_BP.png"
+      - "cnetplot_MF.png":
+          type: file
+          description: optional, cnetplot of enriched molecular functions
+          pattern: "cnetplot_MF.png"
+      - "cnetplot_CC.png":
+          type: file
+          description: optional, cnetplot of enriched cellular components
+          pattern: "cnetplot_CC.png"
   - versions:
       - versions.yml:
           type: file
           description: File containing software versions
           pattern: "versions.yml"
 authors:
-  - "LorenzoS96"
+  - "@LorenzoS96"
+maintainers:
+  - "@LorenzoS96"
