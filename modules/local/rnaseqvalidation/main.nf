@@ -53,7 +53,7 @@ process RNASEQVALIDATION {
         mkdir -p rnaseq_validation/validated_reads
 
         for read_file in ${reads}; do
-            cp $\{read_file} rnaseq_validation/validated_reads
+            cp "\${read_file}" rnaseq_validation/validated_reads
         done
 
         for f in ${deseq2_results}; do
@@ -78,8 +78,8 @@ process RNASEQVALIDATION {
 
     """
     mkdir -p rnaseq_validation/validated_reads
-    touch validated_reads/${prefix}_1.fasta.gz
-    touch validated_reads/${prefix}_2.fasta.gz
+    touch rnaseq_validation/validated_reads/${prefix}_1.fasta.gz
+    touch rnaseq_validation/validated_reads/${prefix}_2.fasta.gz
     touch deseq2_results.tsv
     touch deseq2_tx2gene.tsv
     touch deseq2_de_genes.txt
