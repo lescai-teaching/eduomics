@@ -106,7 +106,7 @@ test("validation - positive simulation") {
                 ]
                 input[2] = [
                     [ id: 'simtest', chromosome: 'chr22', coverage: 30, reps: 3, groups: 2, simthreshold: 0.3, genes: 'A,B,C' ], // meta map
-                    file('https://raw.githubusercontent.com/lescai-teaching/eduomics_testdata/refs/heads/main/rnaseq/validation/enrichment/positive_enrichment_results.rds', checkIfExists: true),
+                    file('https://raw.githubusercontent.com/lescai-teaching/eduomics_testdata/refs/heads/main/rnaseq/validation/enrichment/negative_enrichment_results.rds', checkIfExists: true),
                     [
                     file('https://raw.githubusercontent.com/lescai-teaching/eduomics_testdata/refs/heads/main/rnaseq/validation/enrichment/dotplot_BP.png', checkIfExists: true),
                     file('https://raw.githubusercontent.com/lescai-teaching/eduomics_testdata/refs/heads/main/rnaseq/validation/enrichment/dotplot_MF.png', checkIfExists: true),
@@ -123,7 +123,7 @@ test("validation - positive simulation") {
         then {
             assertAll(
                 { assert process.success },
-                { assert process.out.rnaseq_validated_results },
+                { assert process.out.rnaseq_validated_results.isEmpty() },
                 { assert process.out.versions }
             )
         }

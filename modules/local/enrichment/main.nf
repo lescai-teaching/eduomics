@@ -49,7 +49,7 @@ process ENRICHMENT {
     cat <<-END_VERSIONS > versions.yml
     "${task.process}":
         r-tidyverse: \$(Rscript -e "cat(as.character(packageVersion('tidyverse')))")
-        bioconductor-org.hs.eg.db: \$(Rscript -e "cat(as.character(packageVersion('org.hs.eg.db')))")
+        bioconductor-org.hs.eg.db: \$(Rscript -e "cat(as.character(packageVersion('org.Hs.eg.db')))")
         bioconductor-clusterprofiler: \$(Rscript -e "cat(as.character(packageVersion('clusterProfiler')))")
     END_VERSIONS
     """

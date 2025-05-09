@@ -30,11 +30,22 @@ input:
         description: |
           Groovy Map containing sample information
           e.g. `[ id: 'simulation_id', chromosome: 'chr_number', coverage: 30, reps: 3, groups: 2, simthreshold: 0.3, genes: 'A,B,C' ]`
-    - deseq2_results:
+    - deseq2_results_tsv:
         type: file
-        description: |
-          Collection of DESeq2 results files, which include TSV, TXT, and PDF files
-        pattern: "deseq2_results.tsv, deseq2_tx2gene.tsv, deseq2_de_genes.txt, *.pdf"
+        description: TSV containing the DESeq2 results
+        pattern: "deseq2_results.tsv"
+    - deseq2_tx2gene_tsv:
+        type: file
+        description: TSV containing the association between genes_id and transcripts_id
+        pattern: "deseq2_tx2gene.tsv"
+    - deseq2_de_genes_txt:
+        type: file
+        description: file containing the DE genes (padj < 0.05)
+        pattern: "deseq2_de_genes.txt"
+    - deseq2_pdf:
+        type: file
+        description: MA plot, dispersion plot, count plot, heatmap and pca plot produced by DESeq2
+        pattern: "*.pdf"
   - - meta3:
         type: map
         description: |
@@ -42,9 +53,12 @@ input:
           e.g. `[ id: 'simulation_id', chromosome: 'chr_number', coverage: 30, reps: 3, groups: 2, simthreshold: 0.3, genes: 'A,B,C' ]`
     - enrichment_results:
         type: file
-        description: |
-          Collection of enrichment results files, which include RDS and PNG files (optional)
-        pattern: "enrichment_results.rds, *.png"
+        description: RDS file containing enrichment results
+        pattern: "enrichment_results.rds"
+    - enrichment_png:
+        type: file
+        description: dotplots and cnetplots of enriched BP, MF and CC
+        pattern: "*.png"
 output:
   - rnaseq_validated_results:
       - meta:

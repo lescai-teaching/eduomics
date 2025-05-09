@@ -13,8 +13,8 @@ process RNASEQVALIDATION {
     tuple val(meta3), path(enrichment_rds), path(enrichment_png)
 
     output:
-    tuple val(meta), path("rnaseq_validation/validated_reads/*.fasta.gz"), path("rnaseq_validation/deseq2_results.tsv"), path("rnaseq_validation/deseq2_tx2gene.tsv"), path("rnaseq_validation/deseq2_de_genes.txt"), path("rnaseq_validation/*.pdf"), path("rnaseq_validation/enrichment_results.rds"), path("rnaseq_validation/*.png"), path("rnaseq_validation/validation_result.txt")    , optional: true, emit: rnaseq_validated_results
-    path "versions.yml"                                                                                                                                                                                                                                                                                                                                                                      , emit: versions
+    tuple val(meta), path("rnaseq_validation")    , optional: true, emit: rnaseq_validated_results
+    path "versions.yml"                           , emit: versions
 
     when:
     task.ext.when == null || task.ext.when
@@ -36,12 +36,16 @@ process RNASEQVALIDATION {
         cp "${deseq2_results_tsv}" rnaseq_validation/
         cp "${deseq2_tx2gene_tsv}" rnaseq_validation/
         cp "${deseq2_de_genes_txt}" rnaseq_validation/
-        cp "${deseq2_pdf}" rnaseq_validation/
+
+        for pdf_file in ${deseq2_pdf}; do
+            cp "\${pdf_file}" rnaseq_validation/
+        done
 
         cp "${enrichment_rds}" rnaseq_validation/
-        if [ -n "${enrichment_png}" ]; then
-            cp ${enrichment_png} rnaseq_validation/
-        fi
+
+        for png_file in ${enrichment_png}; do
+            cp "\${png_file}" rnaseq_validation/
+        done
 
     fi
 
