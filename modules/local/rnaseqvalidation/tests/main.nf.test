@@ -31,25 +31,29 @@ test("validation - positive simulation") {
                     ]
                 ]
                 input[1] = [
-                    [ id: 'simtest', chromosome: 'chr22', coverage: 30, reps: 3, groups: 2, simthreshold: 0.3, genes: 'A,B,C' ], // meta map
+                    [ id: 'simtest', chromosome: 'chr22', coverage: 30, reps: 3, groups: 2, simthreshold: 0.3, genes: 'A,B,C' ],
                     file('https://raw.githubusercontent.com/lescai-teaching/eduomics_testdata/refs/heads/main/rnaseq/validation/deseq2/deseq2_results.tsv', checkIfExists: true),
                     file('https://raw.githubusercontent.com/lescai-teaching/eduomics_testdata/refs/heads/main/rnaseq/validation/deseq2/deseq2_tx2gene.tsv', checkIfExists: true),
                     file('https://raw.githubusercontent.com/lescai-teaching/eduomics_testdata/refs/heads/main/rnaseq/validation/deseq2/positive_deseq2_de_genes.txt', checkIfExists: true),
-                    file('https://raw.githubusercontent.com/lescai-teaching/eduomics_testdata/refs/heads/main/rnaseq/validation/deseq2/deseq2_ma_plot.pdf', checkIfExists: true),
-                    file('https://raw.githubusercontent.com/lescai-teaching/eduomics_testdata/refs/heads/main/rnaseq/validation/deseq2/deseq2_dispersion_plot.pdf', checkIfExists: true),
-                    file('https://raw.githubusercontent.com/lescai-teaching/eduomics_testdata/refs/heads/main/rnaseq/validation/deseq2/deseq2_count_plot.pdf', checkIfExists: true),
-                    file('https://raw.githubusercontent.com/lescai-teaching/eduomics_testdata/refs/heads/main/rnaseq/validation/deseq2/deseq2_heatmap_plot.pdf', checkIfExists: true),
-                    file('https://raw.githubusercontent.com/lescai-teaching/eduomics_testdata/refs/heads/main/rnaseq/validation/deseq2/deseq2_pca_plot.pdf', checkIfExists: true)
+                    [
+                        file('https://raw.githubusercontent.com/lescai-teaching/eduomics_testdata/refs/heads/main/rnaseq/validation/deseq2/deseq2_ma_plot.pdf', checkIfExists: true),
+                        file('https://raw.githubusercontent.com/lescai-teaching/eduomics_testdata/refs/heads/main/rnaseq/validation/deseq2/deseq2_dispersion_plot.pdf', checkIfExists: true),
+                        file('https://raw.githubusercontent.com/lescai-teaching/eduomics_testdata/refs/heads/main/rnaseq/validation/deseq2/deseq2_count_plot.pdf', checkIfExists: true),
+                        file('https://raw.githubusercontent.com/lescai-teaching/eduomics_testdata/refs/heads/main/rnaseq/validation/deseq2/deseq2_heatmap_plot.pdf', checkIfExists: true),
+                        file('https://raw.githubusercontent.com/lescai-teaching/eduomics_testdata/refs/heads/main/rnaseq/validation/deseq2/deseq2_pca_plot.pdf', checkIfExists: true)
+                    ]
                 ]
                 input[2] = [
                     [ id: 'simtest', chromosome: 'chr22', coverage: 30, reps: 3, groups: 2, simthreshold: 0.3, genes: 'A,B,C' ], // meta map
                     file('https://raw.githubusercontent.com/lescai-teaching/eduomics_testdata/refs/heads/main/rnaseq/validation/enrichment/positive_enrichment_results.rds', checkIfExists: true),
+                    [
                     file('https://raw.githubusercontent.com/lescai-teaching/eduomics_testdata/refs/heads/main/rnaseq/validation/enrichment/dotplot_BP.png', checkIfExists: true),
                     file('https://raw.githubusercontent.com/lescai-teaching/eduomics_testdata/refs/heads/main/rnaseq/validation/enrichment/dotplot_MF.png', checkIfExists: true),
                     file('https://raw.githubusercontent.com/lescai-teaching/eduomics_testdata/refs/heads/main/rnaseq/validation/enrichment/dotplot_CC.png', checkIfExists: true),
                     file('https://raw.githubusercontent.com/lescai-teaching/eduomics_testdata/refs/heads/main/rnaseq/validation/enrichment/cnetplot_BP.png', checkIfExists: true),
                     file('https://raw.githubusercontent.com/lescai-teaching/eduomics_testdata/refs/heads/main/rnaseq/validation/enrichment/cnetplot_MF.png', checkIfExists: true),
                     file('https://raw.githubusercontent.com/lescai-teaching/eduomics_testdata/refs/heads/main/rnaseq/validation/enrichment/cnetplot_CC.png', checkIfExists: true)
+                    ]
                 ]
                 """
             }
@@ -88,19 +92,29 @@ test("validation - positive simulation") {
                     ]
                 ]
                 input[1] = [
-                    [ id: 'simtest', chromosome: 'chr22', coverage: 30, reps: 3, groups: 2, simthreshold: 0.3, genes: 'A,B,C' ], // meta map
+                    [ id: 'simtest', chromosome: 'chr22', coverage: 30, reps: 3, groups: 2, simthreshold: 0.3, genes: 'A,B,C' ],
                     file('https://raw.githubusercontent.com/lescai-teaching/eduomics_testdata/refs/heads/main/rnaseq/validation/deseq2/deseq2_results.tsv', checkIfExists: true),
                     file('https://raw.githubusercontent.com/lescai-teaching/eduomics_testdata/refs/heads/main/rnaseq/validation/deseq2/deseq2_tx2gene.tsv', checkIfExists: true),
-                    file('https://raw.githubusercontent.com/lescai-teaching/eduomics_testdata/refs/heads/main/rnaseq/validation/deseq2/negative_deseq2_de_genes.txt', checkIfExists: true),
-                    file('https://raw.githubusercontent.com/lescai-teaching/eduomics_testdata/refs/heads/main/rnaseq/validation/deseq2/deseq2_ma_plot.pdf', checkIfExists: true),
-                    file('https://raw.githubusercontent.com/lescai-teaching/eduomics_testdata/refs/heads/main/rnaseq/validation/deseq2/deseq2_dispersion_plot.pdf', checkIfExists: true),
-                    file('https://raw.githubusercontent.com/lescai-teaching/eduomics_testdata/refs/heads/main/rnaseq/validation/deseq2/deseq2_count_plot.pdf', checkIfExists: true),
-                    file('https://raw.githubusercontent.com/lescai-teaching/eduomics_testdata/refs/heads/main/rnaseq/validation/deseq2/deseq2_heatmap_plot.pdf', checkIfExists: true),
-                    file('https://raw.githubusercontent.com/lescai-teaching/eduomics_testdata/refs/heads/main/rnaseq/validation/deseq2/deseq2_pca_plot.pdf', checkIfExists: true)
+                    file('https://raw.githubusercontent.com/lescai-teaching/eduomics_testdata/refs/heads/main/rnaseq/validation/deseq2/positive_deseq2_de_genes.txt', checkIfExists: true),
+                    [
+                        file('https://raw.githubusercontent.com/lescai-teaching/eduomics_testdata/refs/heads/main/rnaseq/validation/deseq2/deseq2_ma_plot.pdf', checkIfExists: true),
+                        file('https://raw.githubusercontent.com/lescai-teaching/eduomics_testdata/refs/heads/main/rnaseq/validation/deseq2/deseq2_dispersion_plot.pdf', checkIfExists: true),
+                        file('https://raw.githubusercontent.com/lescai-teaching/eduomics_testdata/refs/heads/main/rnaseq/validation/deseq2/deseq2_count_plot.pdf', checkIfExists: true),
+                        file('https://raw.githubusercontent.com/lescai-teaching/eduomics_testdata/refs/heads/main/rnaseq/validation/deseq2/deseq2_heatmap_plot.pdf', checkIfExists: true),
+                        file('https://raw.githubusercontent.com/lescai-teaching/eduomics_testdata/refs/heads/main/rnaseq/validation/deseq2/deseq2_pca_plot.pdf', checkIfExists: true)
+                    ]
                 ]
                 input[2] = [
                     [ id: 'simtest', chromosome: 'chr22', coverage: 30, reps: 3, groups: 2, simthreshold: 0.3, genes: 'A,B,C' ], // meta map
-                    file('https://raw.githubusercontent.com/lescai-teaching/eduomics_testdata/refs/heads/main/rnaseq/validation/enrichment/negative_enrichment_results.rds', checkIfExists: true)
+                    file('https://raw.githubusercontent.com/lescai-teaching/eduomics_testdata/refs/heads/main/rnaseq/validation/enrichment/positive_enrichment_results.rds', checkIfExists: true),
+                    [
+                    file('https://raw.githubusercontent.com/lescai-teaching/eduomics_testdata/refs/heads/main/rnaseq/validation/enrichment/dotplot_BP.png', checkIfExists: true),
+                    file('https://raw.githubusercontent.com/lescai-teaching/eduomics_testdata/refs/heads/main/rnaseq/validation/enrichment/dotplot_MF.png', checkIfExists: true),
+                    file('https://raw.githubusercontent.com/lescai-teaching/eduomics_testdata/refs/heads/main/rnaseq/validation/enrichment/dotplot_CC.png', checkIfExists: true),
+                    file('https://raw.githubusercontent.com/lescai-teaching/eduomics_testdata/refs/heads/main/rnaseq/validation/enrichment/cnetplot_BP.png', checkIfExists: true),
+                    file('https://raw.githubusercontent.com/lescai-teaching/eduomics_testdata/refs/heads/main/rnaseq/validation/enrichment/cnetplot_MF.png', checkIfExists: true),
+                    file('https://raw.githubusercontent.com/lescai-teaching/eduomics_testdata/refs/heads/main/rnaseq/validation/enrichment/cnetplot_CC.png', checkIfExists: true)
+                    ]
                 ]
                 """
             }
@@ -141,25 +155,29 @@ test("validation - positive simulation") {
                     ]
                 ]
                 input[1] = [
-                    [ id: 'simtest', chromosome: 'chr22', coverage: 30, reps: 3, groups: 2, simthreshold: 0.3, genes: 'A,B,C' ], // meta map
+                    [ id: 'simtest', chromosome: 'chr22', coverage: 30, reps: 3, groups: 2, simthreshold: 0.3, genes: 'A,B,C' ],
                     file('https://raw.githubusercontent.com/lescai-teaching/eduomics_testdata/refs/heads/main/rnaseq/validation/deseq2/deseq2_results.tsv', checkIfExists: true),
                     file('https://raw.githubusercontent.com/lescai-teaching/eduomics_testdata/refs/heads/main/rnaseq/validation/deseq2/deseq2_tx2gene.tsv', checkIfExists: true),
                     file('https://raw.githubusercontent.com/lescai-teaching/eduomics_testdata/refs/heads/main/rnaseq/validation/deseq2/positive_deseq2_de_genes.txt', checkIfExists: true),
-                    file('https://raw.githubusercontent.com/lescai-teaching/eduomics_testdata/refs/heads/main/rnaseq/validation/deseq2/deseq2_ma_plot.pdf', checkIfExists: true),
-                    file('https://raw.githubusercontent.com/lescai-teaching/eduomics_testdata/refs/heads/main/rnaseq/validation/deseq2/deseq2_dispersion_plot.pdf', checkIfExists: true),
-                    file('https://raw.githubusercontent.com/lescai-teaching/eduomics_testdata/refs/heads/main/rnaseq/validation/deseq2/deseq2_count_plot.pdf', checkIfExists: true),
-                    file('https://raw.githubusercontent.com/lescai-teaching/eduomics_testdata/refs/heads/main/rnaseq/validation/deseq2/deseq2_heatmap_plot.pdf', checkIfExists: true),
-                    file('https://raw.githubusercontent.com/lescai-teaching/eduomics_testdata/refs/heads/main/rnaseq/validation/deseq2/deseq2_pca_plot.pdf', checkIfExists: true)
+                    [
+                        file('https://raw.githubusercontent.com/lescai-teaching/eduomics_testdata/refs/heads/main/rnaseq/validation/deseq2/deseq2_ma_plot.pdf', checkIfExists: true),
+                        file('https://raw.githubusercontent.com/lescai-teaching/eduomics_testdata/refs/heads/main/rnaseq/validation/deseq2/deseq2_dispersion_plot.pdf', checkIfExists: true),
+                        file('https://raw.githubusercontent.com/lescai-teaching/eduomics_testdata/refs/heads/main/rnaseq/validation/deseq2/deseq2_count_plot.pdf', checkIfExists: true),
+                        file('https://raw.githubusercontent.com/lescai-teaching/eduomics_testdata/refs/heads/main/rnaseq/validation/deseq2/deseq2_heatmap_plot.pdf', checkIfExists: true),
+                        file('https://raw.githubusercontent.com/lescai-teaching/eduomics_testdata/refs/heads/main/rnaseq/validation/deseq2/deseq2_pca_plot.pdf', checkIfExists: true)
+                    ]
                 ]
                 input[2] = [
                     [ id: 'simtest', chromosome: 'chr22', coverage: 30, reps: 3, groups: 2, simthreshold: 0.3, genes: 'A,B,C' ], // meta map
                     file('https://raw.githubusercontent.com/lescai-teaching/eduomics_testdata/refs/heads/main/rnaseq/validation/enrichment/positive_enrichment_results.rds', checkIfExists: true),
+                    [
                     file('https://raw.githubusercontent.com/lescai-teaching/eduomics_testdata/refs/heads/main/rnaseq/validation/enrichment/dotplot_BP.png', checkIfExists: true),
                     file('https://raw.githubusercontent.com/lescai-teaching/eduomics_testdata/refs/heads/main/rnaseq/validation/enrichment/dotplot_MF.png', checkIfExists: true),
                     file('https://raw.githubusercontent.com/lescai-teaching/eduomics_testdata/refs/heads/main/rnaseq/validation/enrichment/dotplot_CC.png', checkIfExists: true),
                     file('https://raw.githubusercontent.com/lescai-teaching/eduomics_testdata/refs/heads/main/rnaseq/validation/enrichment/cnetplot_BP.png', checkIfExists: true),
                     file('https://raw.githubusercontent.com/lescai-teaching/eduomics_testdata/refs/heads/main/rnaseq/validation/enrichment/cnetplot_MF.png', checkIfExists: true),
                     file('https://raw.githubusercontent.com/lescai-teaching/eduomics_testdata/refs/heads/main/rnaseq/validation/enrichment/cnetplot_CC.png', checkIfExists: true)
+                    ]
                 ]
                 """
             }

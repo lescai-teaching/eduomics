@@ -8,7 +8,6 @@ library(pheatmap)
 
 
 #### Input selection ####
-
 argv <- commandArgs(trailingOnly = TRUE)
 
 replica <- as.numeric(argv[1])

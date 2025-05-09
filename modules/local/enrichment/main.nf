@@ -12,8 +12,8 @@ process ENRICHMENT {
     tuple val(meta2), path(tx2gene)
 
     output:
-    tuple val(meta), path("enrichment_results.rds"), path("*.png", optional: true)    , emit: enrichment_results
-    path "versions.yml"                                                               , emit: versions
+    tuple val(meta), path("enrichment_results.rds"), path("*.png")    , emit: enrichment_results
+    path "versions.yml"                                               , emit: versions
 
     when:
     task.ext.when == null || task.ext.when

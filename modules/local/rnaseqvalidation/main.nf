@@ -9,8 +9,8 @@ process RNASEQVALIDATION {
 
     input:
     tuple val(meta),  path(reads)
-    tuple val(meta2), path(deseq2_results)
-    tuple val(meta3), path(enrichment_results)
+    tuple val(meta2), path(deseq2_results_tsv), path(deseq2_tx2gene_tsv), path(deseq2_de_genes_txt), path(deseq2_pdf)
+    tuple val(meta3), path(enrichment_rds), path(enrichment_png)
 
     output:
     tuple val(meta), path("rnaseq_validation/validated_reads/*.fasta.gz"), path("rnaseq_validation/deseq2_results.tsv"), path("rnaseq_validation/deseq2_tx2gene.tsv"), path("rnaseq_validation/deseq2_de_genes.txt"), path("rnaseq_validation/*.pdf"), path("rnaseq_validation/enrichment_results.rds"), path("rnaseq_validation/*.png"), path("rnaseq_validation/validation_result.txt")    , optional: true, emit: rnaseq_validated_results
@@ -24,30 +24,7 @@ process RNASEQVALIDATION {
     def prefix = task.ext.prefix ?: "${meta.id}"
 
     """
-    cat <<EOF > validate_enrichment.R
-    #!/usr/bin/env Rscript
-
-    library(DOSE)
-
-    enrichment_results <- readRDS("${enrichment_results}")
-    validate_enrichment <- function(enrichment_results) {
-        categories <- intersect(names(enrichment_results), c("BP", "MF", "CC"))
-
-        for (cat in categories) {
-            if (dim(enrichment_results[[cat]])[1] > 3) {
-                write("GOOD SIMULATION", file = "validation_result.txt")
-                return(invisible(NULL))
-            }
-        }
-
-        write("SIMULATION NOT GOOD", file = "validation_result.txt")
-        return(invisible(NULL))
-    }
-
-    validate_enrichment(enrichment_results)
-    EOF
-
-    Rscript validate_enrichment.R
+    Rscript ${baseDir}/bin/rnaseqvalidation.R ${enrichment_rds}
 
     if [ "\$(cat validation_result.txt)" == "GOOD SIMULATION" ]; then
         mkdir -p rnaseq_validation/validated_reads
@@ -56,13 +33,15 @@ process RNASEQVALIDATION {
             cp "\${read_file}" rnaseq_validation/validated_reads
         done
 
-        for f in ${deseq2_results}; do
-            cp "\$f" rnaseq_validation/;
-        done
+        cp "${deseq2_results_tsv}" rnaseq_validation/
+        cp "${deseq2_tx2gene_tsv}" rnaseq_validation/
+        cp "${deseq2_de_genes_txt}" rnaseq_validation/
+        cp "${deseq2_pdf}" rnaseq_validation/
 
-        for f in ${enrichment_results}; do
-            cp "\$f" rnaseq_validation/;
-        done
+        cp "${enrichment_rds}" rnaseq_validation/
+        if [ -n "${enrichment_png}" ]; then
+            cp ${enrichment_png} rnaseq_validation/
+        fi
 
     fi
 
@@ -80,21 +59,20 @@ process RNASEQVALIDATION {
     mkdir -p rnaseq_validation/validated_reads
     touch rnaseq_validation/validated_reads/${prefix}_1.fasta.gz
     touch rnaseq_validation/validated_reads/${prefix}_2.fasta.gz
-    touch deseq2_results.tsv
-    touch deseq2_tx2gene.tsv
-    touch deseq2_de_genes.txt
-    touch deseq2_ma_plot.pdf
-    touch deseq2_dispersion_plot.pdf
-    touch deseq2_count_plot.pdf
-    touch deseq2_heatmap_plot.pdf
-    touch deseq2_pca_plot.pdf
-    touch enrichment_results.rds
+    touch rnaseq_validation/deseq2_results.tsv
+    touch rnaseq_validation/deseq2_tx2gene.tsv
+    touch rnaseq_validation/deseq2_de_genes.txt
+    touch rnaseq_validation/deseq2_ma_plot.pdf
+    touch rnaseq_validation/deseq2_dispersion_plot.pdf
+    touch rnaseq_validation/deseq2_count_plot.pdf
+    touch rnaseq_validation/deseq2_heatmap_plot.pdf
+    touch rnaseq_validation/deseq2_pca_plot.pdf
+    touch rnaseq_validation/enrichment_results.rds
     for ont in BP MF CC; do
-        touch dotplot_\${ont}.png
-        touch cnetplot_\${ont}.png
+        touch rnaseq_validation/dotplot_\${ont}.png
+        touch rnaseq_validation/cnetplot_\${ont}.png
     done
-    touch validated_de_genes.txt
-    touch validation_result.txt
+    touch rnaseq_validation/validation_result.txt
 
     cat <<-END_VERSIONS > versions.yml
     "${task.process}":

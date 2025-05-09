@@ -29,15 +29,8 @@ nextflow_process {
             assertAll(
                 { assert process.success },
                 { assert process.out.enrichment_results },
-                { assert process.out.enrichment_results[0][1].endsWith("enrichment_results.rds") },
-                {
-                    def plots = process.out.enrichment_results[0].size() > 2 ? process.out.enrichment_results[0][2] : null
-                    if (plots != null) {
-                        plots.each { plot ->
-                            assert plot.endsWith(".png")
-                        }
-                    }
-                },
+                { assert process.out.enrichment_results[0][1].toString().endsWith("enrichment_results.rds") },
+                { assert process.out.enrichment_results[0][2].every { it.toString().endsWith(".png") } },
                 { assert process.out.versions }
             )
         }
@@ -66,15 +59,8 @@ nextflow_process {
             assertAll(
                 { assert process.success },
                 { assert process.out.enrichment_results },
-                { assert process.out.enrichment_results[0][1].endsWith("enrichment_results.rds") },
-                {
-                    def plots = process.out.enrichment_results[0].size() > 2 ? process.out.enrichment_results[0][2] : null
-                    if (plots != null) {
-                        plots.each { plot ->
-                            assert plot.endsWith(".png")
-                        }
-                    }
-                },
+                { assert process.out.enrichment_results[0][1].toString().endsWith("enrichment_results.rds") },
+                { assert process.out.enrichment_results[0][2].every { it.toString().endsWith(".png") } },
                 { assert process.out.versions }
             )
         }

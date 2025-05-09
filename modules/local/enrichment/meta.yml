@@ -61,27 +61,27 @@ output:
           pattern: "enrichment_results.rds"
       - "dotplot_BP.png":
           type: file
-          description: optional, dotplot of enriched biological processes
+          description: dotplot of enriched biological processes
           pattern: "dotplot_BP.png"
       - "dotplot_MF.png":
           type: file
-          description: optional, dotplot of enriched molecolar functions
+          description: dotplot of enriched molecolar functions
           pattern: "dotplot_MF.png"
       - "dotplot_CC.png":
           type: file
-          description: optional, dotplot of enriched cellular components
+          description: dotplot of enriched cellular components
           pattern: "dotplot_CC.png"
       - "cnetplot_BP.png":
           type: file
-          description: optional, cnetplot of enriched biological processes
+          description: cnetplot of enriched biological processes
           pattern: "cnetplot_BP.png"
       - "cnetplot_MF.png":
           type: file
-          description: optional, cnetplot of enriched molecular functions
+          description: cnetplot of enriched molecular functions
           pattern: "cnetplot_MF.png"
       - "cnetplot_CC.png":
           type: file
-          description: optional, cnetplot of enriched cellular components
+          description: cnetplot of enriched cellular components
           pattern: "cnetplot_CC.png"
   - versions:
       - versions.yml:
