@@ -1,0 +1,78 @@
+nextflow_process {
+
+    name "Test Process DNAVALIDATION"
+    script "../main.nf"
+    process "DNAVALIDATION"
+
+    tag "modules"
+    tag "modules_nf_core"
+    tag "dnavalidation"
+
+    test("Should validate DNA when variant is found") {
+        when {
+            process {
+                """
+                input[0] = [
+                    [ id:'test1', simulatedvar:'chr22-34449622-G-A'],
+                    file("https://raw.githubusercontent.com/lescai-teaching/eduomics_testdata/refs/heads/main/dna/result_ann_test.vcf")
+                ]
+                input[1] = [
+                    [ id:'test1', simulatedvar:'chr22-34449622-G-A'  ],
+                    [ file("https://raw.githubusercontent.com/lescai-teaching/eduomics_testdata/refs/heads/main/dna/test1_1.fastq.gz"), file("https://raw.githubusercontent.com/lescai-teaching/eduomics_testdata/refs/heads/main/dna/test1_2.fastq.gz") ]
+                ]
+                """
+            }
+        }
+
+        then {
+            assert process.success
+            assert process.out.dna_validated_results.size() == 1
+        }
+    }
+
+    test("Should not validate DNA when variant is not found") {
+        when {
+            process {
+                """
+                input[0] = [
+                    [ id:'test2', simulatedvar:'CIAONELORENZO' ],
+                    file("https://raw.githubusercontent.com/lescai-teaching/eduomics_testdata/refs/heads/main/dna/result_ann_test.vcf")
+                ]
+                input[1] = [
+                    [ id:'test2' ],
+                    [ file("https://raw.githubusercontent.com/lescai-teaching/eduomics_testdata/refs/heads/main/dna/test1_1.fastq.gz"), file("https://raw.githubusercontent.com/lescai-teaching/eduomics_testdata/refs/heads/main/dna/test1_2.fastq.gz") ]
+                ]
+                """
+            }
+        }
+
+        then {
+            assert process.success
+            assert process.out.dna_validated_results.isEmpty()
+        }
+    }
+
+    test("Stub should work correctly") {
+        options "-stub"
+        when {
+            process {
+                """
+                input[0] = [
+                    [ id:'test_stub', simulatedvar:'chr22-1234-A-T' ],
+                    file("dummy.vcf")
+                ]
+                input[1] = [
+                    [ id:'test_stub' ],
+                    [ file("dummy_1.fastq.gz"), file("dummy_2.fastq.gz") ]
+                ]
+                """
+            }
+        }
+
+        then {
+            assert process.success
+            assert process.out.dna_validated_results.size() == 1
+            assert path(process.out.dna_validated_results.get(0).get(1)).list().size() == 3
+        }
+    }
+}
