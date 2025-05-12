@@ -68,7 +68,7 @@ output:
           type: file
           description: TSV containing the DESeq2 results
           pattern: "deseq2_results.tsv"
-      - "deseq2_tx2gene.tsv":
+      - "deseq2_tx2gene.txt":
           type: file
           description: TSV containing the association between genes_id and transcripts_id
           pattern: "deseq2_tx2gene.tsv"

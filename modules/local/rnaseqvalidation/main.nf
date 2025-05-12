@@ -47,6 +47,8 @@ process RNASEQVALIDATION {
             cp "\${png_file}" rnaseq_validation/
         done
 
+        cp validation_result.txt rnaseq_validation/
+
     fi
 
     cat <<-END_VERSIONS > versions.yml

@@ -63,10 +63,24 @@ test("validation - positive simulation") {
             assertAll(
                 { assert process.success },
                 { assert process.out.rnaseq_validated_results },
+                // Check the existence of the validated_reads subdirectory (folder containing the .fasta.gz files)
+                {
+                    def dir = new File(process.out.rnaseq_validated_results[0][1])
+                    def validatedReadsDir = new File(dir, "validated_reads")
+                    assert validatedReadsDir.exists() && validatedReadsDir.isDirectory()
+                },
+                // Check the existence of files produced by the deanalysis enrichment and rnaseqvalidation modules
+                {
+                    def dir = new File(process.out.rnaseq_validated_results[0][1])
+                    def files = dir.listFiles() as List
+                    assert files.count { it.name.endsWith('.tsv') } == 2
+                    assert files.count { it.name.endsWith('.pdf') } == 5
+                    assert files.count { it.name.endsWith('.png') } == 6
+                    assert files.count { it.name.endsWith('.txt') } == 2
+                },
                 { assert process.out.versions }
             )
         }
-
     }
 
     test("validation - negative simulation") {
@@ -187,10 +201,24 @@ test("validation - positive simulation") {
             assertAll(
                 { assert process.success },
                 { assert process.out.rnaseq_validated_results },
+                // Check the existence of the validated_reads subdirectory (folder containing the .fasta.gz files)
+                {
+                    def dir = new File(process.out.rnaseq_validated_results[0][1])
+                    def validatedReadsDir = new File(dir, "validated_reads")
+                    assert validatedReadsDir.exists() && validatedReadsDir.isDirectory()
+                },
+                // Check the existence of files produced by the deanalysis enrichment and rnaseqvalidation modules
+                {
+                    def dir = new File(process.out.rnaseq_validated_results[0][1])
+                    def files = dir.listFiles() as List
+                    assert files.count { it.name.endsWith('.tsv') } == 2
+                    assert files.count { it.name.endsWith('.pdf') } == 5
+                    assert files.count { it.name.endsWith('.png') } == 6
+                    assert files.count { it.name.endsWith('.txt') } == 2
+                },
                 { assert process.out.versions }
             )
         }
-
     }
 
 }
