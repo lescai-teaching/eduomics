@@ -1,4 +1,3 @@
-
 process DNAVALIDATION {
     tag "$meta.id"
     label 'process_single'
