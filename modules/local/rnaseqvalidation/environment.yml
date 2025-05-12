@@ -4,6 +4,4 @@ channels:
   - conda-forge
   - bioconda
 dependencies:
-  - bioconda::bioconductor-biostrings=2.68.1
-  - bioconda::bioconductor-rtracklayer=1.60.0
-  - conda-forge::r-tidyverse=2.0.0
+  - bioconda::bioconductor-dose=4.0.0

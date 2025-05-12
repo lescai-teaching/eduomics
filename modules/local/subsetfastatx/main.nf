@@ -13,9 +13,9 @@ process SUBSETFASTATX {
     path(gff3)
 
     output:
-    path "*.fasta"                        , emit: fasta
-    path "subsetfastatx_parsing_log.txt"  , emit: log
-    path "versions.yml"                   , emit: versions
+    tuple val(meta), path ("gencode_transcripts_noversion.fasta")    , emit: filtered_txfasta
+    tuple val(meta), path ("subsetfastatx_parsing_log.txt")          , emit: log
+    path "versions.yml"                                              , emit: versions
 
     when:
     task.ext.when == null || task.ext.when
@@ -38,8 +38,9 @@ process SUBSETFASTATX {
     stub:
     def args = task.ext.args ?: ''
     def prefix = task.ext.prefix ?: "${meta.id}"
+
     """
-    touch gencode_transcripts_noversion_${meta.chromosome}.fasta
+    touch gencode_transcripts_noversion.fasta
     touch subsetfastatx_parsing_log.txt
 
     cat <<-END_VERSIONS > versions.yml

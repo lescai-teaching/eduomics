@@ -5,10 +5,10 @@ include { SALMON_INDEX       } from '../../../modules/nf-core/salmon/index/main'
 workflow PREPARE_RNA_GENOME {
 
     take:
-    ch_fasta   // channel: [ path(fasta) ]
+    ch_fasta   // channel: [ path(fasta)   ]
     ch_txfasta // channel: [ path(txfasta) ]
-    ch_gff3    // channel: [ path(gff3) ]
-    ch_meta    // channel: [ val(meta) ]
+    ch_gff3    // channel: [ path(gff3)    ]
+    ch_meta    // channel: [ val(meta)     ]
 
     main:
 
@@ -23,15 +23,21 @@ workflow PREPARE_RNA_GENOME {
     ch_versions = ch_versions.mix(SUBSETGFF.out.versions.first())
     ch_log      = ch_log.mix(SUBSETGFF.out.log)
 
-    SALMON_INDEX ( ch_fasta, SUBSETFASTATX.out.fasta )
+    // Remove the meta from the filtered txfasta
+    // Salmon index requires inputs without a meta
+    ch_filtered_txfasta_nometa = SUBSETFASTATX.out.filtered_txfasta
+        .map { meta, fasta -> fasta }
+
+    SALMON_INDEX ( ch_fasta, ch_filtered_txfasta_nometa )
     ch_versions = ch_versions.mix(SALMON_INDEX.out.versions.first())
 
     emit:
-    txfasta_index      = SALMON_INDEX.out.index          // channel: [ path(txfasta_index) ]
-    txfasta            = SUBSETFASTATX.out.fasta         // channel: [ path(txfasta) ]
-    gene_lists         = SUBSETGFF.out.geneLists         // channel: [ path(geneLists) ]
-    transcript_data    = SUBSETGFF.out.transcriptData    // channel: [ path(transcriptData) ]
-    log_files          = ch_log                          // channel: [ path(log_files) ]
-    versions           = ch_versions                     // channel: [ versions.yml ]
+    txfasta_index           = SALMON_INDEX.out.index                 // channel: [ path(salmon_index)                       ]
+    filtered_txfasta        = SUBSETFASTATX.out.filtered_txfasta     // channel: [ val(meta), path(filtered_txfasta)        ]
+    gene_lists              = SUBSETGFF.out.geneLists                // channel: [ val(meta), path(geneLists)               ]
+    genes_list_associations = SUBSETGFF.out.genes_list_association   // channel: [ val(meta), path(genes_list_associations) ]. This is a TSV file containing the association between a specific list and its genes. Necessary to add genes in meta by coupling the genes with a specific countMatrix
+    filtered_gff3           = SUBSETGFF.out.filtered_gff3            // channel: [ val(meta), path(gff3_filtered)           ]
+    log_files               = ch_log                                 // channel: [ val(meta), path(log_files)               ]
+    versions                = ch_versions                            // channel: [ versions.yml                             ]
 }
 

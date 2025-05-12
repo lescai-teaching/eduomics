@@ -91,27 +91,53 @@ input:
   - meta:
       type: map
       description: |
-        Metadata map containing sample information
-        Required keys:
-          - id: Sample identifier
-          - chromosome: Chromosome of interest
+        Groovy Map containing sample information
+        e.g. `[ id:'test', chromosome: 'chr22', coverage: 30, reps: 3, groups: 2, simthreshold: 0.3 ]`
   - gff3:
       type: file
       description: GFF3 annotation file
       pattern: "*.{gff,gff3}"
 output:
   - geneLists:
-      type: file
-      description: RDS file containing valid gene lists
-      pattern: "valid_gene_lists.rds"
-  - transcriptData:
-      type: file
-      description: RDS file containing transcript data
-      pattern: "transcript_data.rds"
+      - meta:
+          type: file
+          description: |
+            Groovy Map containing sample information
+            e.g. `[ id:'test', chromosome: 'chr22', coverage: 30, reps: 3, groups: 2, simthreshold: 0.3 ]`
+      - "valid_gene_lists.rds":
+          type: file
+          description: RDS file containing valid gene lists
+          pattern: "valid_gene_lists.rds"
+  - genes_list_association:
+      - meta:
+          type: map
+          description: |
+            Groovy Map containing sample information
+            e.g. `[ id:'test', chromosome: 'chr22', coverage: 30, reps: 3, groups: 2, simthreshold: 0.3 ]`
+      - "list_gene_association.tsv":
+          type: file
+          description: TSV file containing the association between genes and the corrisponding list
+          pattern: "list_gene_association.tsv"
+  - filtered_gff3:
+      - meta:
+          type: file
+          description: |
+            Groovy Map containing sample information
+            e.g. `[ id:'test', chromosome: 'chr22', coverage: 30, reps: 3, groups: 2, simthreshold: 0.3 ]`
+      - "filtered_gff3.rds":
+          type: file
+          description: RDS file containing transcript data from the specified chromosome
+          pattern: "filtered_gff3.rds"
   - log:
-      type: file
-      description: Log file containing parsing and analysis information
-      pattern: "parsing_log.txt"
+      - meta:
+          type: file
+          description: |
+            Groovy Map containing sample information
+            e.g. `[ id:'test', chromosome: 'chr22', coverage: 30, reps: 3, groups: 2, simthreshold: 0.3 ]`
+      - "subsetgff_parsing_log.txt":
+          type: file
+          description: Log file containing parsing and analysis information
+          pattern: "subsetgff_parsing_log.txt"
   - versions:
       type: file
       description: File containing software versions
