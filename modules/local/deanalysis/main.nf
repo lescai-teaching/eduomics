@@ -12,8 +12,9 @@ process DEANALYSIS {
     tuple val(meta2), path(transcriptData)
 
     output:
-    tuple val(meta), path("deseq2_results.tsv"), path("deseq2_tx2gene.tsv"), path("deseq2_de_genes.txt"), path("*.pdf")    , emit: deseq2_results
-    path "versions.yml"                                                                                                    , emit: versions
+    tuple val(meta), path("deseq2_results.tsv"), path("deseq2_de_genes.txt"), path("*.pdf")    , emit: deseq2_results
+    tuple val(meta), path("deseq2_tx2gene.tsv")                                                , emit: deseq2_tx2gene
+    path "versions.yml"                                                                        , emit: versions
 
     when:
     task.ext.when == null || task.ext.when

@@ -107,12 +107,12 @@ nextflow_process {
                 { assert process.success },
                 { assert process.out.deseq2_results },
                 { assert process.out.deseq2_results[0][1].toString().endsWith("deseq2_results.tsv") },
-                { assert process.out.deseq2_results[0][2].toString().endsWith("deseq2_tx2gene.tsv") },
-                { assert process.out.deseq2_results[0][3].toString().endsWith("deseq2_de_genes.txt") },
+                { assert process.out.deseq2_results[0][2].toString().endsWith("deseq2_de_genes.txt") },
                 {
-                    def pdfs = process.out.deseq2_results[0][4]
+                    def pdfs = process.out.deseq2_results[0][3]
                     assert pdfs.every { it.toString().endsWith(".pdf") }
                 },
+                { assert process.out.deseq2_tx2gene },
                 { assert process.out.versions }
             )
         }
@@ -143,12 +143,12 @@ nextflow_process {
                 { assert process.success },
                 { assert process.out.deseq2_results },
                 { assert process.out.deseq2_results[0][1].toString().endsWith("deseq2_results.tsv") },
-                { assert process.out.deseq2_results[0][2].toString().endsWith("deseq2_tx2gene.tsv") },
-                { assert process.out.deseq2_results[0][3].toString().endsWith("deseq2_de_genes.txt") },
+                { assert process.out.deseq2_results[0][2].toString().endsWith("deseq2_de_genes.txt") },
                 {
-                    def pdfs = process.out.deseq2_results[0][4]
+                    def pdfs = process.out.deseq2_results[0][3]
                     assert pdfs.every { it.toString().endsWith(".pdf") }
                 },
+                { assert process.out.deseq2_tx2gene },
                 { assert process.out.versions }
             )
         }

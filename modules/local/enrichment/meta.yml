@@ -46,7 +46,7 @@ input:
           e.g. `[ id: 'simulation_id', chromosome: 'chr_number', genes: 'A,B,C', reps: 3, groups: 2 ]`
     - tx2gene:
         type: file
-        description: File mapping transcripts to genes
+        description: TSV mapping transcripts to genes
         pattern: "tx2gene.tsv"
 output:
   - enrichment_results:

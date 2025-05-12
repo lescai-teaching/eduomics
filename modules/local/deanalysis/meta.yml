@@ -68,10 +68,6 @@ output:
           type: file
           description: TSV containing the DESeq2 results
           pattern: "deseq2_results.tsv"
-      - "deseq2_tx2gene.txt":
-          type: file
-          description: TSV containing the association between genes_id and transcripts_id
-          pattern: "deseq2_tx2gene.tsv"
       - "deseq2_de_genes.txt":
           type: file
           description: file containing the DE genes (padj < 0.05)
@@ -96,6 +92,16 @@ output:
           type: file
           description: PCA plot
           pattern: "deseq2_pca_plot.pdf"
+  - deseq2_tx2gene:
+      - meta:
+          type: map
+          description: |
+            Groovy Map containing sample information
+            e.g. `[ id: 'simulation_id', chromosome: 'chr_number', genes: 'A,B,C', reps: 3, groups: 2 ]`
+      - "deseq2_tx2gene.tsv":
+          type: file
+          description: TSV mapping transcripts to genes
+          pattern: "deseq2_tx2gene.tsv"
   - versions:
       - versions.yml:
           type: file

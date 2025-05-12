@@ -34,10 +34,6 @@ input:
         type: file
         description: TSV containing the DESeq2 results
         pattern: "deseq2_results.tsv"
-    - deseq2_tx2gene.txt:
-        type: file
-        description: TSV containing the association between genes_id and transcripts_id
-        pattern: "deseq2_tx2gene.tsv"
     - deseq2_de_genes_txt:
         type: file
         description: file containing the DE genes (padj < 0.05)
@@ -59,6 +55,15 @@ input:
         type: file
         description: dotplots and cnetplots of enriched BP, MF and CC
         pattern: "*.png"
+  - - meta4:
+        type: map
+        description: |
+          Groovy Map containing sample information
+          e.g. `[ id: 'simulation_id', chromosome: 'chr_number', coverage: 30, reps: 3, groups: 2, simthreshold: 0.3, genes: 'A,B,C' ]`
+    - deseq2_tx2gene.tsv:
+        type: file
+        description: TSV mapping transcripts to genes
+        pattern: "deseq2_tx2gene.tsv"
 output:
   - rnaseq_validated_results:
       - meta:
