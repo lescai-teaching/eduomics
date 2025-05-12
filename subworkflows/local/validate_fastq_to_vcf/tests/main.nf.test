@@ -2,6 +2,7 @@ nextflow_workflow {
 
     name "Test Subworkflow VALIDATE_FASTQ_TO_VCF"
     script "../main.nf"
+    config "./test.config"
     workflow "VALIDATE_FASTQ_TO_VCF"
 
     tag "subworkflows"
@@ -26,13 +27,29 @@ nextflow_workflow {
                 """
 
                 // paired fastq files [mandatory]
-                input[0] = Channel.value([
-                    [ id:'test',],
-                    [file('https://raw.githubusercontent.com/lescai-teaching/eduomics_testdata/refs/heads/main/dna/simureads/fastq_output/normal_0.000+disease_1.000_1.fq.gz'),
-                    file('https://raw.githubusercontent.com/lescai-teaching/eduomics_testdata/refs/heads/main/dna/simureads/fastq_output/normal_0.000+disease_1.000_2.fq.gz')],
-                    [file('https://raw.githubusercontent.com/lescai-teaching/eduomics_testdata/refs/heads/main/dna/simureads/fastq_output/normal_1.000+disease_0.000_1.fq.gz'),
-                    file('https://raw.githubusercontent.com/lescai-teaching/eduomics_testdata/refs/heads/main/dna/simureads/fastq_output/normal_2.000+disease_0.000_1.fq.gz')]
-                ])
+//                input[0] = Channel.value([
+//                    [ id:'test',],
+//                    [file('https://raw.githubusercontent.com/lescai-teaching/eduomics_testdata/refs/heads/main/dna/simureads/fastq_output/normal_0.000+disease_1.000_1.fq.gz'),
+//                    file('https://raw.githubusercontent.com/lescai-teaching/eduomics_testdata/refs/heads/main/dna/simureads/fastq_output/normal_0.000+disease_1.000_2.fq.gz')],
+//                    [file('https://raw.githubusercontent.com/lescai-teaching/eduomics_testdata/refs/heads/main/dna/simureads/fastq_output/normal_1.000+disease_0.000_1.fq.gz'),
+//                    file('https://raw.githubusercontent.com/lescai-teaching/eduomics_testdata/refs/heads/main/dna/simureads/fastq_output/normal_2.000+disease_0.000_1.fq.gz')]
+//                ])
+input[0] = Channel.fromList([
+    [
+        [id: 'case'],
+        [
+            'https://raw.githubusercontent.com/lescai-teaching/eduomics_testdata/refs/heads/main/dna/simureads/fastq_output/normal_0.000+disease_1.000_1.fq.gz',
+            'https://raw.githubusercontent.com/lescai-teaching/eduomics_testdata/refs/heads/main/dna/simureads/fastq_output/normal_0.000+disease_1.000_2.fq.gz'
+        ]
+    ],
+    [
+        [id: 'control'],
+        [
+            'https://raw.githubusercontent.com/lescai-teaching/eduomics_testdata/refs/heads/main/dna/simureads/fastq_output/normal_1.000+disease_0.000_1.fq.gz',
+            'https://raw.githubusercontent.com/lescai-teaching/eduomics_testdata/refs/heads/main/dna/simureads/fastq_output/normal_1.000+disease_0.000_2.fq.gz'
+        ]
+    ]
+])
 
                 // fasta       [mandatory] [ val(meta), [ fasta ] ]
                 input[1] = Channel.value([
