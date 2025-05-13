@@ -19,7 +19,7 @@ workflow QUANTIFY_DEANALYSIS_ENRICH_VALIDATE {
 
     ch_versions = Channel.empty()
 
-    // Remove the meta from simredas, filteredgff3 and filteredtxfasta
+    // Remove the meta from filteredgff3 and filteredtxfasta
     // Salmon quant module requires input with no meta
     ch_filteredgff3_nometa = ch_filteredgff3
                 .map { meta, gff3 -> gff3 }
