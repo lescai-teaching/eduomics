@@ -19,24 +19,62 @@ workflow QUANTIFY_DEANALYSIS_ENRICH_VALIDATE {
 
     ch_versions = Channel.empty()
 
-    // Remove the meta from filteredgff3 and filteredtxfasta
-    // Salmon quant module requires input with no meta
-    ch_filteredgff3_nometa = ch_filteredgff3
-                .map { meta, gff3 -> gff3 }
+    // Modify `meta.id` to make it unique for each sample based on filenames
+    ch_simreads_modified = ch_simreads.map { meta, reads ->
+        def new_meta = meta.clone()                                  // clone the original meta to mantain it. It is required in the following steps
+        def base_name = reads[0].getBaseName()                       // e.g. "sample_01_1"
+        def sample = base_name.split('_')[0..1].join('_')            // e.g. "sample_01"
+        new_meta.original_id = meta.id
+        new_meta.id = sample                                         // update meta.id with sample name
+        tuple(new_meta, reads)
+    }
 
-    ch_filteredtxfasta_nometa = ch_filteredtxfasta
-                .map { meta, txfasta -> txfasta }
+    // Strip away meta for filtered gff3 and transcript fasta
+    ch_filteredgff3_nometa = ch_filteredgff3.map { meta, gff3 -> gff3 }
+    ch_filteredtxfasta_nometa = ch_filteredtxfasta.map { meta, txfasta -> txfasta }
 
-    SALMON_QUANT ( ch_simreads, ch_index, ch_filteredgff3_nometa, ch_filteredtxfasta_nometa, ch_alignment_mode, ch_libtype )
+    // Run quantification
+    SALMON_QUANT (
+        ch_simreads_modified,
+        ch_index,
+        ch_filteredgff3_nometa,
+        ch_filteredtxfasta_nometa,
+        ch_alignment_mode,
+        ch_libtype
+    )
+
     ch_versions = ch_versions.mix(SALMON_QUANT.out.versions.first())
 
-    DEANALYSIS ( SALMON_QUANT.out.results, ch_transcriptData )
+    // Restore original `meta.id` for downstream DE analysis (grouping by meta)
+    ch_deanalysis_input = SALMON_QUANT.out.results.map { meta, quant_dir ->
+        def cleaned_meta = meta.clone()
+        cleaned_meta.id = meta.original_id
+        cleaned_meta.remove('original_id')
+        cleaned_meta.remove('sample')
+        tuple(cleaned_meta, quant_dir)
+    }
+    .groupTuple(by: 0)
+
+    // Run differential expression analysis
+    DEANALYSIS ( ch_deanalysis_input, ch_transcriptData )
     ch_versions = ch_versions.mix(DEANALYSIS.out.versions.first())
 
-    ENRICHMENT ( DEANALYSIS.out.deseq2_results, DEANALYSIS.out.deseq2_tx2gene )
+    // Extract only deseq2_results.tsv for enrichment module
+    ch_deseq2_results_tsv_only = DEANALYSIS.out.deseq2_results.map { meta, tsv, file1, list1 ->
+        tuple(meta, tsv)
+    }
+
+    // Run enrichment analysis
+    ENRICHMENT ( ch_deseq2_results_tsv_only, DEANALYSIS.out.deseq2_tx2gene )
     ch_versions = ch_versions.mix(ENRICHMENT.out.versions.first())
 
-    RNASEQVALIDATION ( DEANALYSIS.out.deseq2_results, ch_simreads, ENRICHMENT.out.enrichment_results, DEANALYSIS.out.deseq2_tx2gene)
+    // Perform final validation of results
+    RNASEQVALIDATION (
+        ch_simreads,
+        DEANALYSIS.out.deseq2_results,
+        ENRICHMENT.out.enrichment_results,
+        DEANALYSIS.out.deseq2_tx2gene
+    )
     ch_versions = ch_versions.mix(RNASEQVALIDATION.out.versions.first())
 
     emit:
