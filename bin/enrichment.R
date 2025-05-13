@@ -10,7 +10,7 @@ deseq2_resdata <- argv[1]
 deseq2_tx2gene <- argv[2]
 
 # Read the input files
-resdata <- readRDS(deseq2_resdata)
+resdata <- read_tsv(deseq2_resdata)
 tx2gene <- read_tsv(deseq2_tx2gene) %>%
     dplyr::select(transcript_id, gene_id)
 
