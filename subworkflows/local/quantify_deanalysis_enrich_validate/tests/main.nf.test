@@ -13,35 +13,36 @@ nextflow_workflow {
     tag "enrichment"
     tag "validation"
 
-test("quantify_deanalysis_enrich_validate - with enrichment") {
+
+    test("quantify_deanalysis_enrich_validate - with enrichment") {
 
         when {
             workflow {
                 """
                 def sample_urls = [
                     'sample_01': [
-                        'https://raw.githubusercontent.com/lescai-teaching/eduomics_testdata/refs/heads/main/rnaseq/raw_reads_with_enrichment/sample_01_1.fasta.gz',
-                        'https://raw.githubusercontent.com/lescai-teaching/eduomics_testdata/refs/heads/main/rnaseq/raw_reads_with_enrichment/sample_01_2.fasta.gz'
+                        'https://raw.githubusercontent.com/lescai-teaching/eduomics_testdata/refs/heads/main/rnaseq/raw_reads_enrichment/sample_01_1.fasta.gz',
+                        'https://raw.githubusercontent.com/lescai-teaching/eduomics_testdata/refs/heads/main/rnaseq/raw_reads_enrichment/sample_01_2.fasta.gz'
                     ],
                     'sample_02': [
-                        'https://raw.githubusercontent.com/lescai-teaching/eduomics_testdata/refs/heads/main/rnaseq/raw_reads_with_enrichment/sample_02_1.fasta.gz',
-                        'https://raw.githubusercontent.com/lescai-teaching/eduomics_testdata/refs/heads/main/rnaseq/raw_reads_with_enrichment/sample_02_2.fasta.gz'
+                        'https://raw.githubusercontent.com/lescai-teaching/eduomics_testdata/refs/heads/main/rnaseq/raw_reads_enrichment/sample_02_1.fasta.gz',
+                        'https://raw.githubusercontent.com/lescai-teaching/eduomics_testdata/refs/heads/main/rnaseq/raw_reads_enrichment/sample_02_2.fasta.gz'
                     ],
                     'sample_03': [
-                        'https://raw.githubusercontent.com/lescai-teaching/eduomics_testdata/refs/heads/main/rnaseq/raw_reads_with_enrichment/sample_03_1.fasta.gz',
-                        'https://raw.githubusercontent.com/lescai-teaching/eduomics_testdata/refs/heads/main/rnaseq/raw_reads_with_enrichment/sample_03_2.fasta.gz'
+                        'https://raw.githubusercontent.com/lescai-teaching/eduomics_testdata/refs/heads/main/rnaseq/raw_reads_enrichment/sample_03_1.fasta.gz',
+                        'https://raw.githubusercontent.com/lescai-teaching/eduomics_testdata/refs/heads/main/rnaseq/raw_reads_enrichment/sample_03_2.fasta.gz'
                     ],
                     'sample_04': [
-                        'https://raw.githubusercontent.com/lescai-teaching/eduomics_testdata/refs/heads/main/rnaseq/raw_reads_with_enrichment/sample_04_1.fasta.gz',
-                        'https://raw.githubusercontent.com/lescai-teaching/eduomics_testdata/refs/heads/main/rnaseq/raw_reads_with_enrichment/sample_04_2.fasta.gz'
+                        'https://raw.githubusercontent.com/lescai-teaching/eduomics_testdata/refs/heads/main/rnaseq/raw_reads_enrichment/sample_04_1.fasta.gz',
+                        'https://raw.githubusercontent.com/lescai-teaching/eduomics_testdata/refs/heads/main/rnaseq/raw_reads_enrichment/sample_04_2.fasta.gz'
                     ],
                     'sample_05': [
-                        'https://raw.githubusercontent.com/lescai-teaching/eduomics_testdata/refs/heads/main/rnaseq/raw_reads_with_enrichment/sample_05_1.fasta.gz',
-                        'https://raw.githubusercontent.com/lescai-teaching/eduomics_testdata/refs/heads/main/rnaseq/raw_reads_with_enrichment/sample_05_2.fasta.gz'
+                        'https://raw.githubusercontent.com/lescai-teaching/eduomics_testdata/refs/heads/main/rnaseq/raw_reads_enrichment/sample_05_1.fasta.gz',
+                        'https://raw.githubusercontent.com/lescai-teaching/eduomics_testdata/refs/heads/main/rnaseq/raw_reads_enrichment/sample_05_2.fasta.gz'
                     ],
                     'sample_06': [
-                        'https://raw.githubusercontent.com/lescai-teaching/eduomics_testdata/refs/heads/main/rnaseq/raw_reads_with_enrichment/sample_06_1.fasta.gz',
-                        'https://raw.githubusercontent.com/lescai-teaching/eduomics_testdata/refs/heads/main/rnaseq/raw_reads_with_enrichment/sample_06_2.fasta.gz'
+                        'https://raw.githubusercontent.com/lescai-teaching/eduomics_testdata/refs/heads/main/rnaseq/raw_reads_enrichment/sample_06_1.fasta.gz',
+                        'https://raw.githubusercontent.com/lescai-teaching/eduomics_testdata/refs/heads/main/rnaseq/raw_reads_enrichment/sample_06_2.fasta.gz'
                     ]
                 ]
                 input[0] = Channel
@@ -100,11 +101,11 @@ test("quantify_deanalysis_enrich_validate - with enrichment") {
             assertAll(
                 { assert workflow.success },
                 {
-                    def indexDir = path(workflow.out.txfasta_index[0]).toFile()
+                    def indexDir = path(workflow.out.rnaseq_validated_results[0][1]).toFile()
                     assert indexDir.exists()
                     assert indexDir.isDirectory()
                     assert indexDir.listFiles().size() > 0
-                },
+                }
             )
         }
     }
@@ -195,7 +196,8 @@ test("quantify_deanalysis_enrich_validate - with enrichment") {
 
         then {
             assertAll(
-                { assert workflow.success }
+                { assert workflow.success },
+                { assert !workflow.out.rnaseq_validated_results }
             )
         }
     }

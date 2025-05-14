@@ -13,7 +13,7 @@ workflow QUANTIFY_DEANALYSIS_ENRICH_VALIDATE {
     ch_filteredtxfasta    // channel: [ val(meta), path(filteredtxfasta) ]
     ch_alignment_mode     // channel: [ val(alignment_mode)              ]
     ch_libtype            // channel: [ val(libtype)                     ]
-    ch_transcriptData     // channel: [ val(meta), path(transcriptData)  ]. Utilised by the analysis module to produce the tx2gene
+    ch_transcriptData     // channel: [ val(meta), path(transcriptData)  ]. Utilised by the deanalysis module to produce the tx2gene
 
     main:
 
@@ -42,7 +42,6 @@ workflow QUANTIFY_DEANALYSIS_ENRICH_VALIDATE {
         ch_alignment_mode,
         ch_libtype
     )
-
     ch_versions = ch_versions.mix(SALMON_QUANT.out.versions.first())
 
     // Restore original `meta.id` for downstream DE analysis (grouping by meta)
