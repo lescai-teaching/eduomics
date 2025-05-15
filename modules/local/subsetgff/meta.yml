@@ -1,5 +1,5 @@
 name: SUBSETGFF
-description: Processes GFF3 files and conducts enrichment analysis to select valid gene lists
+description: processes GFF3 files and conducts enrichment analysis to select valid gene lists
 keywords:
   - gff3
   - transcripts
@@ -14,13 +14,12 @@ tools:
       tool_dev_url: "https://github.com/lawremi/rtracklayer"
       doi: "10.1093/bioinformatics/btp328"
       licence: "Artistic-2.0"
-      identifier: "bioconductor-rtracklayer"
+      identifier: "biotools:rtracklayer"
   - r-igraph:
       description: "Network analysis and visualization"
       homepage: "https://igraph.org/r/"
       documentation: "https://igraph.org/r/doc/"
       tool_dev_url: "https://github.com/igraph/rigraph"
-      doi: "10.1016/j.jss.2008.05.011"
       licence: "GPL-2.0 | GPL-3.0"
       identifier: "r-igraph"
   - r-tidyverse:
@@ -36,9 +35,9 @@ tools:
       homepage: "https://bioconductor.org/packages/release/bioc/html/AnnotationDbi.html"
       documentation: "https://bioconductor.org/packages/release/bioc/vignettes/AnnotationDbi/inst/doc/IntroToAnnotationPackages.pdf"
       tool_dev_url: "https://github.com/Bioconductor/AnnotationDbi"
-      doi: "10.1093/bioinformatics/btq388"
+      doi: "10.1038/nmeth.3252"
       licence: "Artistic-2.0"
-      identifier: "bioconductor-annotationdbi"
+      identifier: "biotools:AnnotationDbi"
   - bioconductor-org.hs.eg.db:
       description: "Genome wide annotation for Human"
       homepage: "https://bioconductor.org/packages/release/data/annotation/html/org.Hs.eg.db.html"
@@ -52,7 +51,6 @@ tools:
       homepage: "https://cran.r-project.org/web/packages/s3/index.html"
       documentation: "https://cran.r-project.org/web/packages/s3/s3.pdf"
       tool_dev_url: "https://github.com/cran/s3"
-      doi: ""
       licence: "GPL-2.0 | GPL-3.0"
       identifier: "r-s3"
   - r-httr:
@@ -60,7 +58,7 @@ tools:
       homepage: "https://httr.r-lib.org/"
       documentation: "https://httr.r-lib.org/reference/index.html"
       tool_dev_url: "https://github.com/r-lib/httr"
-      doi: ""
+      doi: "10.32614/CRAN.package.httr"
       licence: "MIT"
       identifier: "r-httr"
   - r-jsonlite:
@@ -68,7 +66,7 @@ tools:
       homepage: "https://cran.r-project.org/web/packages/jsonlite/index.html"
       documentation: "https://cran.r-project.org/web/packages/jsonlite/jsonlite.pdf"
       tool_dev_url: "https://github.com/jeroen/jsonlite"
-      doi: "10.18637/jss.v063.i04"
+      doi: "10.32614/CRAN.package.jsonlite"
       licence: "MIT"
       identifier: "r-jsonlite"
   - bioconductor-clusterprofiler:
@@ -78,13 +76,13 @@ tools:
       tool_dev_url: "https://github.com/YuLab-SMU/clusterProfiler"
       doi: "10.1016/j.xinn.2021.100141"
       licence: "Artistic-2.0"
-      identifier: "bioconductor-clusterprofiler"
+      identifier: "biotools:clusterProfiler"
   - r-matrix:
       description: "Sparse and Dense Matrix Classes and Methods"
       homepage: "https://cran.r-project.org/web/packages/Matrix/index.html"
       documentation: "https://cran.r-project.org/web/packages/Matrix/Matrix.pdf"
       tool_dev_url: "https://github.com/cran/Matrix"
-      doi: "10.18637/jss.v059.i01"
+      doi: "10.32614/CRAN.package.Matrix"
       licence: "GPL-2.0 | GPL-3.0"
       identifier: "r-matrix"
 input:
@@ -98,6 +96,16 @@ input:
       description: GFF3 annotation file
       pattern: "*.{gff,gff3}"
 output:
+  - filtered_annotation:
+      - meta:
+          type: file
+          description: |
+            Groovy Map containing sample information
+            e.g. `[ id:'test', chromosome: 'chr22', coverage: 30, reps: 3, groups: 2, simthreshold: 0.3 ]`
+      - "filtered_annotation.gff3":
+          type: file
+          description: filtered annotation file (gff3) for the simulated chromosome
+          pattern: "filtered_annotation.gff3"
   - geneLists:
       - meta:
           type: file
@@ -118,17 +126,17 @@ output:
           type: file
           description: TSV file containing the association between genes and the corrisponding list
           pattern: "list_gene_association.tsv"
-  - filtered_gff3:
+  - filtered_transcript_data:
       - meta:
           type: file
           description: |
             Groovy Map containing sample information
             e.g. `[ id:'test', chromosome: 'chr22', coverage: 30, reps: 3, groups: 2, simthreshold: 0.3 ]`
-      - "filtered_gff3.rds":
+      - "filtered_transcript_data.rds":
           type: file
           description: RDS file containing transcript data from the specified chromosome
-          pattern: "filtered_gff3.rds"
-  - log:
+          pattern: "filtered_transcript_data.rds"
+  - subsetgff_parsing_log:
       - meta:
           type: file
           description: |
@@ -136,7 +144,7 @@ output:
             e.g. `[ id:'test', chromosome: 'chr22', coverage: 30, reps: 3, groups: 2, simthreshold: 0.3 ]`
       - "subsetgff_parsing_log.txt":
           type: file
-          description: Log file containing parsing and analysis information
+          description: TXT log file containing parsing and analysis information
           pattern: "subsetgff_parsing_log.txt"
   - versions:
       type: file
