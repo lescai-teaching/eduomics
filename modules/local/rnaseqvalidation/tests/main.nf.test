@@ -78,7 +78,7 @@ test("validation - positive simulation") {
                     def files = dir.listFiles() as List
                     assert files.count { it.name.endsWith('.tsv') } == 2
                     assert files.count { it.name.endsWith('.pdf') } == 5
-                    assert files.count { it.name.endsWith('.png') } == 6
+                    assert files.count { it.name.endsWith('.png') } >= 3 // >= 3 because dotplots, also with no enrichment, will be always produced. Cnetplots, in case of no enrichment, are not produced
                     assert files.count { it.name.endsWith('.txt') } == 2
                 },
                 { assert process.out.versions }

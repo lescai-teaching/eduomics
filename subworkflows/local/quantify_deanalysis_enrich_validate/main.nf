@@ -7,13 +7,13 @@ include { RNASEQVALIDATION     } from '../../../modules/local/rnaseqvalidation/m
 workflow QUANTIFY_DEANALYSIS_ENRICH_VALIDATE {
 
     take:
-    ch_simreads           // channel: [ val(meta), path(simreads)        ]
-    ch_index              // channel: [ path(salmon_index)               ]
-    ch_filteredgff3       // channel: [ val(meta), path(filteredgff3)    ]
-    ch_filteredtxfasta    // channel: [ val(meta), path(filteredtxfasta) ]
-    ch_alignment_mode     // channel: [ val(alignment_mode)              ]
-    ch_libtype            // channel: [ val(libtype)                     ]
-    ch_transcriptData     // channel: [ val(meta), path(transcriptData)  ]. Utilised by the deanalysis module to produce the tx2gene
+    ch_simreads                   // channel: [ val(meta), path(simreads)                          ]
+    ch_index                      // channel: [ path(salmon_index)                                 ]
+    ch_filteredgff3               // channel: [ val(meta), path(filteredgff3)                      ]
+    ch_filteredtxfasta            // channel: [ val(meta), path(filteredtxfasta)                   ]
+    ch_alignment_mode             // channel: [ val(alignment_mode)                                ]
+    ch_libtype                    // channel: [ val(libtype)                                       ]
+    ch_filtered_transcriptData    // channel: [ val(meta), path(filtered_transcriptData)  ]
 
     main:
 
@@ -55,7 +55,7 @@ workflow QUANTIFY_DEANALYSIS_ENRICH_VALIDATE {
     .groupTuple(by: 0)
 
     // Run differential expression analysis
-    DEANALYSIS ( ch_deanalysis_input, ch_transcriptData )
+    DEANALYSIS ( ch_deanalysis_input, ch_filtered_transcriptData )
     ch_versions = ch_versions.mix(DEANALYSIS.out.versions.first())
 
     // Extract only deseq2_results.tsv for enrichment module
@@ -83,11 +83,11 @@ workflow QUANTIFY_DEANALYSIS_ENRICH_VALIDATE {
     salmon_lib_format   = SALMON_QUANT.out.lib_format_counts                     // channel: [ val(meta), path(lib_format_counts) ], optional
 
     // DEANALYSIS outputs
-    deseq2_results      = DEANALYSIS.out.deseq2_results                           // channel: [ val(meta), path(deseq2_results.tsv), path(deseq2_de_genes.txt), path(*.pdf) ]
-    deseq2_tx2gene      = DEANALYSIS.out.deseq2_tx2gene                           // channel: [ val(meta), path(deseq2_tx2gene.tsv)                                         ]
+    deseq2_results      = DEANALYSIS.out.deseq2_results                           // channel: [ val(meta), path(deseq2_results), path(deseq2_de_genes), path(*.pdf) ]
+    deseq2_tx2gene      = DEANALYSIS.out.deseq2_tx2gene                           // channel: [ val(meta), path(deseq2_tx2gene)                                     ]
 
     // ENRICHMENT outputs
-    enrichment_results  = ENRICHMENT.out.enrichment_results                      // channel: [ val(meta), path(enrichment_results.rds), path(*.png) ]
+    enrichment_results  = ENRICHMENT.out.enrichment_results                      // channel: [ val(meta), path(enrichment_results), path(*.png) ]
 
     // RNASEQVALIDATION outputs
     rnaseq_validated_results  = RNASEQVALIDATION.out.rnaseq_validated_results    // channel: [ val(meta), path(rnaseq_validation) ], optional
