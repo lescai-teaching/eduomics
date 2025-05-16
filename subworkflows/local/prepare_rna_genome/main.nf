@@ -5,23 +5,23 @@ include { SALMON_INDEX       } from '../../../modules/nf-core/salmon/index/main'
 workflow PREPARE_RNA_GENOME {
 
     take:
-    ch_fasta   // channel: [ path(fasta)   ]
-    ch_txfasta // channel: [ path(txfasta) ]
-    ch_gff3    // channel: [ path(gff3)    ]
     ch_meta    // channel: [ val(meta)     ]
+    ch_gff3    // channel: [ path(gff3)    ]
+    ch_txfasta // channel: [ path(txfasta) ]
+    ch_fasta   // channel: [ path(genomefasta) ]
 
     main:
 
     ch_versions = Channel.empty()
     ch_log      = Channel.empty()
 
-    SUBSETFASTATX ( ch_meta, ch_txfasta, ch_gff3 )
-    ch_versions = ch_versions.mix(SUBSETFASTATX.out.versions.first())
-    ch_log      = ch_log.mix(SUBSETFASTATX.out.log)
-
     SUBSETGFF ( ch_meta, ch_gff3 )
     ch_versions = ch_versions.mix(SUBSETGFF.out.versions.first())
-    ch_log      = ch_log.mix(SUBSETGFF.out.log)
+    ch_log      = ch_log.mix(SUBSETGFF.out.subsetgff_parsing_log)
+
+    SUBSETFASTATX ( ch_txfasta, SUBSETGFF.out.filtered_transcript_data )
+    ch_versions = ch_versions.mix(SUBSETFASTATX.out.versions.first())
+    ch_log      = ch_log.mix(SUBSETFASTATX.out.subsetfastatx_parsing_log)
 
     // Remove the meta from the filtered txfasta
     // Salmon index requires inputs without a meta
@@ -32,12 +32,13 @@ workflow PREPARE_RNA_GENOME {
     ch_versions = ch_versions.mix(SALMON_INDEX.out.versions.first())
 
     emit:
-    txfasta_index           = SALMON_INDEX.out.index                 // channel: [ path(salmon_index)                       ]
-    filtered_txfasta        = SUBSETFASTATX.out.filtered_txfasta     // channel: [ val(meta), path(filtered_txfasta)        ]
-    gene_lists              = SUBSETGFF.out.geneLists                // channel: [ val(meta), path(geneLists)               ]
-    genes_list_associations = SUBSETGFF.out.genes_list_association   // channel: [ val(meta), path(genes_list_associations) ]. This is a TSV file containing the association between a specific list and its genes. Necessary to add genes in meta by coupling the genes with a specific countMatrix
-    filtered_gff3           = SUBSETGFF.out.filtered_gff3            // channel: [ val(meta), path(gff3_filtered)           ]
-    log_files               = ch_log                                 // channel: [ val(meta), path(log_files)               ]
-    versions                = ch_versions                            // channel: [ versions.yml                             ]
+    filtered_annotation      = SUBSETGFF.out.filtered_annotation      // channel: [ val(meta), path(filtered_annotation)      ]
+    gene_lists               = SUBSETGFF.out.geneLists                // channel: [ val(meta), path(geneLists)                ]
+    gene_list_association    = SUBSETGFF.out.genes_list_association   // channel: [ val(meta), path(gene_list_association)    ]
+    filtered_transcript_data = SUBSETGFF.out.filtered_transcript_data // channel: [ val(meta), path(filtered_transcript_data) ]
+    filtered_txfasta         = SUBSETFASTATX.out.filtered_txfasta     // channel: [ val(meta), path(filtered_txfasta)         ]
+    txfasta_index            = SALMON_INDEX.out.index                 // channel: [ path(salmon_index)                        ]
+    log_files                = ch_log                                 // channel: [ val(meta), path(log_files)                ]
+    versions                 = ch_versions                            // channel: [ versions.yml                              ]
 }
 
