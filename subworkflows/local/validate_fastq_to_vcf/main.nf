@@ -11,32 +11,35 @@ include { SAMTOOLS_INDEX as INDEX_RECAL  } from '../../../modules/nf-core/samtoo
 include { BCFTOOLS_SORT                  } from '../../../modules/nf-core/bcftools/sort/main'
 include { GATK4_MERGEVCFS           as MERGE_GENOTYPEGVCFS       } from '../../../modules/nf-core/gatk4/mergevcfs/main'
 include { GATK4_MERGEVCFS           as MERGE_VQSR                } from '../../../modules/nf-core/gatk4/mergevcfs/main'
+include { GATK4_VARIANTRECALIBRATOR as VARIANTRECALIBRATOR_SNP   } from '../../../modules/nf-core/gatk4/variantrecalibrator/main'
+include { GATK4_VARIANTRECALIBRATOR as VARIANTRECALIBRATOR_INDEL } from '../../../modules/nf-core/gatk4/variantrecalibrator/main'
+
 
 // to add the module to compare gVCFs and .solutions files
-
 
 workflow VALIDATE_FASTQ_TO_VCF {
 
     take:
     simulated_reads_ch       // channel: [ val(meta), [ "reads_1.fq.gz", "reads_2.fq.gz" ] ]
-    fasta       // channel: [mandatory] [ val(meta), [ fasta ] ]
-    fai         // channel: [mandatory] [ val(meta), [fai] ]
-    dict        // channel: [mandatory] [ val(meta), [dict] ]
-    bwa_index   // channel: [mandatory] [ val(meta), [bwa_index] ]
-    target_bed  // channel: [mandatory] [ [target_bed] ]
-    dbsnp       // channel: [mandatory] [ [dbsnp] ]
-    dbsnp_tbi   // channel: [mandatory] [ [dbsnp_tbi] ]
+    fasta                    // channel: [mandatory] [ val(meta), [ fasta ] ]
+    fai                      // channel: [mandatory] [ val(meta), [fai] ]
+    dict                     // channel: [mandatory] [ val(meta), [dict] ]
+    bwa_index                // channel: [mandatory] [ val(meta), [bwa_index] ]
+    target_bed               // channel: [mandatory] [ [target_bed] ]
+    dbsnp                    // channel: [mandatory] [ [dbsnp] ]
+    dbsnp_tbi                // channel: [mandatory] [ [dbsnp_tbi] ]
     dbsnp_vqsr
-    known_indels //mills
+    known_indels
     known_indels_tbi
     known_indels_vqsr
     known_snps
-    known_snps_tbi //
+    known_snps_tbi
     known_snps_vqsr
-    resource_indels_vcf //?
-    resource_indels_tbi //?
-    resource_snps_vcf //?
-    resource_snps_tbi //?
+    resource_snps_vcf
+    resource_snps_tbi
+    resource_indels_vcf
+    resource_indels_tbi
+
 
     main:
     ch_versions = Channel.empty()
@@ -149,8 +152,8 @@ workflow VALIDATE_FASTQ_TO_VCF {
     // Recalibrate INDELs and SNPs separately
     VARIANTRECALIBRATOR_INDEL(
         vqsr_input,
-        resource_indels_vcf,
-        resource_indels_tbi,
+        known_indels,
+        known_indels_tbi,
         indels_resource_label,
         fasta.map{ meta, fasta -> [ fasta ] },
         fai.map{ meta, fai -> [ fai ] },
@@ -228,23 +231,14 @@ workflow VALIDATE_FASTQ_TO_VCF {
         [[id:"joint_variant_calling", patient:"all_samples", variantcaller:"haplotypecaller"], tbi_out]
     }
 
-    versions = versions.mix(GATK4_GENOMICSDBIMPORT.out.versions)
-    versions = versions.mix(GATK4_GENOTYPEGVCFS.out.versions)
-    versions = versions.mix(VARIANTRECALIBRATOR_SNP.out.versions)
-    versions = versions.mix(GATK4_APPLYVQSR_SNP.out.versions)
+    ch_versions = versions.mix(GATK4_GENOMICSDBIMPORT.out.versions)
+    ch_versions = versions.mix(GATK4_GENOTYPEGVCFS.out.versions)
+    ch_versions = versions.mix(VARIANTRECALIBRATOR_SNP.out.versions)
+    ch_versions = versions.mix(GATK4_APPLYVQSR_SNP.out.versions)
 
     emit:
     genotype_index  // channel: [ val(meta), [ tbi ] ]
     genotype_vcf    // channel: [ val(meta), [ vcf ] ]
+    ch_versions        // channel: [ versions.yml ]
 
-    versions        // channel: [ versions.yml ]
-
-
-
-//    emit:
-//    vcf             = GATK4_GENOTYPEGVCFS.out.vcf    // channel: [ val(meta), [ vcf ] ]
-//    vcf_index       = GATK4_GENOTYPEGVCFS.out.tbi    // channel: [ val(meta), [ tbi ] ]
-//    versions        = ch_versions                    // channel: [ versions.yml ]
-    // create .solution with deleterious variant
 }
-

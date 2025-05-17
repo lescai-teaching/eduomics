@@ -96,15 +96,45 @@ input[0] = Channel.fromList([
                 input[7] = Channel.value([
                     file('https://raw.githubusercontent.com/lescai-teaching/eduomics_testdata/refs/heads/main/dna/whole_chr22/dbsnp_146.hg38_chr22.vcf.gz.tbi', checkIfExists: true),
                 ])
+                // dbsnp_vqsr   [mandatory] [ [dbsnp_vqsr] ]
+                input[8] = Channel.value(params.dbsnp_vqsr)
 
-                // mills       [mandatory] [ [mills] ]
-                input[8] = Channel.value([
+
+                // known_indels       [mandatory] [ [known_indels] ]
+                input[9] = Channel.value([
                     file('https://raw.githubusercontent.com/lescai-teaching/eduomics_testdata/refs/heads/main/dna/whole_chr22/Mills_and_1000G_gold_standard.indels.hg38_chr22.vcf.gz', checkIfExists: true),
                 ])
 
-                // mills_tbi   [mandatory] [ [mills_tbi] ]
-                input[9] = Channel.value([
+                // known_indels_tbi   [mandatory] [ [known_indels_tbi] ]
+                input[10] = Channel.value([
                     file('https://raw.githubusercontent.com/lescai-teaching/eduomics_testdata/refs/heads/main/dna/whole_chr22/Mills_and_1000G_gold_standard.indels.hg38_chr22.vcf.gz.tbi', checkIfExists: true),
+                ])
+
+                // known_indels_vqrs
+                input[11] = Channel.value(params.dbsnp_vqsr)
+
+
+                // known_snps   [mandatory] [ [known_snps] ]
+                input[12] = Channel.value([
+                    file('https://raw.githubusercontent.com/lescai-teaching/eduomics_testdata/refs/heads/main/dna/whole_chr22/1000G_omni2_5_chr22_q11-21_GRCh38.vcf.gz', checkIfExists: true),
+                ])
+
+
+                // known_snps_tbi   [mandatory] [ [known_snps_tbi] ]
+                input[13] = Channel.value([
+                    file('https://raw.githubusercontent.com/lescai-teaching/eduomics_testdata/refs/heads/main/dna/whole_chr22/1000G_omni2_5_chr22_q11-21_GRCh38.vcf.gz', checkIfExists: true),
+                ])
+
+                // known_snps_vqrs [mandatory] [ [known_snps_vqrs] ]
+                input[14] = Channel.value(params.known_snps_vqrs)
+
+                // germline
+                input[15] = Channel.value([
+                    file('https://raw.githubusercontent.com/lescai-teaching/eduomics_testdata/refs/heads/main/dna/whole_chr22/af-only-gnomad_chr22_q11-21_GRCh38.vcf.gz', checkIfExists: true),
+                ])
+
+                input[15] = Channel.value([
+                    file('https://raw.githubusercontent.com/lescai-teaching/eduomics_testdata/refs/heads/main/dna/whole_chr22/af-only-gnomad_chr22_q11-21_GRCh38.vcf.gz', checkIfExists: true),
                 ])
                 """
             }
