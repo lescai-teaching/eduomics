@@ -1,21 +1,24 @@
-include { BWA_MEM                        } from '../../../modules/nf-core/bwa/mem/main'
-include { GATK4_MARKDUPLICATES           } from '../../../modules/nf-core/gatk4/markduplicates/main'
-include { GATK4_BASERECALIBRATOR         } from '../../../modules/nf-core/gatk4/baserecalibrator/main'
-include { GATK4_APPLYBQSR                } from '../../../modules/nf-core/gatk4/applybqsr/main'
-include { GATK4_HAPLOTYPECALLER          } from '../../../modules/nf-core/gatk4/haplotypecaller/main'
-include { GATK4_GENOMICSDBIMPORT         } from '../../../modules/nf-core/gatk4/genomicsdbimport/main'
-include { GATK4_GENOTYPEGVCFS            } from '../../../modules/nf-core/gatk4/genotypegvcfs/main'
-include { SAMTOOLS_INDEX                 } from '../../../modules/nf-core/samtools/index/main'
-include { SAMTOOLS_INDEX as INDEX_MD     } from '../../../modules/nf-core/samtools/index/main'
-include { SAMTOOLS_INDEX as INDEX_RECAL  } from '../../../modules/nf-core/samtools/index/main'
-include { BCFTOOLS_SORT                  } from '../../../modules/nf-core/bcftools/sort/main'
-include { GATK4_MERGEVCFS           as MERGE_GENOTYPEGVCFS       } from '../../../modules/nf-core/gatk4/mergevcfs/main'
-include { GATK4_MERGEVCFS           as MERGE_VQSR                } from '../../../modules/nf-core/gatk4/mergevcfs/main'
+include { BWA_MEM                                                } from '../../../modules/nf-core/bwa/mem/main'
+include { GATK4_MARKDUPLICATES                                   } from '../../../modules/nf-core/gatk4/markduplicates/main'
+include { GATK4_BASERECALIBRATOR                                 } from '../../../modules/nf-core/gatk4/baserecalibrator/main'
+include { GATK4_APPLYBQSR                                        } from '../../../modules/nf-core/gatk4/applybqsr/main'
+include { GATK4_HAPLOTYPECALLER                                  } from '../../../modules/nf-core/gatk4/haplotypecaller/main'
+include { GATK4_GENOMICSDBIMPORT                                 } from '../../../modules/nf-core/gatk4/genomicsdbimport/main'
+include { GATK4_GENOTYPEGVCFS                                    } from '../../../modules/nf-core/gatk4/genotypegvcfs/main'
+include { SAMTOOLS_INDEX                                         } from '../../../modules/nf-core/samtools/index/main'
+include { SAMTOOLS_INDEX as INDEX_MD                             } from '../../../modules/nf-core/samtools/index/main'
+include { SAMTOOLS_INDEX as INDEX_RECAL                          } from '../../../modules/nf-core/samtools/index/main'
+include { BCFTOOLS_SORT                                          } from '../../../modules/nf-core/bcftools/sort/main'
+include { GATK4_MERGEVCFS as MERGE_GENOTYPEGVCFS                 } from '../../../modules/nf-core/gatk4/mergevcfs/main'
+include { GATK4_MERGEVCFS as MERGE_VQSR                          } from '../../../modules/nf-core/gatk4/mergevcfs/main'
 include { GATK4_VARIANTRECALIBRATOR as VARIANTRECALIBRATOR_SNP   } from '../../../modules/nf-core/gatk4/variantrecalibrator/main'
 include { GATK4_VARIANTRECALIBRATOR as VARIANTRECALIBRATOR_INDEL } from '../../../modules/nf-core/gatk4/variantrecalibrator/main'
+include { GATK4_APPLYVQSR as GATK4_APPLYVQSR_INDEL               } from '../../../modules/nf-core/gatk4/applyvqsr/main'
+include { GATK4_APPLYVQSR as GATK4_APPLYVQSR_SNP                 } from '../../../modules/nf-core/gatk4/applyvqsr/main'
 
 
 // to add the module to compare gVCFs and .solutions files
+
 
 workflow VALIDATE_FASTQ_TO_VCF {
 
@@ -28,18 +31,17 @@ workflow VALIDATE_FASTQ_TO_VCF {
     target_bed               // channel: [mandatory] [ [target_bed] ]
     dbsnp                    // channel: [mandatory] [ [dbsnp] ]
     dbsnp_tbi                // channel: [mandatory] [ [dbsnp_tbi] ]
-    dbsnp_vqsr
-    known_indels
-    known_indels_tbi
-    known_indels_vqsr
-    known_snps
-    known_snps_tbi
-    known_snps_vqsr
-    resource_snps_vcf
-    resource_snps_tbi
-    resource_indels_vcf
-    resource_indels_tbi
-
+    dbsnp_vqsr               // channel: [mandatory] [ [dbsnp_vqsr] ]
+    known_indels             // channel: [mandatory] [ [known_indels] ]
+    known_indels_tbi         // channel: [mandatory] [ [known_indels_tbi] ]
+    known_indels_vqsr        // channel: [mandatory] [ [known_indels_vqsr] ]
+    known_snps               // channel: [mandatory] [ [known_snps] ]
+    known_snps_tbi           // channel: [mandatory] [ [known_snps_tbi] ]
+    known_snps_vqsr          // channel: [mandatory] [ [known_snps_vqsr] ]
+    resource_snps_vcf        // channel: [mandatory] [ [resource_snps_vcf] ]
+    resource_snps_tbi        // channel: [mandatory] [ [resource_snps_tbi] ]
+    resource_indels_vcf      // channel: [mandatory] [ [resource_indels_vcf] ]
+    resource_indels_tbi      // channel: [mandatory] [ [resource_indels_tbi] ]
 
     main:
     ch_versions = Channel.empty()
@@ -65,8 +67,8 @@ workflow VALIDATE_FASTQ_TO_VCF {
                         .combine(INDEX_MD.out.bai, by: 0)
                         .combine(empty_intervals_ch)
 
-    known_sites_all = dbsnp.mix(mills).collect()
-    known_sites_all_tbi = dbsnp_tbi.mix(mills_tbi).collect()
+    known_sites_all = dbsnp.mix(known_indels).collect()
+    known_sites_all_tbi = dbsnp_tbi.mix(known_indels_tbi).collect()
 
     GATK4_BASERECALIBRATOR(
         bam_for_recal,
@@ -78,8 +80,8 @@ workflow VALIDATE_FASTQ_TO_VCF {
         )
     ch_versions = ch_versions.mix(GATK4_BASERECALIBRATOR.out.versions)
 
-    bam_for_applybqsr = BWA_MEM.out.bam
-        .combine(SAMTOOLS_INDEX.out.bai, by: 0)
+    bam_for_applybqsr = GATK4_MARKDUPLICATES.out.bam
+        .combine(INDEX_MD.out.bai, by: 0)
         .combine(GATK4_BASERECALIBRATOR.out.table, by: 0)
         .combine(empty_intervals_ch)
 
@@ -121,12 +123,10 @@ workflow VALIDATE_FASTQ_TO_VCF {
         .combine(target_bed)
         .combine(Channel.value([]))  // empty interval_value
         .combine(Channel.value([]))  // empty workspace
-        //.map{meta, gvcf, tbi, interval -> [meta, vcf, tbi, interval, [], dict]}
         .map{ meta, gvcf, tbi, intervals -> [ [ id:'joint_variant_calling', intervals_name:intervals.baseName, num_intervals:meta.num_intervals ], gvcf, tbi, intervals ] }
         .groupTuple(by:3) //join on interval file
         .map{ meta_list, gvcf, tbi, intervals ->
-            // meta is now a list of [meta1, meta2] but they are all the same. So take the first element.
-            [ meta_list[0], gvcf, tbi, intervals, [], [] ]
+            [ meta_list[0], gvcf, tbi, intervals, [], [] ]}
 
 
     GATK4_GENOMICSDBIMPORT ( ch_gendb_input, false, false, false )
@@ -231,14 +231,14 @@ workflow VALIDATE_FASTQ_TO_VCF {
         [[id:"joint_variant_calling", patient:"all_samples", variantcaller:"haplotypecaller"], tbi_out]
     }
 
-    ch_versions = versions.mix(GATK4_GENOMICSDBIMPORT.out.versions)
-    ch_versions = versions.mix(GATK4_GENOTYPEGVCFS.out.versions)
-    ch_versions = versions.mix(VARIANTRECALIBRATOR_SNP.out.versions)
-    ch_versions = versions.mix(GATK4_APPLYVQSR_SNP.out.versions)
+    ch_versions = ch_versions.mix(GATK4_GENOMICSDBIMPORT.out.versions)
+    ch_versions = ch_versions.mix(GATK4_GENOTYPEGVCFS.out.versions)
+    ch_versions = ch_versions.mix(VARIANTRECALIBRATOR_SNP.out.versions)
+    ch_versions = ch_versions.mix(GATK4_APPLYVQSR_SNP.out.versions)
 
     emit:
     genotype_index  // channel: [ val(meta), [ tbi ] ]
     genotype_vcf    // channel: [ val(meta), [ vcf ] ]
-    ch_versions        // channel: [ versions.yml ]
+    versions = ch_versions        // channel: [ versions.yml ]
 
 }

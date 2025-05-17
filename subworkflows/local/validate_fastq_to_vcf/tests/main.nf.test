@@ -23,6 +23,10 @@ nextflow_workflow {
 
 
         when {
+            params {
+                    dbsnp_vqsr = '--resource:dbsnp,known=false,training=true,truth=false,prior=2.0 dbsnp_138.b37.vcf.gz'
+                    known_snps_vqrs = '--resource:1000G,known=false,training=true,truth=false,prior=10.0 1000G_phase1.snps.high_confidence.b37.vcf.gz'
+                    }
             workflow {
                 """
 
@@ -116,38 +120,49 @@ input[0] = Channel.fromList([
 
                 // known_snps   [mandatory] [ [known_snps] ]
                 input[12] = Channel.value([
-                    file('https://raw.githubusercontent.com/lescai-teaching/eduomics_testdata/refs/heads/main/dna/whole_chr22/1000G_omni2_5_chr22_q11-21_GRCh38.vcf.gz', checkIfExists: true),
+                    file('https://raw.githubusercontent.com/lescai-teaching/eduomics_testdata/refs/heads/main/dna/gatk_bundle/1000G_omni2_5_chr22_q11-21_GRCh38.vcf.gz', checkIfExists: true),
                 ])
 
 
                 // known_snps_tbi   [mandatory] [ [known_snps_tbi] ]
                 input[13] = Channel.value([
-                    file('https://raw.githubusercontent.com/lescai-teaching/eduomics_testdata/refs/heads/main/dna/whole_chr22/1000G_omni2_5_chr22_q11-21_GRCh38.vcf.gz', checkIfExists: true),
+                    file('https://raw.githubusercontent.com/lescai-teaching/eduomics_testdata/refs/heads/main/dna/gatk_bundle/1000G_omni2_5_chr22_q11-21_GRCh38.vcf.gz', checkIfExists: true),
                 ])
 
                 // known_snps_vqrs [mandatory] [ [known_snps_vqrs] ]
                 input[14] = Channel.value(params.known_snps_vqrs)
 
-                // germline
+                // germline vcf
                 input[15] = Channel.value([
-                    file('https://raw.githubusercontent.com/lescai-teaching/eduomics_testdata/refs/heads/main/dna/whole_chr22/af-only-gnomad_chr22_q11-21_GRCh38.vcf.gz', checkIfExists: true),
+                    file('https://raw.githubusercontent.com/lescai-teaching/eduomics_testdata/refs/heads/main/dna/gatk_bundle/af-only-gnomad_chr22_q11-21_GRCh38.vcf.gz', checkIfExists: true),
                 ])
 
-                input[15] = Channel.value([
-                    file('https://raw.githubusercontent.com/lescai-teaching/eduomics_testdata/refs/heads/main/dna/whole_chr22/af-only-gnomad_chr22_q11-21_GRCh38.vcf.gz', checkIfExists: true),
+                // germline tbi
+                input[16] = Channel.value([
+                    file('https://raw.githubusercontent.com/lescai-teaching/eduomics_testdata/refs/heads/main/dna/gatk_bundle/af-only-gnomad_chr22_q11-21_GRCh38.vcf.gz', checkIfExists: true),
                 ])
+
+                // known_indels       [mandatory] [ [known_indels] ]
+                input[17] = Channel.value([
+                    file('https://raw.githubusercontent.com/lescai-teaching/eduomics_testdata/refs/heads/main/dna/whole_chr22/Mills_and_1000G_gold_standard.indels.hg38_chr22.vcf.gz', checkIfExists: true),
+                ])
+
+                // known_indels_tbi   [mandatory] [ [known_indels_tbi] ]
+                input[18] = Channel.value([
+                    file('https://raw.githubusercontent.com/lescai-teaching/eduomics_testdata/refs/heads/main/dna/whole_chr22/Mills_and_1000G_gold_standard.indels.hg38_chr22.vcf.gz.tbi', checkIfExists: true),
+                ])
+
                 """
             }
         }
 
-        then {
-            assertAll(
-                { assert workflow.success},
-                { assert snapshot(workflow.out).match()}
-                { assert workflow.out.vcf },
-                { assert workflow.out.vcf_index }
-                { assert workflow.out.versions }
-            )
+then {
+    assertAll(
+        { assert workflow.success },
+        { assert snapshot(workflow.out).match() },
+        { assert workflow.out.genotype_vcf },
+        { assert workflow.out.genotype_index },
+        { assert workflow.out.versions } )
         }
     }
 }
