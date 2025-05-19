@@ -120,6 +120,7 @@ then {
         { assert snapshot(workflow.out).match() },
         { assert workflow.out.genotype_vcf },
         { assert workflow.out.genotype_index },
+        { assert workflow.out.dna_validated },
         { assert workflow.out.versions } )
         }
     }

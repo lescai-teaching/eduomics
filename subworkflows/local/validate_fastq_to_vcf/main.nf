@@ -8,7 +8,7 @@ include { GATK4_GENOTYPEGVCFS                                    } from '../../.
 include { SAMTOOLS_INDEX                                         } from '../../../modules/nf-core/samtools/index/main'
 include { SAMTOOLS_INDEX as INDEX_MD                             } from '../../../modules/nf-core/samtools/index/main'
 include { SAMTOOLS_INDEX as INDEX_RECAL                          } from '../../../modules/nf-core/samtools/index/main'
-
+include { DNAVALIDATION                                          } from '../../../modules/local/dnavalidation/main'
 
 // to add the module to compare gVCFs and .solutions files
 
@@ -146,10 +146,20 @@ GATK4_BASERECALIBRATOR(
     GATK4_GENOTYPEGVCFS(genotype_input, fasta, fai, dict, dbsnp.map{ it -> [ [:], it ] }, dbsnp_tbi.map{ it -> [ [:], it ] })
     ch_versions = ch_versions.mix(GATK4_GENOTYPEGVCFS.out.versions)
 
+    dnavalidation_input = GATK4_GENOTYPEGVCFS.out.vcf
+        .join(simulated_reads_ch)
+        .map { meta, vcf, reads ->
+            [meta + [simulatedvar: meta.id], vcf, reads.flatten()]
+        }
+    //add variant meta to test!
+    DNAVALIDATION(dnavalidation_input)
+    ch_versions = ch_versions.mix(DNAVALIDATION.out.versions)
+
 
     emit:
     genotype_vcf    = GATK4_GENOTYPEGVCFS.out.vcf    // channel: [ val(meta), [ vcf ] ]
     genotype_index  = GATK4_GENOTYPEGVCFS.out.tbi    // channel: [ val(meta), [ tbi ] ]
+    dna_validated   = DNAVALIDATION.out.dna_validated_results // channel: [ val(meta), [ dna_validated_results ] ]
     versions        = ch_versions                    // channel: [ versions.yml ]
 
 }
