@@ -8,28 +8,25 @@ library(pheatmap)
 
 
 #### Input selection ####
-
 argv <- commandArgs(trailingOnly = TRUE)
 
 replica <- as.numeric(argv[1])
 group <- as.numeric(argv[2])
-tx2gene <- argv[3]
+transcriptData <- argv[3]
 quant_dirs <- strsplit(argv[4], ",")[[1]]
 
 
 #### Load the input files ####
 group_labels <- c("control", "case")
 dataset <- as_tibble(expand.grid(replica = 1:replica, group = 1:group) %>%
-                       mutate(sample = paste0("sample_0", row_number()),
-                              condition = factor(group, levels = 1:2, labels = group_labels)) %>%
-                       dplyr::select(sample, condition))
+                mutate(sample = paste0("sample_0", row_number()), condition = factor(group, levels = 1:2, labels = group_labels)) %>%
+                dplyr::select(sample, condition))
 
 
-tx2gene <- readRDS(tx2gene) %>%
-  dplyr::select(transcript_id, gene_id)
+tx2gene <- readRDS(transcriptData) %>%
+                dplyr::select(transcript_id, gene_id)
 
-write.table(tx2gene, file = "deseq2_tx2gene.tsv", sep = "\t", row.names = FALSE)
-
+write_tsv(tx2gene, "deseq2_tx2gene.tsv")
 
 #### Load .quant files from Salmon  ####
 files <- sapply(dataset$sample, function(sample) {
@@ -81,18 +78,21 @@ resdata$gene <- rownames(resOrdered)
 
 write_tsv(resdata, "deseq2_results.tsv")
 
+# Extract only DE genes (padj < 0.05)
+sig_genes <- resdata$gene[which(resdata$padj < 0.05)]
+
+write.table(sig_genes, file = "deseq2_de_genes.txt", quote = FALSE, row.names = FALSE, col.names = FALSE)
+
 
 #### Clustering ####
 ntd <- normTransform(dds)
 
-select <- order(rowMeans(counts(dds,normalized=TRUE)),
-                decreasing=TRUE)[1:20]
+select <- order(rowMeans(counts(dds,normalized=TRUE)), decreasing=TRUE)[1:20]
 
 df <- as.data.frame(colData(dds)[,c("condition")])
 
 pdf("deseq2_heatmap_plot.pdf")
-pheatmap(assay(ntd)[select,],
-         cluster_cols=FALSE, annotation_col=df$condition)
+pheatmap(assay(ntd)[select,], cluster_cols=FALSE, annotation_col=df$condition)
 dev.off()
 
 pdf("deseq2_pca_plot.pdf")
