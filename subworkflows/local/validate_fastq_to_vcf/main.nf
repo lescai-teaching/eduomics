@@ -8,13 +8,6 @@ include { GATK4_GENOTYPEGVCFS                                    } from '../../.
 include { SAMTOOLS_INDEX                                         } from '../../../modules/nf-core/samtools/index/main'
 include { SAMTOOLS_INDEX as INDEX_MD                             } from '../../../modules/nf-core/samtools/index/main'
 include { SAMTOOLS_INDEX as INDEX_RECAL                          } from '../../../modules/nf-core/samtools/index/main'
-include { BCFTOOLS_SORT                                          } from '../../../modules/nf-core/bcftools/sort/main'
-include { GATK4_MERGEVCFS as MERGE_GENOTYPEGVCFS                 } from '../../../modules/nf-core/gatk4/mergevcfs/main'
-include { GATK4_MERGEVCFS as MERGE_VQSR                          } from '../../../modules/nf-core/gatk4/mergevcfs/main'
-include { GATK4_VARIANTRECALIBRATOR as VARIANTRECALIBRATOR_SNP   } from '../../../modules/nf-core/gatk4/variantrecalibrator/main'
-include { GATK4_VARIANTRECALIBRATOR as VARIANTRECALIBRATOR_INDEL } from '../../../modules/nf-core/gatk4/variantrecalibrator/main'
-include { GATK4_APPLYVQSR as GATK4_APPLYVQSR_INDEL               } from '../../../modules/nf-core/gatk4/applyvqsr/main'
-include { GATK4_APPLYVQSR as GATK4_APPLYVQSR_SNP                 } from '../../../modules/nf-core/gatk4/applyvqsr/main'
 
 
 // to add the module to compare gVCFs and .solutions files
@@ -28,11 +21,11 @@ workflow VALIDATE_FASTQ_TO_VCF {
     fai                      // channel: [mandatory] [ val(meta), [fai] ]
     dict                     // channel: [mandatory] [ val(meta), [dict] ]
     bwa_index                // channel: [mandatory] [ val(meta), [bwa_index] ]
-    target_bed               // channel: [mandatory] [ [target_bed] ]
+    intervals               // channel: [mandatory] [ [intervals] ]
     dbsnp                    // channel: [mandatory] [ [dbsnp] ]
     dbsnp_tbi                // channel: [mandatory] [ [dbsnp_tbi] ]
-    //known_snps               // channel: [mandatory] [ [known_snps] ]
-    //known_snps_tbi           // channel: [mandatory] [ [known_snps_tbi] ]
+    known_snps               // channel: [mandatory] [ [known_snps] ]
+    known_snps_tbi           // channel: [mandatory] [ [known_snps_tbi] ]
 
 
     main:
@@ -59,16 +52,16 @@ workflow VALIDATE_FASTQ_TO_VCF {
                         .combine(INDEX_MD.out.bai, by: 0)
                         .combine(empty_intervals_ch)
 
-    //known_sites_all = dbsnp.mix(known_snps).collect()
-    //known_sites_all_tbi = dbsnp_tbi.mix(known_snps_tbi).collect()
+    known_sites_all = dbsnp.mix(known_snps).collect()
+    known_sites_all_tbi = dbsnp_tbi.mix(known_snps_tbi).collect()
 
 GATK4_BASERECALIBRATOR(
     bam_for_recal,
     fasta,
     fai,
     dict,
-    dbsnp.map{ it -> [[id:'dbsnp'], it] },
-    dbsnp_tbi.map{ it -> [[id:'dbsnp'], it] }
+    known_sites_all.map{ it -> [[id:'sites'], it] },
+    known_sites_all_tbi.map{ it -> [[id:'sites'], it] }
     )
     ch_versions = ch_versions.mix(GATK4_BASERECALIBRATOR.out.versions)
 
@@ -112,17 +105,38 @@ GATK4_BASERECALIBRATOR(
     //see https://github.com/nf-core/modules/blob/e053975682e471dfed382fe6cdb29a71406f6630/subworkflows/nf-core/bam_create_som_pon_gatk/main.nf#L6
     ch_dict_gendb.view { "ch_dict_gendb: $it" }
 
-    ch_gendb_input = Channel.value()
-        .combine(ch_vcf)
-        .combine(ch_index)
-        .combine(target_bed)
-        .combine(ch_dict_gendb)
-        .map { meta, vcf, tbi, interval, dict -> [meta, vcf, tbi, interval, [], dict]}
+//ch_gendb_input = Channel.value([id: 'test'])
+//    .combine(ch_vcf)
+//    .combine(ch_index)
+//    .combine(intervals)
+//    .combine(ch_dict_gendb)
+//    .map { meta, vcf, tbi, interval, dict ->
+//        [
+//            meta,           // val(meta)
+//            vcf.flatten(),  // path(vcf)
+//            tbi.flatten(),  // path(tbi)
+//            interval,       // path(interval_file)
+//            [],             // val(interval_value)
+//            []              // path(wspace)
+//        ]
+//    }
 
-    ch_gendb_input.view { "Final ch_gendb_input: $it" }
+    ch_gendb_input = GATK4_HAPLOTYPECALLER.out.vcf.join(GATK4_HAPLOTYPECALLER.out.tbi)
+        .combine(intervals)
+        .map{ meta, vcf, tbi, intervals ->
+            [
+                [ id:'joint_variant_calling', intervals_name:intervals[0].baseName, num_intervals:1 ],
+                [vcf],
+                [tbi],
+                intervals[1],
+                [],
+                []
+            ]
+        }
+
+    ch_gendb_input.view { "ch_gendb_input: $it" }
 
 
-//[id: 'joint_variant_calling']
     GATK4_GENOMICSDBIMPORT ( ch_gendb_input, false, false, false )
     ch_versions = ch_versions.mix(GATK4_GENOMICSDBIMPORT.out.versions.first())
 

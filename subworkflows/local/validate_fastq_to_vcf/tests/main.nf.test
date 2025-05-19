@@ -86,10 +86,9 @@ input[0] = Channel.fromList([
                     ]
                 ])
 
-                // target_bed    [mandatory] [ [capture] ]
+                // interval    [mandatory] [ [interval] ]
                 input[5] = Channel.value([
-                    [ id:'test'], // meta map
-                    file('https://raw.githubusercontent.com/lescai-teaching/eduomics_testdata/refs/heads/main/dna/whole_chr22/Twist_exome_2.0_covered_chr22_500pad.bed', checkIfExists: true),
+                    file('https://raw.githubusercontent.com/lescai-teaching/eduomics_testdata/refs/heads/main/dna/small_data_coordinates.txt', checkIfExists: true),
                 ])
 
                 // dbsnp       [mandatory] [ [dbsnp] ]
@@ -100,6 +99,16 @@ input[0] = Channel.fromList([
                 // dbsnp_tbi   [mandatory] [ [dbsnp_tbi] ]
                 input[7] = Channel.value([
                     file('https://raw.githubusercontent.com/lescai-teaching/eduomics_testdata/refs/heads/main/dna/whole_chr22/dbsnp_146.hg38_chr22.vcf.gz.tbi', checkIfExists: true),
+                ])
+
+                // known_snps   [mandatory] [ [known_snps] ]
+                input[8] = Channel.value([
+                    file('https://raw.githubusercontent.com/lescai-teaching/eduomics_testdata/refs/heads/main/dna/gatk_bundle/1000G_omni2_5_chr22_q11-21_GRCh38.vcf.gz', checkIfExists: true),
+                ])
+
+                // known_snps_tbi   [mandatory] [ [known_snps_tbi] ]
+                input[9] = Channel.value([
+                    file('https://raw.githubusercontent.com/lescai-teaching/eduomics_testdata/refs/heads/main/dna/gatk_bundle/1000G_omni2_5_chr22_q11-21_GRCh38.vcf.gz.tbi', checkIfExists: true),
                 ])
                 """
             }
