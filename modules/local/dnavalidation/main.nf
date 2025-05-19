@@ -8,13 +8,11 @@ process DNAVALIDATION {
     'community.wave.seqera.io/library/bash:5.2.21--5bc877f5b6cf0654' }"
 
     input:
-    tuple val(meta) , path(vcf)
-    tuple val(meta2), path(reads)
+    tuple val(meta), path(vcf), path(reads)
 
     output:
-    tuple val(meta), path("dna_${meta.simulatedvar}_validation")      , optional: true, emit: dna_validated_results
-    tuple val(meta), path("dna_${meta.simulatedvar}_validation/*.vcf"), optional: true, emit: vcf_file
-    path "versions.yml"                                                               , emit: versions
+    tuple val(meta), path("dna_${meta.simulatedvar}_validation"), optional: true, emit: dna_validated_results
+    path "versions.yml",                                                          emit: versions
 
     when:
     task.ext.when == null || task.ext.when
@@ -25,11 +23,13 @@ process DNAVALIDATION {
     def variant = meta.simulatedvar ?: ''
     """
     variantpos=\$(echo "${variant}" | cut -d"-" -f2)
-    if grep -q "\${variantpos}" ${vcf} && [ "${meta.simulatedvar}" = "${meta2.simulatedvar}" ]; then
+    if grep -q "\${variantpos}" ${vcf}; then
         mkdir -p dna_${variant}_validation
         echo "${variant}" > dna_${variant}_validation/solution_${variant}.txt
         cp ${vcf} dna_${variant}_validation/
-        cp ${reads} dna_${variant}_validation/
+        for read in ${reads}; do
+            cp \$read dna_${variant}_validation/
+        done
     fi
 
     cat <<-END_VERSIONS > versions.yml
@@ -42,9 +42,11 @@ process DNAVALIDATION {
     def variant = meta.simulatedvar ?: 'chr22-1234-A-T'
     """
     mkdir -p dna_${variant}_validation
+    touch dna_${variant}_validation/solution_${variant}.txt
     touch dna_${variant}_validation/simulated_validated.vcf
-    touch dna_${variant}_validation/simulated_validated_read_1.fastq.gz
-    touch dna_${variant}_validation/simulated_validated_read_2.fastq.gz
+    for read in ${reads}; do
+        touch dna_${variant}_validation/\$(basename \$read)
+    done
 
     cat <<-END_VERSIONS > versions.yml
     "${task.process}":
