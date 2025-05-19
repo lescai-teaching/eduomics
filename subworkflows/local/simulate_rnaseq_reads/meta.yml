@@ -1,0 +1,136 @@
+# yaml-language-server: $schema=https://raw.githubusercontent.com/nf-core/modules/master/subworkflows/yaml-schema.json
+name: "simulate_rnaseq_reads"
+description: Simulates RNA-seq reads based on count matrices and fold changes
+keywords:
+  - RNA-seq
+  - simulation
+  - count matrices
+  - polyester
+components:
+  - countmatrices
+  - polyester_simulate
+input:
+  - ch_filtered_txfasta:
+      description: |
+        Channel with the filtered transcript fasta file
+        Structure: [ val(meta), path(filtered_txfasta) ]
+      structure:
+        - meta:
+            type: map
+            description: |
+              Groovy Map containing sample information
+              e.g. `[ id:'test', chromosome: 'chr22', coverage: 30, reps: 3, groups: 2, simthreshold: 0.3 ]`
+        - filtered_txfasta:
+            type: file
+            description: transcriptome FASTA file containing transcripts from the specified chromosome
+            pattern: "gencode_transcripts_noversion.fasta"
+  - ch_filtered_gff3:
+      description: |
+        Channel with the filtered gff3 file
+        Structure: [ val(meta), path(filtered_gff3) ]
+      structure:
+        - meta:
+            type: map
+            description: |
+              Groovy Map containing sample information
+              e.g. `[ id:'test', chromosome: 'chr22', coverage: 30, reps: 3, groups: 2, simthreshold: 0.3 ]`
+        - filtered_gff3:
+            type: file
+            description: RDS file containing transcripts from the specified chromosome
+            pattern: "filtered_gff3.rds"
+  - ch_genelists:
+      description: |
+        Channel containing those gene lists that should give an enrichment with EnrichGO
+        Structure: [ val(meta), path(genelists) ]
+      structure:
+        - meta:
+            type: map
+            description: |
+              Groovy Map containing sample information
+              e.g. `[ id:'test', chromosome: 'chr22', coverage: 30, reps: 3, groups: 2, simthreshold: 0.3 ]`
+        - genelists:
+            type: file
+            description: RDS file containing those gene lists that should give an enrichment with EnrichGO
+            pattern: "valid_gene_lists.rds"
+  - ch_foldchange:
+      description: |
+        Channel containing fold changes
+        Structure: [ val(meta), path(foldchange) ]
+      structure:
+        - meta:
+            type: map
+            description: |
+              Groovy Map containing sample information
+              e.g. `[ id:'test', chromosome: 'chr22', coverage: 30, reps: 3, groups: 2, simthreshold: 0.3 ]`
+        - foldchange:
+            type: file
+            description: fold change files
+            pattern: "*.rds"
+  - ch_genes_list_associations:
+      description: |
+        Channel containing the association between a specific list and its genes
+        Structure: [ val(meta), path(genes_list_associations) ]
+      structure:
+        - meta:
+            type: map
+            description: |
+              Groovy Map containing sample information
+              e.g. `[ id:'test', chromosome: 'chr22', coverage: 30, reps: 3, groups: 2, simthreshold: 0.3 ]`
+        - genes_list_associations:
+            type: file
+            description: TSV file containing the association between a specific list and its genes
+            pattern: "list_gene_association.tsv"
+output:
+  - countMatrix:
+      description: |
+        Channel containing the count matrices associated to each gene list
+        Structure: [ val(meta), path(countMatrix) ]
+      structure:
+        - meta:
+            type: map
+            description: |
+              Groovy Map containing sample information
+              e.g. `[ id:'test', chromosome: 'chr22', coverage: 30, reps: 3, groups: 2, simthreshold: 0.3 ]`
+        - countMatrix:
+            type: file
+            description: simulated count matrices
+            pattern: "countMatrix_*.rds"
+  - expectedLog2FC:
+      description: |
+        Channel containing the expected log2foldchange
+        Structure: [ val(meta), path(expectedLog2FC) ]
+      structure:
+        - meta:
+            type: map
+            description: |
+              Groovy Map containing sample information
+              e.g. `[ id:'test', chromosome: 'chr22', coverage: 30, reps: 3, groups: 2, simthreshold: 0.3 ]`
+        - expectedLog2FC:
+            type: file
+            description: expected log2foldchange
+            pattern: "expected_*.rds"
+  - simreads:
+      description: |
+        Channel containing the simulated reads with a new meta containing also the DE genes
+        Structure: [ val(newmeta), path(simreads) ]
+      structure:
+        - newmeta:
+            type: map
+            description: |
+              Groovy Map containing sample information
+              e.g. `[ id:'test', chromosome: 'chr22', coverage: 30, reps: 3, groups: 2, simthreshold: 0.3, genes: 'A,B,C' ]`
+        - simreads:
+            type: file
+            description: controls/cases simulated reads
+            pattern: "*.fasta.gz"
+  - versions:
+      description: |
+        Channel containing software versions file
+      structure:
+        - versions.yml:
+            type: file
+            description: file containing versions of the software used
+authors:
+  - "@LorenzoS96"
+maintainers:
+  - "@LorenzoS96"
