@@ -33,24 +33,9 @@ workflow PROFILE_SIMULATE_VARS_FASTQ {
     )
     ch_versions = ch_versions.mix(SIMUSCOP_SIMUREADS.out.versions)
 
-    simulated_reads_ch = SIMUSCOP_SIMUREADS.out.reads
-            .map{ m, files ->
-                    def grouped = files.groupBy { file ->
-                        file.name.replaceFirst(/_[12]\.fq\.gz$/, '')
-                        }
-                    grouped.collect { sampleName, group ->
-                        def updatedMeta = m + [sample: sampleName]
-                        [updatedMeta, group.sort()]
-                        }
-            }
-            .flatMap{
-                m, reads ->
-                [m, reads]
-            }
-
 
     emit:
-    simreads = simulated_reads_ch    // channel: [ val(meta), [ "reads_1.fq.gz", "reads_2.fq.gz" ] ]
-    versions = ch_versions           // channel: [ versions.yml ]
+    simreads = SIMUSCOP_SIMUREADS.out.reads    // channel: [ val(meta), [ "reads_1.fq.gz", "reads_2.fq.gz" ] ]
+    versions = ch_versions                     // channel: [ versions.yml ]
 }
 
