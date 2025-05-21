@@ -7,10 +7,10 @@ dependencies:
   - bioconda::bioconductor-biostrings=2.68.1
   - bioconda::bioconductor-rtracklayer=1.60.0
   - conda-forge::r-tidyverse=2.0.0
-  - bioconda::bioconductor-annotationdbi>=1.62.0
+  - bioconda::bioconductor-annotationdbi=1.62.2
   - bioconda::bioconductor-org.hs.eg.db=3.17.0
   - conda-forge::r-igraph=1.5.1
   - conda-forge::r-httr=1.4.7
   - conda-forge::r-jsonlite=1.8.7
   - bioconda::bioconductor-clusterprofiler=4.8.1
-  - conda-forge::r-matrix=1.6_1
+  - conda-forge::r-matrix=1.6.5

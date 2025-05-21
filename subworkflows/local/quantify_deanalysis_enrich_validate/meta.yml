@@ -1,0 +1,192 @@
+# yaml-language-server: $schema=https://raw.githubusercontent.com/nf-core/modules/master/subworkflows/yaml-schema.json
+name: quantify_deanalysis_enrich_validate
+description: quantify gene expression, perform differential expression analysis, conduct functional enrichment, and validate RNA-seq results
+keywords:
+  - quantify
+  - salmon_quant
+  - differential expression analysis
+  - deseq2
+  - enrich
+  - validate
+components:
+  - salmon/quant
+  - deanalysis
+  - enrichment
+  - rnaseqvalidation
+input:
+  - ch_simreads:
+      description: |
+        Channel with the simulated reads in FASTA format
+        Structure: [ val(meta), path(simreads) ]
+      structure:
+        - meta:
+            type: map
+            description: |
+              Groovy Map containing sample information
+              e.g. `[ id:'test', chromosome: 'chr22', coverage: 30, reps: 3, groups: 2, simthreshold: 0.3, genes: 'A,B,C' ]`
+        - simreads:
+            type: file
+            description: simulated reads in FASTA format
+            pattern: "*.fasta.gz"
+  - ch_index:
+      description: |
+        Channel with the simulated reads
+        Structure: [ val(meta), path(simreads) ]
+      structure:
+        - salmon_index:
+            type: folder
+            description: folder containing the salmon index
+  - ch_filtered_gff3:
+      description: |
+        Channel with the filtered gff3 file
+        Structure: [ val(meta), path(filtered_gff3) ]
+      structure:
+        - meta:
+            type: map
+            description: |
+              Groovy Map containing sample information
+              e.g. `[ id:'test', chromosome: 'chr22', coverage: 30, reps: 3, groups: 2, simthreshold: 0.3 ]`
+        - filtered_gff3:
+            type: file
+            description: filtered annotation file (gff3) for the simulated chromosome
+            pattern: "filtered_gff3.gff3"
+  - ch_filtered_txfasta:
+      description: |
+        Channel with the filtered transcript fasta file
+        Structure: [ val(meta), path(filtered_txfasta) ]
+      structure:
+        - meta:
+            type: map
+            description: |
+              Groovy Map containing sample information
+              e.g. `[ id:'test', chromosome: 'chr22', coverage: 30, reps: 3, groups: 2, simthreshold: 0.3 ]`
+        - filtered_txfasta:
+            type: file
+            description: transcriptome FASTA file containing transcripts from the simulated chromosome
+            pattern: "gencode_transcripts_noversion.fasta"
+  - ch_alignment_mode:
+      description: |
+        Channel to select the mode to run salmon
+        Structure: [ val(alignment_mode) ]
+      structure:
+        - alignment_mode:
+            type: boolean
+            description: whether to run salmon in alignment mode
+  - ch_libtype:
+      description: |
+        Channel to select the library type based on strandedness
+        Structure: [ val(libtype) ]
+      structure:
+        - libtype:
+            type: string
+            description: library type based on strandedness
+  - ch_filtered_transcriptData:
+      description: |
+        Channel containing the transcript data from the simulated chromosome
+        Structure: [ val(meta), path(filtered_transcriptData) ]
+      structure:
+        - meta:
+            type: map
+            description: |
+              Groovy Map containing sample information
+              e.g. `[ id:'test', chromosome: 'chr22', coverage: 30, reps: 3, groups: 2, simthreshold: 0.3 ]`
+        - filtered_transcriptData:
+            type: file
+            description: RDS file containing transcript data from the simulated chromosome
+            pattern: "filtered_transcriptData.rds"
+output:
+  - salmon_results:
+      description: |
+        Channel containing salmon quantification files
+        Structure: [ val(meta), path(quant_dir) ]
+      structure:
+        - meta:
+            type: map
+            description: |
+              Groovy Map containing sample information
+              e.g. `[ id:'test', chromosome: 'chr22', coverage: 30, reps: 3, groups: 2, simthreshold: 0.3, genes: 'A,B,C' ]`
+        - quant_dir:
+            type: directory
+            description: folder containing the quantification results for a specific sample
+            pattern: "sample_01, sample_02 etc..."
+  - salmon_json_info:
+      description: |
+        Channel containing meta information from Salmon quant
+        Structure: [ val(meta), path(json_info) ]
+      structure:
+        - meta:
+            type: map
+            description: |
+              Groovy Map containing sample information
+              e.g. `[ id:'test', chromosome: 'chr22', coverage: 30, reps: 3, groups: 2, simthreshold: 0.3, genes: 'A,B,C' ]`
+        - salmon_json_info:
+            type: file
+            description: file containing meta information from Salmon quant
+            pattern: "*info.json"
+  - salmon_lib_format:
+      description: |
+        Channel containing the library format counts
+        Structure: [ val(meta), path(lib_format_counts) ]
+      structure:
+        - meta:
+            type: map
+            description: |
+              Groovy Map containing sample information
+              e.g. `[ id:'test', chromosome: 'chr22', coverage: 30, reps: 3, groups: 2, simthreshold: 0.3, genes: 'A,B,C' ]`
+        - salmon_lib_format:
+            type: file
+            description: file containing the library format counts
+            pattern: "*lib_format_counts.json"
+  - deseq2_results:
+      description: |
+        Channel containing deseq2 results, deseq2 DE genes and related plots
+        Structure: [ val(meta), path(deseq2_results), path(deseq2_de_genes), path(*.pdf) ]
+      structure:
+        - meta:
+            type: map
+            description: |
+              Groovy Map containing sample information
+              e.g. `[ id:'test', chromosome: 'chr22', coverage: 30, reps: 3, groups: 2, simthreshold: 0.3, genes: 'A,B,C' ]`
+        - deseq2_results:
+            type: file
+            description: deseq2 results in TSV format, deseq2 DE genes in TXT format and related plots in pdf format
+            pattern: "deseq2_results.tsv, deseq2_de_genes.txt, *.pdf"
+  - deseq2_tx2gene:
+      description: |
+        Channel containing the mapping between transcripts and genes
+        Structure: [ val(meta), path(deseq2_tx2gene) ]
+      structure:
+        - meta:
+            type: map
+            description: |
+              Groovy Map containing sample information
+              e.g. `[ id:'test', chromosome: 'chr22', coverage: 30, reps: 3, groups: 2, simthreshold: 0.3, genes: 'A,B,C' ]`
+        - deseq2_tx2gene:
+            type: file
+            description: TSV mapping transcripts to genes
+            pattern: "deseq2_tx2gene.tsv"
+  - enrichment_results:
+      description: |
+        Channel containing the enrichemnt results and the related plots
+        Structure: [ val(meta), path(enrichment_results), path(*.png) ]
+      structure:
+        - meta:
+            type: map
+            description: |
+              Groovy Map containing sample information
+              e.g. `[ id:'test', chromosome: 'chr22', coverage: 30, reps: 3, groups: 2, simthreshold: 0.3, genes: 'A,B,C' ]`
+        - enrichment_results:
+            type: file
+            description: enrichment results in RDS format and related plots in png format
+            pattern: "enrichment_results.rds, *.png"
+  - versions:
+      description: |
+        Channel containing software versions file
+      structure:
+        - versions.yml:
+            type: file
+            description: file containing versions of the software used
+authors:
+  - "@LorenzoS96"
+maintainers:
+  - "@LorenzoS96"

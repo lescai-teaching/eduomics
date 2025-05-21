@@ -12,14 +12,8 @@ process ENRICHMENT {
     tuple val(meta2), path(tx2gene)
 
     output:
-    tuple val(meta), path("dotplot_BP.png")            , optional: true, emit: dotplot_BP
-    tuple val(meta), path("dotplot_MF.png")            , optional: true, emit: dotplot_MF
-    tuple val(meta), path("dotplot_CC.png")            , optional: true, emit: dotplot_CC
-    tuple val(meta), path("cnetplot_BP.png")           , optional: true, emit: cnetplot_BP
-    tuple val(meta), path("cnetplot_MF.png")           , optional: true, emit: cnetplot_MF
-    tuple val(meta), path("cnetplot_CC.png")           , optional: true, emit: cnetplot_CC
-    tuple val(meta), path("enrichment_results.rds")    , emit: enrichment_results
-    path "versions.yml"                                , emit: versions
+    tuple val(meta), path("enrichment_results.rds"), path("*.png")    , emit: enrichment_results
+    path "versions.yml"                                               , emit: versions
 
     when:
     task.ext.when == null || task.ext.when
@@ -35,7 +29,7 @@ process ENRICHMENT {
 
     cat <<-END_VERSIONS > versions.yml
     "${task.process}":
-        bioconductor-tximport: \$(Rscript -e "cat(as.character(packageVersion('tximport')))")
+        r-tidyverse: \$(Rscript -e "cat(as.character(packageVersion('tidyverse')))")
         bioconductor-org.hs.eg.db: \$(Rscript -e "cat(as.character(packageVersion('org.Hs.eg.db')))")
         bioconductor-clusterprofiler: \$(Rscript -e "cat(as.character(packageVersion('clusterProfiler')))")
     END_VERSIONS
@@ -54,8 +48,8 @@ process ENRICHMENT {
 
     cat <<-END_VERSIONS > versions.yml
     "${task.process}":
-        bioconductor-tximport: \$(Rscript -e "cat(as.character(packageVersion('tximport')))")
-        bioconductor-org.hs.eg.db: \$(Rscript -e "cat(as.character(packageVersion('org.hs.eg.db')))")
+        r-tidyverse: \$(Rscript -e "cat(as.character(packageVersion('tidyverse')))")
+        bioconductor-org.hs.eg.db: \$(Rscript -e "cat(as.character(packageVersion('org.Hs.eg.db')))")
         bioconductor-clusterprofiler: \$(Rscript -e "cat(as.character(packageVersion('clusterProfiler')))")
     END_VERSIONS
     """

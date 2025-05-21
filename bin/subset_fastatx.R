@@ -1,7 +1,6 @@
 #!/usr/bin/env Rscript
 
 #### Load the libraries ####
-library(rtracklayer)
 library(tidyverse)
 library(Biostrings)
 
@@ -12,31 +11,13 @@ argv <- commandArgs(trailingOnly = TRUE)
 
 chromosome_of_interest <- argv[1]
 fasta <- argv[2]
-gff3 <- argv[3]
+transcript_data <- argv[3]
 log_file <- "subsetfastatx_parsing_log.txt"
 
 
-#### Import the GFF file ####
-gff_data <- import.gff3(gff3)
-
-
-#### Filter transcripts of interest ####
-
-# Filter for transcripts on the specified chromosome
-selected_transcripts <- gff_data[gff_data$type == "transcript" & seqnames(gff_data) == chromosome_of_interest]
-length(unique(selected_transcripts$transcript_id))
-
-# Convert to tibble and filter for protein-coding transcripts; select relevant columns
-transcript_data <- as_tibble(as.data.frame(selected_transcripts)) %>%
-filter(gene_type == "protein_coding") %>%
-dplyr::select(transcript_id, gene_id, gene_name, gene_type)
-
-# Clean transcript and gene IDs by removing version numbers
-transcript_data <- transcript_data %>%
-mutate(
-    transcript_id = gsub("\\.\\d+$", "", transcript_id, perl = TRUE),
-    gene_id = gsub("\\.\\d+$", "", gene_id, perl = TRUE)
-)
+#### Import the filtered transcript data ####
+# This file containing protein-coding transcripts from the simulated chromosome
+transcript_data <- readRDS(transcript_data)
 
 cat("1) Extracted", nrow(transcript_data),
     "protein-coding transcripts from", paste0(chromosome_of_interest),
@@ -53,17 +34,17 @@ cat("\n2) Number of transcripts in FASTA before filtering", length(fasta_all),
 
 # Function to check if a given FASTA entry corresponds to an annotated transcript
 match_fasta_name <- function(fasta_name, parsed_gff_tibble){
-# Split the FASTA header by "|"
-data = unlist(stringr::str_split(fasta_name, fixed("|")))
-# Extract the transcript ID, removing the version suffix (e.g., ".1")
-transcript_id = gsub("\\.\\d+$","", data[[1]], perl=T)
-# Check if the transcript ID is present in the parsed GFF data
-if (transcript_id %in% parsed_gff_tibble$transcript_id){
-    return(TRUE)
-}
-else{
-    return(FALSE)
-}
+    # Split the FASTA header by "|"
+    data = unlist(stringr::str_split(fasta_name, fixed("|")))
+    # Extract the transcript ID, removing the version suffix (e.g., ".1")
+    transcript_id = gsub("\\.\\d+$","", data[[1]], perl=T)
+    # Check if the transcript ID is present in the parsed GFF data
+    if (transcript_id %in% parsed_gff_tibble$transcript_id){
+        return(TRUE)
+    }
+    else{
+        return(FALSE)
+    }
 }
 
 # Filter FASTA sequences that match the transcript IDs in `transcript_data`

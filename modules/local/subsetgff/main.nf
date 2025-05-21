@@ -12,11 +12,12 @@ process SUBSETGFF {
     path(gff3)
 
     output:
-    tuple val(meta), path("valid_gene_lists.rds")        , emit: geneLists
-    tuple val(meta), path("list_gene_association.tsv")   , emit: genes_list_association
-    tuple val(meta), path("filtered_gff3.rds")           , emit: filtered_gff3
-    tuple val(meta), path("subsetgff_parsing_log.txt")   , emit: log
-    path "versions.yml"                                  , emit: versions
+    tuple val(meta), path("filtered_annotation.gff3")        , emit: filtered_annotation
+    tuple val(meta), path("valid_gene_lists.rds")            , emit: geneLists
+    tuple val(meta), path("list_gene_association.tsv")       , emit: genes_list_association
+    tuple val(meta), path("filtered_transcript_data.rds")    , emit: filtered_transcript_data
+    tuple val(meta), path("subsetgff_parsing_log.txt")       , emit: subsetgff_parsing_log
+    path "versions.yml"                                      , emit: versions
 
     when:
     task.ext.when == null || task.ext.when
@@ -48,9 +49,10 @@ process SUBSETGFF {
     def prefix = task.ext.prefix ?: "${meta.id}"
 
     """
+    touch filtered_annotation.gff3
     touch valid_gene_lists.rds
     touch list_gene_association.tsv
-    touch filtered_gff3.rds
+    touch filtered_transcript_data.rds
     touch subsetgff_parsing_log.txt
 
     cat <<-END_VERSIONS > versions.yml

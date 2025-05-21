@@ -8,15 +8,14 @@ process RNASEQVALIDATION {
         'community.wave.seqera.io/library/bioconductor-dose:4.0.0--57136ca31aaf6317' }"
 
     input:
-    tuple val(meta),  path(enrichment_results)
-    tuple val(meta2), path(reads)
-    tuple val(meta3), path(de_genes)
+    tuple val(meta),  path(reads)
+    tuple val(meta2), path(deseq2_results_tsv), path(deseq2_de_genes_txt), path(deseq2_pdf)
+    tuple val(meta3), path(enrichment_rds), path(enrichment_png)
+    tuple val(meta4), path(deseq2_tx2gene)
 
     output:
-    tuple val(meta), path("validated_reads/*.fasta.gz")    , optional: true, emit: valid_reads
-    tuple val(meta), path("validated_de_genes.txt")        , optional: true, emit: valid_de_genes
-    tuple val(meta), path("validation_result.txt")         , emit: validation_result
-    path "versions.yml"                                    , emit: versions
+    tuple val(meta), path("rnaseq_validation")    , optional: true, emit: rnaseq_validated_results
+    path "versions.yml"                           , emit: versions
 
     when:
     task.ext.when == null || task.ext.when
@@ -26,37 +25,32 @@ process RNASEQVALIDATION {
     def prefix = task.ext.prefix ?: "${meta.id}"
 
     """
-    cat <<EOF > validate_enrichment.R
-    #!/usr/bin/env Rscript
-
-    library(DOSE)
-
-    enrichment_results <- readRDS("${enrichment_results}")
-    validate_enrichment <- function(enrichment_results) {
-        categories <- intersect(names(enrichment_results), c("BP", "MF", "CC"))
-
-        for (cat in categories) {
-            if (dim(enrichment_results[[cat]])[1] > 3) {
-                write("GOOD SIMULATION", file = "validation_result.txt")
-                return(invisible(NULL))
-            }
-        }
-
-        write("SIMULATION NOT GOOD", file = "validation_result.txt")
-        return(invisible(NULL))
-    }
-
-    validate_enrichment(enrichment_results)
-    EOF
-
-    Rscript validate_enrichment.R
+    Rscript ${baseDir}/bin/rnaseqvalidation.R ${enrichment_rds}
 
     if [ "\$(cat validation_result.txt)" == "GOOD SIMULATION" ]; then
-        mkdir -p validated_reads
+        mkdir -p rnaseq_validation/validated_reads
+
         for read_file in ${reads}; do
-            ln -s "\$(readlink -f "\$read_file")" validated_reads/
+            cp "\${read_file}" rnaseq_validation/validated_reads
         done
-        cp ${de_genes} validated_de_genes.txt
+
+        cp "${deseq2_results_tsv}" rnaseq_validation/
+        cp "${deseq2_de_genes_txt}" rnaseq_validation/
+
+        for pdf_file in ${deseq2_pdf}; do
+            cp "\${pdf_file}" rnaseq_validation/
+        done
+
+        cp "${enrichment_rds}" rnaseq_validation/
+
+        for png_file in ${enrichment_png}; do
+            cp "\${png_file}" rnaseq_validation/
+        done
+
+        cp "${deseq2_tx2gene}" rnaseq_validation/
+
+        cp validation_result.txt rnaseq_validation/
+
     fi
 
     cat <<-END_VERSIONS > versions.yml
@@ -70,11 +64,23 @@ process RNASEQVALIDATION {
     def prefix = task.ext.prefix ?: "${meta.id}"
 
     """
-    mkdir -p validated_reads
-    touch validated_reads/${prefix}_1.fasta.gz
-    touch validated_reads/${prefix}_2.fasta.gz
-    touch validated_de_genes.txt
-    touch validation_result.txt
+    mkdir -p rnaseq_validation/validated_reads
+    touch rnaseq_validation/validated_reads/${prefix}_1.fasta.gz
+    touch rnaseq_validation/validated_reads/${prefix}_2.fasta.gz
+    touch rnaseq_validation/deseq2_results.tsv
+    touch rnaseq_validation/deseq2_de_genes.txt
+    touch rnaseq_validation/deseq2_ma_plot.pdf
+    touch rnaseq_validation/deseq2_dispersion_plot.pdf
+    touch rnaseq_validation/deseq2_count_plot.pdf
+    touch rnaseq_validation/deseq2_heatmap_plot.pdf
+    touch rnaseq_validation/deseq2_pca_plot.pdf
+    touch rnaseq_validation/enrichment_results.rds
+    for ont in BP MF CC; do
+        touch rnaseq_validation/dotplot_\${ont}.png
+        touch rnaseq_validation/cnetplot_\${ont}.png
+    done
+    touch rnaseq_validation/validation_result.txt
+    touch rnaseq_validation/deseq2_tx2gene.tsv
 
     cat <<-END_VERSIONS > versions.yml
     "${task.process}":

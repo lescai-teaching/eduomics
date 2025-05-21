@@ -1,0 +1,204 @@
+nextflow_workflow {
+
+    name "Test Subworkflow QUANTIFY_DEANALYSIS_ENRICH_VALIDATE"
+    script "../main.nf"
+    workflow "QUANTIFY_DEANALYSIS_ENRICH_VALIDATE"
+
+    tag "subworkflows"
+    tag "subworkflows_"
+    tag "subworkflows/quantify_deanalysis_enrich_validate"
+    tag "salmon"
+    tag "salmon/quant"
+    tag "deseq2"
+    tag "enrichment"
+    tag "validation"
+
+
+    test("quantify_deanalysis_enrich_validate - with enrichment") {
+
+        when {
+            workflow {
+                """
+                def sample_urls = [
+                    'sample_01': [
+                        'https://raw.githubusercontent.com/lescai-teaching/eduomics_testdata/refs/heads/main/rnaseq/raw_reads_enrichment/sample_01_1.fasta.gz',
+                        'https://raw.githubusercontent.com/lescai-teaching/eduomics_testdata/refs/heads/main/rnaseq/raw_reads_enrichment/sample_01_2.fasta.gz'
+                    ],
+                    'sample_02': [
+                        'https://raw.githubusercontent.com/lescai-teaching/eduomics_testdata/refs/heads/main/rnaseq/raw_reads_enrichment/sample_02_1.fasta.gz',
+                        'https://raw.githubusercontent.com/lescai-teaching/eduomics_testdata/refs/heads/main/rnaseq/raw_reads_enrichment/sample_02_2.fasta.gz'
+                    ],
+                    'sample_03': [
+                        'https://raw.githubusercontent.com/lescai-teaching/eduomics_testdata/refs/heads/main/rnaseq/raw_reads_enrichment/sample_03_1.fasta.gz',
+                        'https://raw.githubusercontent.com/lescai-teaching/eduomics_testdata/refs/heads/main/rnaseq/raw_reads_enrichment/sample_03_2.fasta.gz'
+                    ],
+                    'sample_04': [
+                        'https://raw.githubusercontent.com/lescai-teaching/eduomics_testdata/refs/heads/main/rnaseq/raw_reads_enrichment/sample_04_1.fasta.gz',
+                        'https://raw.githubusercontent.com/lescai-teaching/eduomics_testdata/refs/heads/main/rnaseq/raw_reads_enrichment/sample_04_2.fasta.gz'
+                    ],
+                    'sample_05': [
+                        'https://raw.githubusercontent.com/lescai-teaching/eduomics_testdata/refs/heads/main/rnaseq/raw_reads_enrichment/sample_05_1.fasta.gz',
+                        'https://raw.githubusercontent.com/lescai-teaching/eduomics_testdata/refs/heads/main/rnaseq/raw_reads_enrichment/sample_05_2.fasta.gz'
+                    ],
+                    'sample_06': [
+                        'https://raw.githubusercontent.com/lescai-teaching/eduomics_testdata/refs/heads/main/rnaseq/raw_reads_enrichment/sample_06_1.fasta.gz',
+                        'https://raw.githubusercontent.com/lescai-teaching/eduomics_testdata/refs/heads/main/rnaseq/raw_reads_enrichment/sample_06_2.fasta.gz'
+                    ]
+                ]
+                input[0] = Channel
+                    .fromList(sample_urls.entrySet())
+                    .map { entry ->
+                        def sample_id = entry.key
+                        def urls = entry.value
+                        def meta = [ id: 'simtest', chromosome: 'chr22', reps: 3, groups: 2, genes: 'A,B,C' ]
+                        def files = urls.collect { file(it) }
+                        [meta, files]
+                    }
+                def index_urls = [
+                    'https://raw.githubusercontent.com/lescai-teaching/eduomics_testdata/refs/heads/main/rnaseq/salmonquantify/chr22_transcripts_index/complete_ref_lens.bin',
+                    'https://raw.githubusercontent.com/lescai-teaching/eduomics_testdata/refs/heads/main/rnaseq/salmonquantify/chr22_transcripts_index/ctable.bin',
+                    'https://raw.githubusercontent.com/lescai-teaching/eduomics_testdata/refs/heads/main/rnaseq/salmonquantify/chr22_transcripts_index/ctg_offsets.bin',
+                    'https://raw.githubusercontent.com/lescai-teaching/eduomics_testdata/refs/heads/main/rnaseq/salmonquantify/chr22_transcripts_index/duplicate_clusters.tsv',
+                    'https://raw.githubusercontent.com/lescai-teaching/eduomics_testdata/refs/heads/main/rnaseq/salmonquantify/chr22_transcripts_index/info.json',
+                    'https://raw.githubusercontent.com/lescai-teaching/eduomics_testdata/refs/heads/main/rnaseq/salmonquantify/chr22_transcripts_index/mphf.bin',
+                    'https://raw.githubusercontent.com/lescai-teaching/eduomics_testdata/refs/heads/main/rnaseq/salmonquantify/chr22_transcripts_index/pos.bin',
+                    'https://raw.githubusercontent.com/lescai-teaching/eduomics_testdata/refs/heads/main/rnaseq/salmonquantify/chr22_transcripts_index/pre_indexing.log',
+                    'https://raw.githubusercontent.com/lescai-teaching/eduomics_testdata/refs/heads/main/rnaseq/salmonquantify/chr22_transcripts_index/rank.bin',
+                    'https://raw.githubusercontent.com/lescai-teaching/eduomics_testdata/refs/heads/main/rnaseq/salmonquantify/chr22_transcripts_index/refAccumLengths.bin',
+                    'https://raw.githubusercontent.com/lescai-teaching/eduomics_testdata/refs/heads/main/rnaseq/salmonquantify/chr22_transcripts_index/ref_indexing.log',
+                    'https://raw.githubusercontent.com/lescai-teaching/eduomics_testdata/refs/heads/main/rnaseq/salmonquantify/chr22_transcripts_index/reflengths.bin',
+                    'https://raw.githubusercontent.com/lescai-teaching/eduomics_testdata/refs/heads/main/rnaseq/salmonquantify/chr22_transcripts_index/refseq.bin',
+                    'https://raw.githubusercontent.com/lescai-teaching/eduomics_testdata/refs/heads/main/rnaseq/salmonquantify/chr22_transcripts_index/seq.bin',
+                    'https://raw.githubusercontent.com/lescai-teaching/eduomics_testdata/refs/heads/main/rnaseq/salmonquantify/chr22_transcripts_index/versionInfo.json'
+                ]
+                def index_dir = file("\${workDir}/salmon_index")
+                index_dir.mkdirs()
+
+                index_urls.each { url ->
+                    def f = file(url)
+                    f.copyTo("\${index_dir}/\${f.name}")
+                }
+                input[1] = Channel.value(index_dir)
+                input[2] = Channel.value([
+                    [ id: 'simtest', chromosome: 'chr22', reps: 3, groups: 2, genes: 'A,B,C' ],
+                    file('https://raw.githubusercontent.com/lescai-teaching/eduomics_testdata/refs/heads/main/rnaseq/deanalysis/chr22.gff3', checkIfExists: true)
+                ])
+                input[3] = Channel.value([
+                    [ id: 'simtest', chromosome: 'chr22', reps: 3, groups: 2, genes: 'A,B,C' ],
+                    file('https://raw.githubusercontent.com/lescai-teaching/eduomics_testdata/refs/heads/main/rnaseq/countmatrices/gencode_transcripts_noversion_chr22.fasta', checkIfExists: true)
+                ])
+                input[4] = false
+                input[5] = Channel.value("IU")
+                input[6] = Channel.value([
+                    [ id: 'simtest', chromosome: 'chr22', reps: 3, groups: 2, genes: 'A,B,C' ],
+                    file("https://raw.githubusercontent.com/lescai-teaching/eduomics_testdata/refs/heads/main/rnaseq/countmatrices/transcriptData_chr22.rds", checkIfExists: true)
+                ])
+                """
+            }
+        }
+
+        then {
+            assertAll(
+                { assert workflow.success },
+                {
+                    def indexDir = path(workflow.out.rnaseq_validated_results[0][1]).toFile()
+                    assert indexDir.exists()
+                    assert indexDir.isDirectory()
+                    assert indexDir.listFiles().size() > 0
+                }
+            )
+        }
+    }
+
+
+    test("quantify_deanalysis_enrich_validate - no enrichment") {
+
+        when {
+            workflow {
+                """
+                def sample_urls = [
+                    'sample_01': [
+                        'https://raw.githubusercontent.com/lescai-teaching/eduomics_testdata/refs/heads/main/rnaseq/salmonquantify/raw_reads/sample_01_1.fasta.gz',
+                        'https://raw.githubusercontent.com/lescai-teaching/eduomics_testdata/refs/heads/main/rnaseq/salmonquantify/raw_reads/sample_01_2.fasta.gz'
+                    ],
+                    'sample_02': [
+                        'https://raw.githubusercontent.com/lescai-teaching/eduomics_testdata/refs/heads/main/rnaseq/salmonquantify/raw_reads/sample_02_1.fasta.gz',
+                        'https://raw.githubusercontent.com/lescai-teaching/eduomics_testdata/refs/heads/main/rnaseq/salmonquantify/raw_reads/sample_02_2.fasta.gz'
+                    ],
+                    'sample_03': [
+                        'https://raw.githubusercontent.com/lescai-teaching/eduomics_testdata/refs/heads/main/rnaseq/salmonquantify/raw_reads/sample_03_1.fasta.gz',
+                        'https://raw.githubusercontent.com/lescai-teaching/eduomics_testdata/refs/heads/main/rnaseq/salmonquantify/raw_reads/sample_03_2.fasta.gz'
+                    ],
+                    'sample_04': [
+                        'https://raw.githubusercontent.com/lescai-teaching/eduomics_testdata/refs/heads/main/rnaseq/salmonquantify/raw_reads/sample_04_1.fasta.gz',
+                        'https://raw.githubusercontent.com/lescai-teaching/eduomics_testdata/refs/heads/main/rnaseq/salmonquantify/raw_reads/sample_04_2.fasta.gz'
+                    ],
+                    'sample_05': [
+                        'https://raw.githubusercontent.com/lescai-teaching/eduomics_testdata/refs/heads/main/rnaseq/salmonquantify/raw_reads/sample_05_1.fasta.gz',
+                        'https://raw.githubusercontent.com/lescai-teaching/eduomics_testdata/refs/heads/main/rnaseq/salmonquantify/raw_reads/sample_05_2.fasta.gz'
+                    ],
+                    'sample_06': [
+                        'https://raw.githubusercontent.com/lescai-teaching/eduomics_testdata/refs/heads/main/rnaseq/salmonquantify/raw_reads/sample_06_1.fasta.gz',
+                        'https://raw.githubusercontent.com/lescai-teaching/eduomics_testdata/refs/heads/main/rnaseq/salmonquantify/raw_reads/sample_06_2.fasta.gz'
+                    ]
+                ]
+                input[0] = Channel
+                    .fromList(sample_urls.entrySet())
+                    .map { entry ->
+                        def sample_id = entry.key
+                        def urls = entry.value
+                        def meta = [ id: 'simtest', chromosome: 'chr22', reps: 3, groups: 2, genes: 'A,B,C' ]
+                        def files = urls.collect { file(it) }
+                        [meta, files]
+                    }
+                def index_urls = [
+                    'https://raw.githubusercontent.com/lescai-teaching/eduomics_testdata/refs/heads/main/rnaseq/salmonquantify/chr22_transcripts_index/complete_ref_lens.bin',
+                    'https://raw.githubusercontent.com/lescai-teaching/eduomics_testdata/refs/heads/main/rnaseq/salmonquantify/chr22_transcripts_index/ctable.bin',
+                    'https://raw.githubusercontent.com/lescai-teaching/eduomics_testdata/refs/heads/main/rnaseq/salmonquantify/chr22_transcripts_index/ctg_offsets.bin',
+                    'https://raw.githubusercontent.com/lescai-teaching/eduomics_testdata/refs/heads/main/rnaseq/salmonquantify/chr22_transcripts_index/duplicate_clusters.tsv',
+                    'https://raw.githubusercontent.com/lescai-teaching/eduomics_testdata/refs/heads/main/rnaseq/salmonquantify/chr22_transcripts_index/info.json',
+                    'https://raw.githubusercontent.com/lescai-teaching/eduomics_testdata/refs/heads/main/rnaseq/salmonquantify/chr22_transcripts_index/mphf.bin',
+                    'https://raw.githubusercontent.com/lescai-teaching/eduomics_testdata/refs/heads/main/rnaseq/salmonquantify/chr22_transcripts_index/pos.bin',
+                    'https://raw.githubusercontent.com/lescai-teaching/eduomics_testdata/refs/heads/main/rnaseq/salmonquantify/chr22_transcripts_index/pre_indexing.log',
+                    'https://raw.githubusercontent.com/lescai-teaching/eduomics_testdata/refs/heads/main/rnaseq/salmonquantify/chr22_transcripts_index/rank.bin',
+                    'https://raw.githubusercontent.com/lescai-teaching/eduomics_testdata/refs/heads/main/rnaseq/salmonquantify/chr22_transcripts_index/refAccumLengths.bin',
+                    'https://raw.githubusercontent.com/lescai-teaching/eduomics_testdata/refs/heads/main/rnaseq/salmonquantify/chr22_transcripts_index/ref_indexing.log',
+                    'https://raw.githubusercontent.com/lescai-teaching/eduomics_testdata/refs/heads/main/rnaseq/salmonquantify/chr22_transcripts_index/reflengths.bin',
+                    'https://raw.githubusercontent.com/lescai-teaching/eduomics_testdata/refs/heads/main/rnaseq/salmonquantify/chr22_transcripts_index/refseq.bin',
+                    'https://raw.githubusercontent.com/lescai-teaching/eduomics_testdata/refs/heads/main/rnaseq/salmonquantify/chr22_transcripts_index/seq.bin',
+                    'https://raw.githubusercontent.com/lescai-teaching/eduomics_testdata/refs/heads/main/rnaseq/salmonquantify/chr22_transcripts_index/versionInfo.json'
+                ]
+                def index_dir = file("\${workDir}/salmon_index")
+                index_dir.mkdirs()
+
+                index_urls.each { url ->
+                    def f = file(url)
+                    f.copyTo("\${index_dir}/\${f.name}")
+                }
+                input[1] = Channel.value(index_dir)
+                input[2] = Channel.value([
+                    [ id: 'simtest', chromosome: 'chr22', reps: 3, groups: 2, genes: 'A,B,C' ],
+                    file('https://raw.githubusercontent.com/lescai-teaching/eduomics_testdata/refs/heads/main/rnaseq/deanalysis/chr22.gff3', checkIfExists: true)
+                ])
+                input[3] = Channel.value([
+                    [ id: 'simtest', chromosome: 'chr22', reps: 3, groups: 2, genes: 'A,B,C' ],
+                    file('https://raw.githubusercontent.com/lescai-teaching/eduomics_testdata/refs/heads/main/rnaseq/countmatrices/gencode_transcripts_noversion_chr22.fasta', checkIfExists: true)
+                ])
+                input[4] = false
+                input[5] = Channel.value("IU")
+                input[6] = Channel.value([
+                    [ id: 'simtest', chromosome: 'chr22', reps: 3, groups: 2, genes: 'A,B,C' ],
+                    file("https://raw.githubusercontent.com/lescai-teaching/eduomics_testdata/refs/heads/main/rnaseq/countmatrices/transcriptData_chr22.rds", checkIfExists: true)
+                ])
+                """
+            }
+        }
+
+        then {
+            assertAll(
+                { assert workflow.success },
+                { assert !workflow.out.rnaseq_validated_results }
+            )
+        }
+    }
+}
