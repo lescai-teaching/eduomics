@@ -35,7 +35,7 @@ workflow PROFILE_SIMULATE_VARS_FASTQ {
 
 
     emit:
-    simreads = SIMUSCOP_SIMUREADS.out.reads    // channel: [ val(meta), [ "reads_1.fq.gz", "reads_2.fq.gz" ] ]
+    simreads = SIMUSCOP_SIMUREADS.out.reads    // channel: [ val(meta), [ "control_1.fq.gz", "control_2.fq.gz", "case_1.fq.gz", "case_2.fq.gz" ] ]
     versions = ch_versions                     // channel: [ versions.yml ]
 }
 
