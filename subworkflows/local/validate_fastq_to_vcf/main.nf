@@ -26,7 +26,7 @@ workflow VALIDATE_FASTQ_TO_VCF {
     dbsnp_tbi                // channel: [mandatory] [ [dbsnp_tbi] ]
     known_snps               // channel: [mandatory] [ [known_snps] ]
     known_snps_tbi           // channel: [mandatory] [ [known_snps_tbi] ]
-
+    geno_db
 
     main:
     ch_versions = Channel.empty()
@@ -98,13 +98,6 @@ GATK4_BASERECALIBRATOR(
     )
     ch_versions = ch_versions.mix(GATK4_HAPLOTYPECALLER.out.versions)
 
-
-    ch_vcf = GATK4_HAPLOTYPECALLER.out.vcf.map { meta, vcf -> vcf }.collect()
-    ch_index = GATK4_HAPLOTYPECALLER.out.tbi.map { meta, tbi -> tbi }.collect()
-    ch_dict_gendb   = dict.map{meta, dict -> return dict}.toList()
-    //see https://github.com/nf-core/modules/blob/e053975682e471dfed382fe6cdb29a71406f6630/subworkflows/nf-core/bam_create_som_pon_gatk/main.nf#L6
-    ch_dict_gendb.view { "ch_dict_gendb: $it" }
-
 //ch_gendb_input = Channel.value([id: 'test'])
 //    .combine(ch_vcf)
 //    .combine(ch_index)
@@ -121,37 +114,41 @@ GATK4_BASERECALIBRATOR(
 //        ]
 //    }
 
-    ch_gendb_input = GATK4_HAPLOTYPECALLER.out.vcf.join(GATK4_HAPLOTYPECALLER.out.tbi)
+
+    ch_vcfs = GATK4_HAPLOTYPECALLER.out.vcf.map { meta, vcf -> vcf }.collect() //both case and control vcfs
+    ch_tbis = GATK4_HAPLOTYPECALLER.out.tbi.map { meta, tbi -> tbi }.collect()
+    ch_dict_gendb   = dict.map{meta, dict -> return dict}.toList()
+    //see https://github.com/nf-core/modules/blob/e053975682e471dfed382fe6cdb29a71406f6630/subworkflows/nf-core/bam_create_som_pon_gatk/main.nf#L6
+    ch_dict_gendb.view { "ch_dict_gendb: $it" }
+
+    // Combine all inputs for GenomicsDBImport
+    ch_gendb_input = Channel.of([id:geno_db])
+        .combine(ch_vcfs)
+        .combine(ch_tbis)
         .combine(intervals)
+        .combine(ch_dict_gendb)
         .map{ meta, vcf, tbi, intervals ->
-            [
-                [ id:'joint_variant_calling', intervals_name:intervals[0].baseName, num_intervals:1 ],
-                [vcf],
-                [tbi],
-                intervals[1],
-                [],
-                []
-            ]
+            return [meta, vcf, tbi, intervals, [], []]
         }
-
-    ch_gendb_input.view { "ch_gendb_input: $it" }
-
 
     GATK4_GENOMICSDBIMPORT ( ch_gendb_input, false, false, false )
     ch_versions = ch_versions.mix(GATK4_GENOMICSDBIMPORT.out.versions.first())
 
+    ///genotype_input = GATK4_GENOMICSDBIMPORT.out.genomicsdb.map{ meta, genomicsdb -> [ meta, genomicsdb, [], [], [] ] }
     genotype_input = GATK4_GENOMICSDBIMPORT.out.genomicsdb.map{ meta, genomicsdb -> [ meta, genomicsdb, [], [], [] ] }
 
     // Joint genotyping performed using GenotypeGVCFs
     GATK4_GENOTYPEGVCFS(genotype_input, fasta, fai, dict, dbsnp.map{ it -> [ [:], it ] }, dbsnp_tbi.map{ it -> [ [:], it ] })
     ch_versions = ch_versions.mix(GATK4_GENOTYPEGVCFS.out.versions)
 
+    // dbsnp.map{ it -> [ [:], it ] }  cambiare con:   [ id:'null' ]
+
     dnavalidation_input = GATK4_GENOTYPEGVCFS.out.vcf
         .join(simulated_reads_ch)
         .map { meta, vcf, reads ->
             [meta + [simulatedvar: meta.id], vcf, reads.flatten()]
         }
-    //add variant meta to test!
+    //add variant meta in the test!
     DNAVALIDATION(dnavalidation_input)
     ch_versions = ch_versions.mix(DNAVALIDATION.out.versions)
 

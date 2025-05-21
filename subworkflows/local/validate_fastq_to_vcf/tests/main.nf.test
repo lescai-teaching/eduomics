@@ -88,7 +88,7 @@ input[0] = Channel.fromList([
 
                 // interval    [mandatory] [ [interval] ]
                 input[5] = Channel.value([
-                    file('https://raw.githubusercontent.com/lescai-teaching/eduomics_testdata/refs/heads/main/dna/small_data_coordinates.txt', checkIfExists: true),
+                    file('https://raw.githubusercontent.com/msantorsola/random_tests/refs/heads/main/intervals_test.bed', checkIfExists: true),
                 ])
 
                 // dbsnp       [mandatory] [ [dbsnp] ]
@@ -110,6 +110,8 @@ input[0] = Channel.fromList([
                 input[9] = Channel.value([
                     file('https://raw.githubusercontent.com/lescai-teaching/eduomics_testdata/refs/heads/main/dna/gatk_bundle/1000G_omni2_5_chr22_q11-21_GRCh38.vcf.gz.tbi', checkIfExists: true),
                 ])
+                // genomics db str  ]
+                input[10] = "normal_disease_db"
                 """
             }
         }
