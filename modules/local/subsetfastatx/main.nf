@@ -4,17 +4,16 @@ process SUBSETFASTATX {
 
     conda "${moduleDir}/environment.yml"
     container "${ workflow.containerEngine == 'singularity' && !task.ext.singularity_pull_docker_container ?
-        'oras://community.wave.seqera.io/library/bioconductor-biostrings_bioconductor-rtracklayer_r-tidyverse:f420c00b549a4380':
-        'community.wave.seqera.io/library/bioconductor-biostrings_bioconductor-rtracklayer_r-tidyverse:e36d3b6eec6fd274' }"
+        'oras://community.wave.seqera.io/library/bioconductor-biostrings_r-tidyverse:59cdfcce7d992560':
+        'community.wave.seqera.io/library/bioconductor-biostrings_r-tidyverse:4645f56e7256e01f' }"
 
     input:
-    val(meta)
     path(txfasta)
-    path(gff3)
+    tuple val(meta), path(filtered_transcript_data)
 
     output:
     tuple val(meta), path ("gencode_transcripts_noversion.fasta")    , emit: filtered_txfasta
-    tuple val(meta), path ("subsetfastatx_parsing_log.txt")          , emit: log
+    tuple val(meta), path ("subsetfastatx_parsing_log.txt")          , emit: subsetfastatx_parsing_log
     path "versions.yml"                                              , emit: versions
 
     when:
@@ -25,11 +24,10 @@ process SUBSETFASTATX {
     def prefix = task.ext.prefix ?: "${meta.id}"
 
     """
-    Rscript ${baseDir}/bin/subset_fastatx.R ${meta.chromosome} ${txfasta} ${gff3}
+    Rscript ${baseDir}/bin/subset_fastatx.R ${meta.chromosome} ${txfasta} ${filtered_transcript_data}
 
     cat <<-END_VERSIONS > versions.yml
     "${task.process}":
-        bioconductor-rtracklayer: \$(Rscript -e "cat(as.character(packageVersion('rtracklayer')))")
         bioconductor-biostrings: \$(Rscript -e "cat(as.character(packageVersion('Biostrings')))")
         r-tidyverse: \$(Rscript -e "cat(as.character(packageVersion('tidyverse')))")
     END_VERSIONS
@@ -45,7 +43,6 @@ process SUBSETFASTATX {
 
     cat <<-END_VERSIONS > versions.yml
     "${task.process}":
-        bioconductor-rtracklayer: \$(Rscript -e "cat(as.character(packageVersion('rtracklayer')))")
         bioconductor-biostrings: \$(Rscript -e "cat(as.character(packageVersion('Biostrings')))")
         r-tidyverse: \$(Rscript -e "cat(as.character(packageVersion('tidyverse')))")
     END_VERSIONS
