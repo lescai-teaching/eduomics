@@ -1,49 +1,101 @@
 # yaml-language-server: $schema=https://raw.githubusercontent.com/nf-core/modules/master/subworkflows/yaml-schema.json
 name: "fastq_variant_to_validation"
-## TODO nf-core: Add a description of the subworkflow and list keywords
-description: Sort SAM/BAM/CRAM file
+description: Perform variant calling and validation on simulated FASTQ reads
 keywords:
-  - sort
-  - bam
-  - sam
-  - cram
-## TODO nf-core: Add a list of the modules and/or subworkflows used in the subworkflow
+  - variant calling
+  - validation
+  - GATK
+  - BWA
+  - SAMtools
 components:
-  - samtools/sort
   - samtools/index
-## TODO nf-core: List all of the channels used as input with a description and their structure
+  - samtools/sort
+  - bwa/mem
+  - gatk4/markduplicates
+  - gatk4/baserecalibrator
+  - gatk4/applybqsr
+  - gatk4/haplotypecaller
+  - gatk4/genomicsdbimport
+  - gatk4/genotypegvcfs
+  - dnavalidation
 input:
-  - ch_bam:
+  - reads:
       type: file
       description: |
-        The input channel containing the BAM/CRAM/SAM files
-        Structure: [ val(meta), path(bam) ]
-      pattern: "*.{bam/cram/sam}"
-## TODO nf-core: List all of the channels used as output with a descriptions and their structure
+        Channel containing input FASTQ files
+        Structure: [ val(meta), [ reads ] ]
+      pattern: "*.fastq.gz"
+  - fasta:
+      type: file
+      description: |
+        Channel containing reference genome FASTA file
+        Structure: [ val(meta), [ fasta ] ]
+      pattern: "*.{fa,fasta}"
+  - fai:
+      type: file
+      description: |
+        Channel containing FASTA index file
+        Structure: [ val(meta), [ fai ] ]
+      pattern: "*.fai"
+  - dict:
+      type: file
+      description: |
+        Channel containing sequence dictionary file
+        Structure: [ val(meta), [ dict ] ]
+      pattern: "*.dict"
+  - bwa_index:
+      type: file
+      description: |
+        Channel containing BWA index files
+        Structure: [ val(meta), [ bwa_index ] ]
+      pattern: "*.{amb,ann,bwt,pac,sa}"
+  - dbsnp:
+      type: file
+      description: |
+        Channel containing dbSNP VCF file
+        Structure: [ [ dbsnp ] ]
+      pattern: "*.vcf.gz"
+  - dbsnp_tbi:
+      type: file
+      description: |
+        Channel containing dbSNP VCF index file
+        Structure: [ [ dbsnp_tbi ] ]
+      pattern: "*.vcf.gz.tbi"
+  - mills:
+      type: file
+      description: |
+        Channel containing Mills and 1000G gold standard indels VCF file
+        Structure: [ [ mills ] ]
+      pattern: "*.vcf.gz"
+  - mills_tbi:
+      type: file
+      description: |
+        Channel containing Mills and 1000G gold standard indels VCF index file
+        Structure: [ [ mills_tbi ] ]
+      pattern: "*.vcf.gz.tbi"
+  - capture:
+      type: file
+      description: |
+        Channel containing capture regions BED file
+        Structure: [ [ capture ] ]
+      pattern: "*.bed"
 output:
-  - bam:
+  - simulation:
       type: file
       description: |
-        Channel containing BAM files
-        Structure: [ val(meta), path(bam) ]
-      pattern: "*.bam"
-  - bai:
-      type: file
+        Channel containing DNA validation results
+        Structure: [ val(meta), path(validated_results_folder/*) ]
+      pattern: "*"
+  - scenario:
+      type: value
       description: |
-        Channel containing indexed BAM (BAI) files
-        Structure: [ val(meta), path(bai) ]
-      pattern: "*.bai"
-  - csi:
-      type: file
-      description: |
-        Channel containing CSI files
-        Structure: [ val(meta), path(csi) ]
-      pattern: "*.csi"
+        Channel containing scenario information
+        Structure: [ val(meta), val(variant) ]
   - versions:
       type: file
       description: |
         File containing software versions
-        Structure: [ path(versions.yml) ]
+        Structure: [ versions.yml ]
       pattern: "versions.yml"
 authors:
   - "@lescai"
