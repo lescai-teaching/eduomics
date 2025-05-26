@@ -23,12 +23,14 @@ process COUNTMATRICES {
     script:
     def args = task.ext.args ?: ''
     def prefix = task.ext.prefix ?: "${meta.id}"
+    def simreps = meta.reps ?: 3
+    def simgroups = meta.groups ?: 2
 
     """
     Rscript ${baseDir}/bin/count_matrices.R \\
         '${meta.coverage}' \\
-        '${meta.reps}' \\
-        '${meta.groups}' \\
+        '${simreps}' \\
+        '${simgroups}' \\
         '${filtered_txfasta}' \\
         '${filtered_transcriptData}' \\
         '${geneLists}'
