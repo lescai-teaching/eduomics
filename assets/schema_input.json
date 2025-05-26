@@ -40,6 +40,11 @@
                 "errorMessage": "indicates the number of groups (defaults to 2)",
                 "meta": ["groups"]
             },
+            "simthreshold": {
+                "type": "number",
+                "errorMessage": "indicates the similarity threshold to be used for calculating gene groups",
+                "meta": ["simthreshold"]
+            },
             "capture": {
                 "type": "string",
                 "format": "file-path",
