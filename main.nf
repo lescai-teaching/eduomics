@@ -26,10 +26,20 @@ include { getGenomeAttribute      } from './subworkflows/local/utils_nfcore_eduo
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 */
 
-// TODO nf-core: Remove this line if you don't need a FASTA file
-//   This is an example of how to use getGenomeAttribute() to fetch parameters
-//   from igenomes.config using `--genome`
-params.fasta = getGenomeAttribute('fasta')
+// getting attributes for genome files
+params.fasta    = getGenomeAttribute('fasta')
+params.fai      = getGenomeAttribute('fai')
+params.gnomad   = getGenomeAttribute('gnomad')
+params.mills    = getGenomeAttribute('mills')
+params.vcf1000g = getGenomeAttribute('vcf1000g')
+params.dbsnp    = getGenomeAttribute('dbsnp')
+params.clinvar  = getGenomeAttribute('clinvar')
+params.gff3     = getGenomeAttribute('gff3')
+params.txfasta  = getGenomeAttribute('txfasta')
+
+// other parameters for granular control of modules
+params.salmon_libtype   = "IU"
+params.salmon_alignmode = false
 
 /*
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~

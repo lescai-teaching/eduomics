@@ -1,3 +1,3 @@
-id,type,chromosome,coverage,capture,reps,groups
-simulation1,dnaseq,chr22,100,https://raw.githubusercontent.com/lescai-teaching/eduomics_testdata/refs/heads/main/dna/whole_chr22/Twist_exome_2.0_covered_chr22_500pad.bed,1,2
-simulation2,rnaseq,chr22,30,none,3,2
+id,type,chromosome,coverage,capture,reps,groups,simthreshold
+simulation1,dna,chr22,100,https://raw.githubusercontent.com/lescai-teaching/eduomics_testdata/refs/heads/main/dna/whole_chr22/Twist_exome_2.0_covered_chr22_500pad.bed,1,2,0.3
+simulation2,rna,chr22,30,,3,2,0.3

@@ -11,7 +11,7 @@ workflow QUANTIFY_DEANALYSIS_ENRICH_VALIDATE {
     ch_index                      // channel: [ path(salmon_index)                                 ]
     ch_filteredgff3               // channel: [ val(meta), path(filteredgff3)                      ]
     ch_filteredtxfasta            // channel: [ val(meta), path(filteredtxfasta)                   ]
-    ch_alignment_mode             // channel: [ val(alignment_mode)                                ]
+    ch_alignment_mode             // value  : [ boolean                                            ]
     ch_libtype                    // channel: [ val(libtype)                                       ]
     ch_filtered_transcriptData    // channel: [ val(meta), path(filtered_transcriptData)  ]
 
