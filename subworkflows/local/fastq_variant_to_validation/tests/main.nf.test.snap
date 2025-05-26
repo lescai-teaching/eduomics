@@ -1,0 +1,57 @@
+{
+    "single sample - variant present": {
+        "content": [
+            {
+                "0": [
+                    
+                ],
+                "1": [
+                    
+                ],
+                "2": [
+                    "versions.yml:md5,2250f3ebc572a41c75435e2f607597c9",
+                    "versions.yml:md5,2250f3ebc572a41c75435e2f607597c9",
+                    "versions.yml:md5,31239f47332a0c0c0487e58e6d4340d1",
+                    "versions.yml:md5,31239f47332a0c0c0487e58e6d4340d1",
+                    "versions.yml:md5,49b101185b9cf7dc6867351331fcdece",
+                    "versions.yml:md5,870aef698dcae3d52b4e97fb42d5dc3c",
+                    "versions.yml:md5,a4ded6bc9584272681d0aa8147e0d83e",
+                    "versions.yml:md5,a4ded6bc9584272681d0aa8147e0d83e",
+                    "versions.yml:md5,be3b8ea9e6bcec95af940e3aed132b18",
+                    "versions.yml:md5,f09aefdd9471bac92294842e2e656e3a",
+                    "versions.yml:md5,f09aefdd9471bac92294842e2e656e3a",
+                    "versions.yml:md5,f0a2ce5fd9c9e5eef282404f98543270",
+                    "versions.yml:md5,f774466b3de5cf34f0523d6493f5d82a",
+                    "versions.yml:md5,f774466b3de5cf34f0523d6493f5d82a"
+                ],
+                "scenario": [
+                    
+                ],
+                "simulation": [
+                    
+                ],
+                "versions": [
+                    "versions.yml:md5,2250f3ebc572a41c75435e2f607597c9",
+                    "versions.yml:md5,2250f3ebc572a41c75435e2f607597c9",
+                    "versions.yml:md5,31239f47332a0c0c0487e58e6d4340d1",
+                    "versions.yml:md5,31239f47332a0c0c0487e58e6d4340d1",
+                    "versions.yml:md5,49b101185b9cf7dc6867351331fcdece",
+                    "versions.yml:md5,870aef698dcae3d52b4e97fb42d5dc3c",
+                    "versions.yml:md5,a4ded6bc9584272681d0aa8147e0d83e",
+                    "versions.yml:md5,a4ded6bc9584272681d0aa8147e0d83e",
+                    "versions.yml:md5,be3b8ea9e6bcec95af940e3aed132b18",
+                    "versions.yml:md5,f09aefdd9471bac92294842e2e656e3a",
+                    "versions.yml:md5,f09aefdd9471bac92294842e2e656e3a",
+                    "versions.yml:md5,f0a2ce5fd9c9e5eef282404f98543270",
+                    "versions.yml:md5,f774466b3de5cf34f0523d6493f5d82a",
+                    "versions.yml:md5,f774466b3de5cf34f0523d6493f5d82a"
+                ]
+            }
+        ],
+        "meta": {
+            "nf-test": "0.9.2",
+            "nextflow": "25.04.2"
+        },
+        "timestamp": "2025-05-21T17:02:20.126393124"
+    }
+}

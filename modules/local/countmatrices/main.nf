@@ -9,8 +9,8 @@ process COUNTMATRICES {
 
     input:
     tuple val(meta),  path(filtered_txfasta)
-    tuple val(meta2), path(filtered_gff3)
-    tuple val(meta3), path(geneList)
+    tuple val(meta2), path(filtered_transcriptData)
+    tuple val(meta3), path(geneLists)
 
     output:
     tuple val(meta), path ("countMatrix_*.rds")    , emit: simcountMatrix
@@ -30,8 +30,8 @@ process COUNTMATRICES {
         '${meta.reps}' \\
         '${meta.groups}' \\
         '${filtered_txfasta}' \\
-        '${filtered_gff3}' \\
-        '${geneList}'
+        '${filtered_transcriptData}' \\
+        '${geneLists}'
 
     cat <<-END_VERSIONS > versions.yml
     "${task.process}":

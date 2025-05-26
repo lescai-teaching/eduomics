@@ -21,7 +21,7 @@ tools:
       tool_dev_url: "https://github.com/Bioconductor/Biostrings"
       doi: "10.18129/B9.bioc.Biostrings"
       licence: ["Artistic-2.0"]
-      identifier: "bioconductor-biostrings"
+      identifier: "biotools:biostrings"
 input:
   - - meta:
         type: map
@@ -30,23 +30,23 @@ input:
           e.g. `[ id:'test', chromosome: 'chr22', coverage: 30, reps: 3, groups: 2, simthreshold: 0.3 ]`
     - filtered_txfasta:
         type: file
-        description: Transcriptome FASTA file containing transcripts from the specified chromosome
+        description: filtered FASTA file with the transcripts from the simulated chromosome
         pattern: "gencode_transcripts_noversion.fasta"
   - - meta2:
         type: map
         description: |
           Groovy Map containing sample information
           e.g. `[ id:'test', chromosome: 'chr22', coverage: 30, reps: 3, groups: 2, simthreshold: 0.3 ]`
-    - filtered_gff3:
+    - filtered_transcriptData:
         type: file
-        description: RDS file containing transcript data from the specified chromosome
-        pattern: "filtered_gff3.rds"
+        description: RDS file containing filtered transcript data from the simulated chromosome
+        pattern: "filtered_transcriptData.rds"
   - - meta3:
         type: map
         description: |
           Groovy Map containing sample information
           e.g. `[ id:'test', chromosome: 'chr22', coverage: 30, reps: 3, groups: 2, simthreshold: 0.3 ]`
-    - geneList:
+    - geneLists:
       type: file
       description: RDS file containing valid gene lists
       pattern: "valid_gene_lists.rds"
@@ -69,7 +69,7 @@ output:
             e.g. `[ id:'test', chromosome: 'chr22', coverage: 30, reps: 3, groups: 2, simthreshold: 0.3 ]`
       - "expected_*.rds":
           type: file
-          description: Gene info and expected log2 fold change in RDS format
+          description: RDS file containing the expected log2 fold change
           pattern: "expected_*.rds"
   - versions:
       type: file

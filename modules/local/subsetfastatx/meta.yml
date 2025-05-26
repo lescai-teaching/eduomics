@@ -1,38 +1,40 @@
 name: SUBSETFASTATX
-description: subsets a FASTA file based on a specified chromosome and GFF3 annotations
+description: subsets a FASTA file based on a simulated chromosome and GFF3 annotations
 keywords:
   - fasta
   - subset
   - transcriptome
-  - gff3
-  - chromosome
 tools:
-  - bioconductor-rtracklayer:
-      description: Importing GFF3 files
-      homepage: https://bioconductor.org/packages/release/bioc/html/rtracklayer.html
-      documentation: https://bioconductor.org/packages/release/bioc/vignettes/rtracklayer/inst/doc/rtracklayer.html
   - bioconductor-biostrings:
       description: Efficient manipulation of biological strings
       homepage: https://bioconductor.org/packages/release/bioc/html/Biostrings.html
       documentation: https://bioconductor.org/packages/release/bioc/vignettes/Biostrings/inst/doc/BiostringsQuickOverview.pdf
+      tool_dev_url: "https://github.com/tidyverse/tidyverse"
+      doi: "10.18129/B9.bioc.Biostrings"
+      licence: ["Artistic-2.0"]
+      identifier: "biotools:biostrings"
   - r-tidyverse:
       description: Collection of R packages for data science
       homepage: https://www.tidyverse.org/
       documentation: https://www.tidyverse.org/packages/
+      tool_dev_url: "https://github.com/tidyverse/tidyverse"
+      doi: "10.21105/joss.01686"
+      licence: ["MIT"]
+      identifier: "r-tidyverse"
 input:
-  - meta:
-      type: map
-      description: |
-        Groovy Map containing sample information
-        e.g. `[ id:'test', chromosome: 'chr22', coverage: 30, reps: 3, groups: 2, simthreshold: 0.3 ]`
-  - txfasta:
+  - - txfasta:
       type: file
-      description: Transcriptome FASTA file
+      description: transcriptome FASTA file
       pattern: "*.{fa,fasta}"
-  - gff3:
-      type: file
-      description: GFF3 annotation file
-      pattern: "*.{gff3}"
+  - - meta:
+        type: map
+        description: |
+          Groovy Map containing sample information
+          e.g. `[ id:'test', chromosome: 'chr22', coverage: 30, reps: 3, groups: 2, simthreshold: 0.3 ]`
+    - filtered_transcript_data:
+        type: file
+        description: RDS file containing transcript data from the simulated chromosome
+        pattern: "filtered_transcript_data.rds"
 output:
   - filtered_txfasta:
       - meta:
@@ -42,9 +44,9 @@ output:
             e.g. `[ id:'test', chromosome: 'chr22', coverage: 30, reps: 3, groups: 2, simthreshold: 0.3 ]`
       - "gencode_transcripts_noversion.fasta":
           type: file
-          description: Subset FASTA file containing transcripts from the specified chromosome
+          description: subset FASTA file containing transcripts from the simulated chromosome
           pattern: "gencode_transcripts_noversion.fasta"
-  - log:
+  - subsetfastatx_parsing_log:
       - meta:
           type: file
           description: |
@@ -52,7 +54,7 @@ output:
             e.g. `[ id:'test', chromosome: 'chr22', coverage: 30, reps: 3, groups: 2, simthreshold: 0.3 ]`
       - "subsetfastatx_parsing_log.txt":
           type: file
-          description: Log file containing parsing and analysis information
+          description: TXT log file containing parsing and analysis information
           pattern: "subsetfastatx_parsing_log.txt"
   - versions:
       type: file

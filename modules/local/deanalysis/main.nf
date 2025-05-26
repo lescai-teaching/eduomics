@@ -9,17 +9,12 @@ process DEANALYSIS {
 
     input:
     tuple val(meta), path(quant_dirs)
-    path tx2gene
+    tuple val(meta2), path(transcriptData)
 
     output:
-    tuple val(meta), path("deseq2_results.tsv")            , emit: results
-    tuple val(meta), path("deseq2_ma_plot.pdf")            , emit: ma_plot
-    tuple val(meta), path("deseq2_dispersion_plot.pdf")    , emit: dispersion_plot
-    tuple val(meta), path("deseq2_count_plot.pdf")         , emit: count_plot
-    tuple val(meta), path("deseq2_heatmap_plot.pdf")       , emit: heatmap_plot
-    tuple val(meta), path("deseq2_pca_plot.pdf")           , emit: pca_plot
-    tuple val(meta), path("deseq2_tx2gene.tsv")            , emit: tx2gene
-    path "versions.yml"                                    , emit: versions
+    tuple val(meta), path("deseq2_results.tsv"), path("deseq2_de_genes.txt"), path("*.pdf")    , emit: deseq2_results
+    tuple val(meta), path("deseq2_tx2gene.tsv")                                                , emit: deseq2_tx2gene
+    path "versions.yml"                                                                        , emit: versions
 
     when:
     task.ext.when == null || task.ext.when
@@ -32,7 +27,7 @@ process DEANALYSIS {
     Rscript ${baseDir}/bin/de_analysis.R \\
         '${meta.reps}' \\
         '${meta.groups}' \\
-        '${tx2gene}' \\
+        '${transcriptData}' \\
         '${quant_dirs.join(',')}'
 
     cat <<-END_VERSIONS > versions.yml
@@ -45,16 +40,18 @@ process DEANALYSIS {
     """
 
     stub:
+    def args = task.ext.args ?: ''
     def prefix = task.ext.prefix ?: "${meta.id}"
 
     """
     touch deseq2_results.tsv
+    touch deseq2_tx2gene.tsv
+    touch deseq2_de_genes.txt
     touch deseq2_ma_plot.pdf
     touch deseq2_dispersion_plot.pdf
     touch deseq2_count_plot.pdf
     touch deseq2_heatmap_plot.pdf
     touch deseq2_pca_plot.pdf
-    touch deseq2_tx2gene.tsv
 
     cat <<-END_VERSIONS > versions.yml
     "${task.process}":

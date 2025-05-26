@@ -5,21 +5,21 @@ workflow SIMULATE_RNASEQ_READS {
 
     take:
     ch_filtered_txfasta            // channel: [ val(meta), path(filtered_txfasta)        ]
-    ch_filtered_gff3               // channel: [ val(meta), path(filtered_gff3)           ]
-    ch_genelists                   // channel: [ val(meta), path(genelists)               ]. This is an RDS file containing a list of lists
+    ch_filtered_transcriptData     // channel: [ val(meta), path(filtered_transcriptData) ]
+    ch_genelists                   // channel: [ val(meta), path(genelists)               ]
     ch_foldchange                  // channel: [ val(meta), path(foldchange)              ]
-    ch_genes_list_associations     // channel: [ val(meta), path(genes_list_associations) ]. This is a TSV file containing the association between a specific list and its genes. Necessary to add genes in meta by coupling the genes with a specific countMatrix
+    ch_gene_list_association       // channel: [ val(meta), path(gene_list_association)     ]
 
     main:
 
     ch_versions = Channel.empty()
 
-// Generate count matrices
-    COUNTMATRICES(ch_filtered_txfasta, ch_filtered_gff3, ch_genelists)
+    // Generate count matrices
+    COUNTMATRICES(ch_filtered_txfasta, ch_filtered_transcriptData, ch_genelists)
     ch_versions = ch_versions.mix(COUNTMATRICES.out.versions.first())
 
     // Build gene map
-    genesMap = ch_genes_list_associations
+    genesMap = ch_gene_list_association
         .splitCsv(header:true, sep:'\t')
         .map { row ->
             def list_name = row[1].gene_list
@@ -44,7 +44,7 @@ workflow SIMULATE_RNASEQ_READS {
 
     emit:
     countMatrix    = COUNTMATRICES.out.simcountMatrix  // channel: [ val(meta),    path(countMatrix)    ]
-    expectedLog2FC = COUNTMATRICES.out.simAnnords      // channel: [ val(meta),    path(expectedLog2FC) ]. RDS containing the expected log2foldchange for each DE gene
+    expectedLog2FC = COUNTMATRICES.out.simAnnords      // channel: [ val(meta),    path(expectedLog2FC) ]
     simreads       = POLYESTER_SIMULATE.out.reads      // channel: [ val(newmeta), path(simreads)       ]. The newmeta will look like this [ id: 'test', chromosome: 'chr22', coverage: 30, reps: 3, groups: 2, simthreshold: 0.3, genes: 'A,B,C' ]
     versions       = ch_versions                       // channel: [ versions.yml                       ]
 }

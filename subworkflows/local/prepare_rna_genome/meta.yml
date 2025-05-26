@@ -13,53 +13,47 @@ components:
   - subsetgff
   - salmon/index
 input:
-  - ch_fasta:
-      type: file
+  - ch_meta:
+      type: value
       description: |
-        The input channel containing the FASTA file
-        Structure: [ path(fasta) ]
-      pattern: "*.{fa,fasta}"
-  - ch_txfasta:
-      type: file
-      description: |
-        The input channel containing the transcript FASTA file
-        Structure: [ path(txfasta) ]
-      pattern: "*.{fa,fasta}"
+        The input channel containing metadata for subsetting
+        Structure: [ val(meta) ]
   - ch_gff3:
       type: file
       description: |
         The input channel containing the GFF3 file
         Structure: [ path(gff3) ]
       pattern: "*.gff3"
-  - ch_meta:
-      type: value
+  - ch_txfasta:
+      type: file
       description: |
-        The input channel containing metadata for subsetting
-        Structure: [ val(meta) ]
+        The input channel containing the transcript FASTA file
+        Structure: [ path(txfasta) ]
+      pattern: "*.{fa,fasta}"
+  - ch_fasta:
+      type: file
+      description: |
+        The input channel containing the FASTA file
+        Structure: [ path(fasta) ]
+      pattern: "*.{fa,fasta}"
 output:
-  - txfasta_index:
-      type: directory
+  - filtered_annotation:
       description: |
-        Channel containing Salmon index directory
-        Structure: [ path(salmon_index) ]
-      pattern: "salmon_index"
-  - filtered_txfasta:
-      description: |
-        Channel containing the filtered txfasta file with the transcripts from the specified chromosome
-        Structure: [ val(meta), path(filtered_txfasta) ]
+        Channel containing the filtered gff3 file with the transcripts from the simulated chromosome
+        Structure: [ val(meta), path(filtered_annotation) ]
       structure:
         - meta:
             type: map
             description: |
               Groovy Map containing sample information
               e.g. `[ id:'test', chromosome: 'chr22', coverage: 30, reps: 3, groups: 2, simthreshold: 0.3 ]`
-        - filtered_txfasta:
+        - filtered_annotation:
             type: file
-            description: Subset FASTA file containing transcripts from the specified chromosome
-            pattern: "gencode_transcripts_noversion.fasta"
+            description: filtered GFF3 file with the transcripts from the simulated chromosome
+            pattern: "filtered_annotation.gff3"
   - gene_lists:
       description: |
-        Channel containing gene lists from subset GFF
+        Channel containing gene lists that should give an enrichment
         Structure: [ val(meta), path(gene_lists)  ]
       structure:
         - meta:
@@ -69,9 +63,9 @@ output:
               e.g. `[ id:'test', chromosome: 'chr22', coverage: 30, reps: 3, groups: 2, simthreshold: 0.3 ]`
         - gene_lists:
             type: file
-            description: RDS file containing valid gene lists
+            description: RDS file containing gene lists that should give an enrichment
             pattern: "valid_gene_lists.rds"
-  - genes_list_associations:
+  - gene_list_association:
       description: |
         Channel containing the association between a list and its gene
         Structure: [ val(meta), path(genes_list_associations)  ]
@@ -81,24 +75,44 @@ output:
             description: |
               Groovy Map containing sample information
               e.g. `[ id:'test', chromosome: 'chr22', coverage: 30, reps: 3, groups: 2, simthreshold: 0.3 ]`
-        - genes_list_associations:
+        - gene_list_association:
             type: file
-            description: TSV file containing the association between genes and the corrisponding list
+            description: TSV file containing the association between a specific list and its genes (required in the following steps)
             pattern: "list_gene_association.tsv"
-  - filtered_gff3:
+  - filtered_transcript_data:
       description: |
-        Channel containing the filtered gff3 file with the transcripts from the specified chromosome
-        Structure: [ val(meta), path(filtered_gff3)  ]
+        Channel containing the filtered transcript data from the simulated chromosome
+        Structure: [ val(meta), path(filtered_transcript_data) ]
       structure:
         - meta:
             type: map
             description: |
               Groovy Map containing sample information
               e.g. `[ id:'test', chromosome: 'chr22', coverage: 30, reps: 3, groups: 2, simthreshold: 0.3 ]`
-        - filtered_gff3:
+        - filtered_transcript_data:
             type: file
-            description: RDS file containing transcript data from the specified chromosome
-            pattern: "filtered_gff3.rds"
+            description: RDS containing filtered transcript data from the simulated chromosome
+            pattern: "filtered_transcript_data.rds"
+  - filtered_txfasta:
+      description: |
+        Channel containing the filtered txfasta file with the transcripts from the simulated chromosome
+        Structure: [ val(meta), path(filtered_txfasta) ]
+      structure:
+        - meta:
+            type: map
+            description: |
+              Groovy Map containing sample information
+              e.g. `[ id:'test', chromosome: 'chr22', coverage: 30, reps: 3, groups: 2, simthreshold: 0.3 ]`
+        - filtered_txfasta:
+            type: file
+            description: filtered FASTA file with the transcripts from the simulated chromosome
+            pattern: "gencode_transcripts_noversion.fasta"
+  - txfasta_index:
+      type: directory
+      description: |
+        Channel containing Salmon index directory
+        Structure: [ path(salmon_index) ]
+      pattern: "salmon_index"
   - log_files:
       description: |
         Channel containing log files from the modules subsetfastatx and subsetgff

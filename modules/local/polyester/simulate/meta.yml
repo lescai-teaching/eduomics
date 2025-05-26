@@ -15,7 +15,14 @@ tools:
       doi: "10.18129/B9.bioc.polyester"
       licence: ["Artistic-2.0"]
       identifier: biotools:polyester
-
+  - bioconductor-biostrings:
+      description: Efficient manipulation of biological strings
+      homepage: https://bioconductor.org/packages/release/bioc/html/Biostrings.html
+      documentation: https://bioconductor.org/packages/release/bioc/vignettes/Biostrings/inst/doc/BiostringsQuickOverview.pdf
+      tool_dev_url: "https://github.com/tidyverse/tidyverse"
+      doi: "10.18129/B9.bioc.Biostrings"
+      licence: ["Artistic-2.0"]
+      identifier: "biotools:biostrings"
 input:
   # Only when we have meta
   - - meta:
