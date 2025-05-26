@@ -61,6 +61,14 @@
         },
         "then": {
             "required": ["capture"]
+        },
+        "if": {
+            "properties": {
+                "type": { "const": "rna" }
+            }
+        },
+        "then": {
+            "required": ["simthreshold"]
         }
     }
 }
