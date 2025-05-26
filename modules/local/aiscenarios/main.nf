@@ -8,8 +8,7 @@ process AISCENARIOS {
         'community.wave.seqera.io/library/pip_google-genai:657c5e158292b26a' }"
 
     input:
-    tuple val(meta), val(variant)
-    tuple val(meta2), val(genes)
+    tuple val(meta), val(variant), val(genes)
 
     output:
     tuple val(meta), path("*_scenario.txt"), emit: scenario

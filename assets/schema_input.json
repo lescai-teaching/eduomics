@@ -54,21 +54,23 @@
             }
         },
         "required": ["id", "type", "chromosome"],
-        "if": {
-            "properties": {
-                "type": { "const": "dna" }
+        "allOf": [
+            {
+                "if": {
+                    "properties": { "type": { "const": "dna" } }
+                },
+                "then": {
+                    "required": ["capture"]
+                }
+            },
+            {
+                "if": {
+                    "properties": { "type": { "const": "rna" } }
+                },
+                "then": {
+                    "required": ["simthreshold"]
+                }
             }
-        },
-        "then": {
-            "required": ["capture"]
-        },
-        "if": {
-            "properties": {
-                "type": { "const": "rna" }
-            }
-        },
-        "then": {
-            "required": ["simthreshold"]
-        }
+        ]
     }
 }
