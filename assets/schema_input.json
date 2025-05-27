@@ -40,6 +40,11 @@
                 "errorMessage": "indicates the number of groups (defaults to 2)",
                 "meta": ["groups"]
             },
+            "simthreshold": {
+                "type": "number",
+                "errorMessage": "indicates the similarity threshold to be used for calculating gene groups",
+                "meta": ["simthreshold"]
+            },
             "capture": {
                 "type": "string",
                 "format": "file-path",
@@ -49,13 +54,23 @@
             }
         },
         "required": ["id", "type", "chromosome"],
-        "if": {
-            "properties": {
-                "type": { "const": "dna" }
+        "allOf": [
+            {
+                "if": {
+                    "properties": { "type": { "const": "dna" } }
+                },
+                "then": {
+                    "required": ["capture"]
+                }
+            },
+            {
+                "if": {
+                    "properties": { "type": { "const": "rna" } }
+                },
+                "then": {
+                    "required": ["simthreshold"]
+                }
             }
-        },
-        "then": {
-            "required": ["capture"]
-        }
+        ]
     }
 }
