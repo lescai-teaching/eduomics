@@ -61,12 +61,7 @@ workflow SUBSET_REFERENCES_TO_TARGETS {
 
     ch_versions = ch_versions.mix(SUBSETCAPTURE.out.versions)
 
-    // Select variants based on intervals (target capture BED) - GATK BUNDLE
-    // TO FIX: to do for several VCF files!
-    //GATK4_SELECTVARIANTS ( ch_vcf_idx_intervals )
-
-    // Select variants based on intervals (target capture BED) - GATK BUNDLE
-// Create consistent channel structures for all GATK processes
+    // Fix the channel input for GATK4_SELECTVARIANTS [meta, vcf, vcf_idx, target_bed]
 
     ch_gnomad_with_meta = SUBSETCAPTURE.out.target_bed.combine(ch_gnomad).map { meta, target_bed, vcf, vcf_idx ->
         [meta, vcf, vcf_idx, target_bed]
@@ -96,37 +91,6 @@ workflow SUBSET_REFERENCES_TO_TARGETS {
     GATK4_SELECTVARIANTS_DBSNP (ch_dbsnp_with_meta)
     ch_versions = ch_versions.mix(GATK4_SELECTVARIANTS_DBSNP.out.versions)
 
-
-    out_gnomad_vcf = GATK4_SELECTVARIANTS_GNOMAD.out.vcf.map { meta, vcf ->
-        [ meta, vcf.getName().replaceAll(/.vcf.gz$/, "_${meta.chromosome}_gnomad.vcf.gz") ]
-
-    }
-    out_gnomad_tbi = GATK4_SELECTVARIANTS_GNOMAD.out.tbi.map { meta, tbi ->
-        [ meta, tbi.getName().replaceAll(/.vcf.gz.tbi$/, "_${meta.chromosome}_gnomad.vcf.gz.tbi") ]
-    }
-
-    out_mills_vcf = GATK4_SELECTVARIANTS_MILLS.out.vcf.map { meta, vcf ->
-        [ meta, vcf.getName().replaceAll(/.vcf.gz$/, "_${meta.chromosome}_mills.vcf.gz") ]
-    }
-    out_mills_tbi = GATK4_SELECTVARIANTS_MILLS.out.tbi.map { meta, vcf ->
-        [ meta, vcf.getName().replaceAll(/.vcf.gz.tbi$/, "_${meta.chromosome}_mills.vcf.gz.tbi") ]
-    }
-
-
-    out_1000G_vcf = GATK4_SELECTVARIANTS_1000G.out.vcf.map { meta, vcf ->
-        [ meta, vcf.getName().replaceAll(/.vcf.gz$/, "_${meta.chromosome}_1000G.vcf.gz") ]
-    }
-    out_1000G_tbi = GATK4_SELECTVARIANTS_1000G.out.tbi.map { meta, vcf ->
-        [ meta, vcf.getName().replaceAll(/.vcf.gz.tbi$/, "_${meta.chromosome}_1000G.vcf.gz.tbi") ]
-    }
-
-    out_dbsnp_vcf = GATK4_SELECTVARIANTS_DBSNP.out.vcf.map { meta, vcf ->
-        [ meta, vcf.getName().replaceAll(/.vcf.gz$/, "_${meta.chromosome}_dbsnp.vcf.gz") ]
-    }
-    out_dbsnp_tbi = GATK4_SELECTVARIANTS_DBSNP.out.tbi.map { meta, vcf ->
-        [ meta, vcf.getName().replaceAll(/.vcf.gz.tbi$/, "_${meta.chromosome}_dbsnp.vcf.gz.tbi") ]
-    }
-
     // Subset clinvar variants
     SUBVAR (
     ch_meta.combine(ch_clinvar_vcf).map { meta, vcf -> [meta, vcf] },
@@ -135,15 +99,13 @@ workflow SUBSET_REFERENCES_TO_TARGETS {
 
     ch_versions = ch_versions.mix(SUBVAR.out.versions)
 
+    // declare vcf output names
     out_gnomad_vcf = GATK4_SELECTVARIANTS_GNOMAD.out.vcf
     out_gnomad_tbi = GATK4_SELECTVARIANTS_GNOMAD.out.tbi
-
     out_mills_vcf = GATK4_SELECTVARIANTS_MILLS.out.vcf
     out_mills_tbi = GATK4_SELECTVARIANTS_MILLS.out.tbi
-
     out_1000G_vcf = GATK4_SELECTVARIANTS_1000G.out.vcf
     out_1000G_tbi = GATK4_SELECTVARIANTS_1000G.out.tbi
-
     out_dbsnp_vcf = GATK4_SELECTVARIANTS_DBSNP.out.vcf
     out_dbsnp_tbi = GATK4_SELECTVARIANTS_DBSNP.out.tbi
 
