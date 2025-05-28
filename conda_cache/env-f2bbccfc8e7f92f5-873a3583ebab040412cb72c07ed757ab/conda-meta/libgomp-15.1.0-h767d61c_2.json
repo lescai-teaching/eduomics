@@ -1,0 +1,50 @@
+{
+    "build": "h767d61c_2",
+    "build_number": 2,
+    "channel": "https://conda.anaconda.org/conda-forge/noarch",
+    "constrains": [],
+    "depends": ["__glibc >=2.17,<3.0.a0"],
+    "extracted_package_dir": "/opt/conda/pkgs/libgomp-15.1.0-h767d61c_2",
+    "files": ["lib/libgomp.so", "lib/libgomp.so.1.0.0", "share/licenses/gcc-libs/RUNTIME.LIBRARY.EXCEPTION.gomp_copy"],
+    "fn": "libgomp-15.1.0-h767d61c_2.conda",
+    "license": "GPL-3.0-only WITH GCC-exception-3.1",
+    "link": {
+        "source": "/opt/conda/pkgs/libgomp-15.1.0-h767d61c_2",
+        "type": 1
+    },
+    "md5": "fbe7d535ff9d3a168c148e07358cd5b1",
+    "name": "libgomp",
+    "package_tarball_full_path": "/opt/conda/pkgs/libgomp-15.1.0-h767d61c_2.conda",
+    "paths_data": {
+        "paths": [
+            {
+                "_path": "lib/libgomp.so",
+                "path_type": "softlink",
+                "sha256": "f6ee90d37b996872e83b8a5de233309af6e467765822759140d341779e1c1e8c",
+                "size_in_bytes": 1160472
+            },
+            {
+                "_path": "lib/libgomp.so.1.0.0",
+                "path_type": "hardlink",
+                "sha256": "f6ee90d37b996872e83b8a5de233309af6e467765822759140d341779e1c1e8c",
+                "sha256_in_prefix": "f6ee90d37b996872e83b8a5de233309af6e467765822759140d341779e1c1e8c",
+                "size_in_bytes": 1160472
+            },
+            {
+                "_path": "share/licenses/gcc-libs/RUNTIME.LIBRARY.EXCEPTION.gomp_copy",
+                "path_type": "hardlink",
+                "sha256": "9d6b43ce4d8de0c878bf16b54d8e7a10d9bd42b75178153e3af6a815bdc90f74",
+                "sha256_in_prefix": "9d6b43ce4d8de0c878bf16b54d8e7a10d9bd42b75178153e3af6a815bdc90f74",
+                "size_in_bytes": 3324
+            }
+        ],
+        "paths_version": 1
+    },
+    "requested_spec": "None",
+    "sha256": "05fff3dc7e80579bc28de13b511baec281c4343d703c406aefd54389959154fb",
+    "size": 452635,
+    "subdir": "linux-64",
+    "timestamp": 1746642113000,
+    "url": "https://conda.anaconda.org/conda-forge/linux-64/libgomp-15.1.0-h767d61c_2.conda",
+    "version": "15.1.0"
+}

@@ -7,7 +7,7 @@ nextflow_process {
         when {
             process {
                 """
-                input[0] = [ [ id:'test', single_end:false ], 'chr22' ]
+                input[0] = [ id:'test', chromosome:'chr22' ]
                 input[1] = file("https://raw.githubusercontent.com/lescai-teaching/eduomics_testdata/refs/heads/main/dna/chrom.sizes")
                 input[2] = file("https://raw.githubusercontent.com/lescai-teaching/eduomics_testdata/refs/heads/main/dna/Twist_Exome_Target2_chr22q11-21_GRCh38.bed")
                 """
@@ -19,12 +19,11 @@ nextflow_process {
             assert snapshot(process.out).match()
             assert path(process.out.capture_bed_gz.get(0).get(1)).exists()
             assert path(process.out.capture_bed_index.get(0).get(1)).exists()
+            assert path(process.out.target_bed.get(0).get(1)).exists()
             assert path(process.out.target_bed_pad50.get(0).get(1)).exists()
             assert path(process.out.target_bed_pad500.get(0).get(1)).exists()
-            //{ assert process.out.reads.get(0).get(1).first().endsWith('.fasta.gz') },
             assert path(process.out.versions.get(0)).exists()
         }
     }
 }
-
 

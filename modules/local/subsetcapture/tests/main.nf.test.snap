@@ -6,7 +6,7 @@
                     [
                         {
                             "id": "test",
-                            "single_end": false
+                            "chromosome": "chr22"
                         },
                         "test.capture.bed.gz:md5,1bfb2a02b6882800dfc86f1dcd116dea"
                     ]
@@ -15,7 +15,7 @@
                     [
                         {
                             "id": "test",
-                            "single_end": false
+                            "chromosome": "chr22"
                         },
                         "test.capture.bed.gz.tbi:md5,cca8582edb548b04e057329d3c8de585"
                     ]
@@ -24,7 +24,7 @@
                     [
                         {
                             "id": "test",
-                            "single_end": false
+                            "chromosome": "chr22"
                         },
                         "test_chr22_target.bed:md5,1bfb2a02b6882800dfc86f1dcd116dea"
                     ]
@@ -33,7 +33,7 @@
                     [
                         {
                             "id": "test",
-                            "single_end": false
+                            "chromosome": "chr22"
                         },
                         "test_chr22_target.pad50.bed:md5,ac358cce78980c94f6ff5be56cbdede9"
                     ]
@@ -42,19 +42,19 @@
                     [
                         {
                             "id": "test",
-                            "single_end": false
+                            "chromosome": "chr22"
                         },
                         "test_chr22_target.pad500.bed:md5,4188712633feb7137bc5d29a3940aa6a"
                     ]
                 ],
                 "5": [
-                    "versions.yml:md5,0c17fbe27ea47a2c8684f688df68768c"
+                    "versions.yml:md5,c1a07c19f78ebf42c9618dfa4aeec294"
                 ],
                 "capture_bed_gz": [
                     [
                         {
                             "id": "test",
-                            "single_end": false
+                            "chromosome": "chr22"
                         },
                         "test.capture.bed.gz:md5,1bfb2a02b6882800dfc86f1dcd116dea"
                     ]
@@ -63,7 +63,7 @@
                     [
                         {
                             "id": "test",
-                            "single_end": false
+                            "chromosome": "chr22"
                         },
                         "test.capture.bed.gz.tbi:md5,cca8582edb548b04e057329d3c8de585"
                     ]
@@ -72,7 +72,7 @@
                     [
                         {
                             "id": "test",
-                            "single_end": false
+                            "chromosome": "chr22"
                         },
                         "test_chr22_target.bed:md5,1bfb2a02b6882800dfc86f1dcd116dea"
                     ]
@@ -81,7 +81,7 @@
                     [
                         {
                             "id": "test",
-                            "single_end": false
+                            "chromosome": "chr22"
                         },
                         "test_chr22_target.pad50.bed:md5,ac358cce78980c94f6ff5be56cbdede9"
                     ]
@@ -90,20 +90,20 @@
                     [
                         {
                             "id": "test",
-                            "single_end": false
+                            "chromosome": "chr22"
                         },
                         "test_chr22_target.pad500.bed:md5,4188712633feb7137bc5d29a3940aa6a"
                     ]
                 ],
                 "versions": [
-                    "versions.yml:md5,0c17fbe27ea47a2c8684f688df68768c"
+                    "versions.yml:md5,c1a07c19f78ebf42c9618dfa4aeec294"
                 ]
             }
         ],
         "meta": {
             "nf-test": "0.9.2",
-            "nextflow": "24.10.4"
+            "nextflow": "25.04.2"
         },
-        "timestamp": "2025-03-26T11:08:56.792659394"
+        "timestamp": "2025-05-28T08:36:42.822942397"
     }
 }

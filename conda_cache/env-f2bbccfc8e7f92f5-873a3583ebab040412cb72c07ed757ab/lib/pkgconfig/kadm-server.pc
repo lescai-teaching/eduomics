@@ -1,0 +1,11 @@
+prefix=/workspace/eduomics/conda_cache/env-f2bbccfc8e7f92f5-873a3583ebab040412cb72c07ed757ab
+exec_prefix=${prefix}
+libdir=${exec_prefix}/lib
+includedir=${prefix}/include
+
+Name: kadm-server
+Description: Kerberos administration server library
+Version: 1.21.3
+Requires.private: kdb mit-krb5-gssapi
+Cflags: -I${includedir}
+Libs: -L${libdir} -lkadm5srv_mit

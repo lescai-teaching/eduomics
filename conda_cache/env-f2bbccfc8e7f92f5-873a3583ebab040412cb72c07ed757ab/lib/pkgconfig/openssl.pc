@@ -1,0 +1,9 @@
+prefix=/workspace/eduomics/conda_cache/env-f2bbccfc8e7f92f5-873a3583ebab040412cb72c07ed757ab
+exec_prefix=${prefix}
+libdir=${exec_prefix}/lib
+includedir=${prefix}/include 
+
+Name: OpenSSL
+Description: Secure Sockets Layer and cryptography libraries and tools
+Version: 3.5.0
+Requires: libssl libcrypto
