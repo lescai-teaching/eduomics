@@ -24,16 +24,16 @@ nextflow_workflow {
                 // ch_meta
                 input[0] = Channel.of([ id:'test', chromosome: 'chr22'])
 
-                // ch_fasta        [mandatory] [ val(meta), [ fasta ] ]
+                // ch_fasta        [mandatory] [ val(fasta) ]
                 input[1] = Channel.value(file('https://raw.githubusercontent.com/lescai-teaching/eduomics_testdata/refs/heads/main/dna/chr22_q11-21_GRCh38.fasta', checkIfExists: true))
 
-                // ch_fai          [optional]  [ val(meta), [fai] ]
+                // ch_fai          [optional]  [ val(fai) ]
                 input[2] = Channel.value(
                     file('https://raw.githubusercontent.com/lescai-teaching/eduomics_testdata/refs/heads/main/dna/chr22_q11-21_GRCh38.fasta.fai', checkIfExists: true)
                 )
 
                 // ch_get_sizes
-                input[3] = Channel.empty()
+                input[3] = Channel.value(false)
 
                 // ch_capture_bed - twist capture for exome
                 input[4] = Channel.value(file('https://raw.githubusercontent.com/lescai-teaching/eduomics_testdata/refs/heads/main/dna/Twist_Exome_Target2_chr22q11-21_GRCh38.bed', checkIfExists: true))
@@ -85,16 +85,16 @@ nextflow_workflow {
                 { assert workflow.out.target_bed },
                 { assert workflow.out.target_bed_pad50 },
                 { assert workflow.out.target_bed_pad500 },
-                { assert workflow.out.target_gnomad_vcf },
-                { assert workflow.out.target_gnomad_tbi },
-                { assert workflow.out.target_mills_vcf },
-                { assert workflow.out.target_mills_tbi },
-                { assert workflow.out.target_1000g_vcf },
-                { assert workflow.out.target_1000g_tbi },
-                { assert workflow.out.target_dbsnp_vcf },
-                { assert workflow.out.target_dbsnp_tbi },
-                { assert workflow.out.clinvar_benign_vcf },
-                { assert workflow.out.clinvar_pathogenic_vcf },
+                { assert workflow.out.target_gnomad_vcf != null }, // if no variants in capture regions
+                { assert workflow.out.target_gnomad_tbi != null },
+                { assert workflow.out.target_mills_vcf != null },
+                { assert workflow.out.target_mills_tbi != null },
+                { assert workflow.out.target_1000g_vcf != null },
+                { assert workflow.out.target_1000g_tbi != null },
+                { assert workflow.out.target_dbsnp_vcf != null },
+                { assert workflow.out.target_dbsnp_tbi != null },
+                { assert workflow.out.clinvar_benign_vcf != null },
+                { assert workflow.out.clinvar_pathogenic_vcf != null },
                 { assert workflow.out.clinvar_selected_vcf != null },
                 { assert workflow.out.versions }
             )
