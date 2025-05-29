@@ -85,6 +85,7 @@ nextflow_workflow {
                 { assert workflow.out.target_bed },
                 { assert workflow.out.target_bed_pad50 },
                 { assert workflow.out.target_bed_pad500 },
+                { assert workflow.out.target_dict },
                 { assert workflow.out.target_gnomad_vcf != null }, // if no variants in capture regions
                 { assert workflow.out.target_gnomad_tbi != null },
                 { assert workflow.out.target_mills_vcf != null },
