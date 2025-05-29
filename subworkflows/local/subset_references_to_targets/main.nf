@@ -27,30 +27,17 @@ workflow SUBSET_REFERENCES_TO_TARGETS {
 
     ch_versions = Channel.empty()
 
-    // Subset the reference genome, index and get chrom sizes
-    //SAMTOOLS_FAIDX ( ch_fasta.combine(ch_fai), [], false )
-    //ch_versions = ch_versions.mix(SAMTOOLS_FAIDX.out.versions
-
-    //SAMTOOLS_FAIDX_SUBSET ( ch_fasta, [[id:'null'], []], false )
-    //ch_versions = ch_versions.mix(SAMTOOLS_FAIDX_SUBSET.out.versions)
-    // false: do not generate chrom.sizes file
-
     ch_fasta_with_meta = ch_meta.combine(ch_fasta).map { meta, fasta -> [meta, fasta] }
     ch_fai_with_meta = ch_meta.combine(ch_fai).map { meta, fai -> [meta, fai] }
 
     SAMTOOLS_FAIDX_SUBSET ( ch_fasta_with_meta, [[],[]], ch_get_sizes )
     ch_versions = ch_versions.mix(SAMTOOLS_FAIDX_SUBSET.out.versions)
-    // [[id:'null'], []]
-
-    //SAMTOOLS_FAIDX_INDEX ( SAMTOOLS_FAIDX_SUBSET.out.fa, [], ch_get_sizes )
-    // index fasta after subsetting
 
     SAMTOOLS_FAIDX_INDEX (SAMTOOLS_FAIDX_SUBSET.out.fa, [[],[]], ch_get_sizes )
     ch_versions = ch_versions.mix(SAMTOOLS_FAIDX_INDEX.out.versions)
 
     SAMTOOLS_FAIDX_SIZES ( SAMTOOLS_FAIDX_SUBSET.out.fa, SAMTOOLS_FAIDX_INDEX.out.fai, true )
     ch_versions = ch_versions.mix(SAMTOOLS_FAIDX_SIZES.out.versions)
-    // generating the .sizes from .fai index
 
     //Subset capture regions by chrom
     SUBSETCAPTURE (
@@ -61,34 +48,25 @@ workflow SUBSET_REFERENCES_TO_TARGETS {
 
     ch_versions = ch_versions.mix(SUBSETCAPTURE.out.versions)
 
-    // Fix the channel input for GATK4_SELECTVARIANTS [meta, vcf, vcf_idx, target_bed]
-
-    ch_gnomad_with_meta = SUBSETCAPTURE.out.target_bed.combine(ch_gnomad).map { meta, target_bed, vcf, vcf_idx ->
+    // Subset gatk bundle vcf
+    GATK4_SELECTVARIANTS_GNOMAD ( SUBSETCAPTURE.out.target_bed.combine(ch_gnomad).map { meta, target_bed, vcf, vcf_idx ->
         [meta, vcf, vcf_idx, target_bed]
-    }
-
-    ch_mills_with_meta = SUBSETCAPTURE.out.target_bed.combine(ch_mills).map { meta, target_bed, vcf, vcf_idx ->
-        [meta, vcf, vcf_idx, target_bed]
-    }
-
-    ch_1000g_with_meta = SUBSETCAPTURE.out.target_bed.combine(ch_1000g).map { meta, target_bed, vcf, vcf_idx ->
-        [meta, vcf, vcf_idx, target_bed]
-    }
-
-    ch_dbsnp_with_meta = SUBSETCAPTURE.out.target_bed.combine(ch_dbsnp).map { meta, target_bed, vcf, vcf_idx ->
-        [meta, vcf, vcf_idx, target_bed]
-    }
-
-    GATK4_SELECTVARIANTS_GNOMAD (ch_gnomad_with_meta)
+    })
     ch_versions = ch_versions.mix(GATK4_SELECTVARIANTS_GNOMAD.out.versions)
 
-    GATK4_SELECTVARIANTS_MILLS (ch_mills_with_meta)
+    GATK4_SELECTVARIANTS_MILLS ( SUBSETCAPTURE.out.target_bed.combine(ch_mills).map { meta, target_bed, vcf, vcf_idx ->
+        [meta, vcf, vcf_idx, target_bed]
+    })
     ch_versions = ch_versions.mix(GATK4_SELECTVARIANTS_MILLS.out.versions)
 
-    GATK4_SELECTVARIANTS_1000G (ch_1000g_with_meta)
+    GATK4_SELECTVARIANTS_1000G ( SUBSETCAPTURE.out.target_bed.combine(ch_1000g).map { meta, target_bed, vcf, vcf_idx ->
+        [meta, vcf, vcf_idx, target_bed]
+    })
     ch_versions = ch_versions.mix(GATK4_SELECTVARIANTS_1000G.out.versions)
 
-    GATK4_SELECTVARIANTS_DBSNP (ch_dbsnp_with_meta)
+    GATK4_SELECTVARIANTS_DBSNP (SUBSETCAPTURE.out.target_bed.combine(ch_dbsnp).map { meta, target_bed, vcf, vcf_idx ->
+        [meta, vcf, vcf_idx, target_bed]
+    })
     ch_versions = ch_versions.mix(GATK4_SELECTVARIANTS_DBSNP.out.versions)
 
     // Subset clinvar variants
@@ -98,16 +76,6 @@ workflow SUBSET_REFERENCES_TO_TARGETS {
     )
 
     ch_versions = ch_versions.mix(SUBVAR.out.versions)
-
-    // declare vcf output names
-    out_gnomad_vcf = GATK4_SELECTVARIANTS_GNOMAD.out.vcf
-    out_gnomad_tbi = GATK4_SELECTVARIANTS_GNOMAD.out.tbi
-    out_mills_vcf = GATK4_SELECTVARIANTS_MILLS.out.vcf
-    out_mills_tbi = GATK4_SELECTVARIANTS_MILLS.out.tbi
-    out_1000G_vcf = GATK4_SELECTVARIANTS_1000G.out.vcf
-    out_1000G_tbi = GATK4_SELECTVARIANTS_1000G.out.tbi
-    out_dbsnp_vcf = GATK4_SELECTVARIANTS_DBSNP.out.vcf
-    out_dbsnp_tbi = GATK4_SELECTVARIANTS_DBSNP.out.tbi
 
 
     emit:
@@ -119,16 +87,16 @@ workflow SUBSET_REFERENCES_TO_TARGETS {
     target_bed        = SUBSETCAPTURE.out.target_bed        // channel: [ val(meta), [ target_bed ] ]
     target_bed_pad50  = SUBSETCAPTURE.out.target_bed_pad50  // channel: [ val(meta), [ target_bed_pad50 ] ]
     target_bed_pad500 = SUBSETCAPTURE.out.target_bed_pad500 // channel: [ val(meta), [ target_bed_pad500 ] ]
-    target_gnomad_vcf = out_gnomad_vcf
-    target_gnomad_tbi = out_gnomad_tbi // channel: [ val(meta), [ tbi ] ]
-    target_mills_vcf  = out_mills_vcf  // channel: [ val(meta), [ vcf ] ]
-    target_mills_tbi  = out_mills_tbi  // channel: [ val(meta), [ tbi ] ]
-    target_1000g_vcf  = out_1000G_vcf  // channel: [ val(meta), [ vcf ] ]
-    target_1000g_tbi  = out_1000G_tbi  // channel: [ val(meta), [ tbi ] ]
-    target_dbsnp_vcf  = out_dbsnp_vcf  // channel: [ val(meta), [ vcf ] ]
-    target_dbsnp_tbi  = out_dbsnp_tbi  // channel: [ val(meta), [ tbi ] ]
-    clinvar_benign_vcf        = SUBVAR.out.benign_vcf      // channel: [ val(meta), [ benign_vcf ] ]
-    clinvar_pathogenic_vcf    = SUBVAR.out.pathogenic_vcf    // channel: [ val(meta), [ pathogenic_vcf ] ]
-    clinvar_selected_vcf      = SUBVAR.out.selected_vcf     // channel: [ val(meta), [ selected_vcf ] ]
+    target_gnomad_vcf = GATK4_SELECTVARIANTS_GNOMAD.out.vcf // channel: [ val(meta), [ tbi ] ]
+    target_gnomad_tbi = GATK4_SELECTVARIANTS_GNOMAD.out.tbi // channel: [ val(meta), [ tbi ] ]
+    target_mills_vcf  = GATK4_SELECTVARIANTS_MILLS.out.vcf  // channel: [ val(meta), [ vcf ] ]
+    target_mills_tbi  = GATK4_SELECTVARIANTS_MILLS.out.tbi  // channel: [ val(meta), [ tbi ] ]
+    target_1000g_vcf  = GATK4_SELECTVARIANTS_1000G.out.vcf  // channel: [ val(meta), [ vcf ] ]
+    target_1000g_tbi  = GATK4_SELECTVARIANTS_1000G.out.tbi  // channel: [ val(meta), [ tbi ] ]
+    target_dbsnp_vcf  = GATK4_SELECTVARIANTS_DBSNP.out.vcf  // channel: [ val(meta), [ vcf ] ]
+    target_dbsnp_tbi  = GATK4_SELECTVARIANTS_DBSNP.out.tbi  // channel: [ val(meta), [ tbi ] ]
+    clinvar_benign_vcf      = SUBVAR.out.benign_vcf      // channel: [ val(meta), [ benign_vcf ] ]
+    clinvar_pathogenic_vcf  = SUBVAR.out.pathogenic_vcf    // channel: [ val(meta), [ pathogenic_vcf ] ]
+    clinvar_selected_vcf    = SUBVAR.out.selected_vcf     // channel: [ val(meta), [ selected_vcf ] ]
     versions = ch_versions                                  // channel: [ versions.yml ]
 }
