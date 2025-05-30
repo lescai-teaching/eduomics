@@ -21,59 +21,55 @@ nextflow_workflow {
         when {
             workflow {
                 """
-                // ch_fasta        [mandatory] [ val(meta), [ fasta ] ]
-                input[0] = Channel.value([
-                    [ id:'test', chromosome:'chr22' ],
-                    file('https://raw.githubusercontent.com/lescai-teaching/eduomics_testdata/refs/heads/main/dna/chr22_q11-21_GRCh38.fasta', checkIfExists: true)
-                ])
-                // ch_fai          [optional]  [ val(meta), [fai] ]
-                input[1] = Channel.value([
-                    [ id:'test', chromosome:'chr22' ],
+                // ch_meta
+                input[0] = Channel.of([ id:'test', chromosome: 'chr22'])
+
+                // ch_fasta        [mandatory] [ val(fasta) ]
+                input[1] = Channel.value(file('https://raw.githubusercontent.com/lescai-teaching/eduomics_testdata/refs/heads/main/dna/chr22_q11-21_GRCh38.fasta', checkIfExists: true))
+
+                // ch_fai          [optional]  [ val(fai) ]
+                input[2] = Channel.value(
                     file('https://raw.githubusercontent.com/lescai-teaching/eduomics_testdata/refs/heads/main/dna/chr22_q11-21_GRCh38.fasta.fai', checkIfExists: true)
-                ])
+                )
+
                 // ch_get_sizes
-                input[2] = Channel.empty()
+                input[3] = Channel.value(false)
 
                 // ch_capture_bed - twist capture for exome
-                input[3] = Channel.value(file('https://raw.githubusercontent.com/lescai-teaching/eduomics_testdata/refs/heads/main/dna/Twist_Exome_Target2_chr22q11-21_GRCh38.bed', checkIfExists: true))
+                input[4] = Channel.value(file('https://raw.githubusercontent.com/lescai-teaching/eduomics_testdata/refs/heads/main/dna/Twist_Exome_Target2_chr22q11-21_GRCh38.bed', checkIfExists: true))
 
                 // ch_chromosome
-                input[4] = Channel.of([ [ id:'test', single_end:false ], 'chr22' ])
+                //input[4] = Channel.of([ [ id:'test', single_end:false ], 'chr22' ])
 
                 // ch_gnomad
                 input[5] = Channel.value([
-                    [ id:'test', chromosome:'chr22' ],
                     file('https://raw.githubusercontent.com/lescai-teaching/eduomics_testdata/refs/heads/main/dna/gatk_bundle/af-only-gnomad_chr22_q11-21_GRCh38_original_chr_lenght.vcf.gz', checkIfExists: true),
                     file('https://raw.githubusercontent.com/lescai-teaching/eduomics_testdata/refs/heads/main/dna/gatk_bundle/af-only-gnomad_chr22_q11-21_GRCh38_original_chr_lenght.vcf.gz.tbi', checkIfExists: true)
                 ])
 
                 // ch_mills
                 input[6] = Channel.value([
-                    [ id:'test', chromosome:'chr22' ],
                     file('https://raw.githubusercontent.com/lescai-teaching/eduomics_testdata/refs/heads/main/dna/whole_chr22/Mills_and_1000G_gold_standard.indels.hg38_chr22.vcf.gz', checkIfExists: true),
                     file('https://raw.githubusercontent.com/lescai-teaching/eduomics_testdata/refs/heads/main/dna/whole_chr22/Mills_and_1000G_gold_standard.indels.hg38_chr22.vcf.gz.tbi', checkIfExists: true)
                 ])
 
                 // ch_1000g
                 input[7] = Channel.value([
-                    [ id:'test', chromosome:'chr22' ],
                     file('https://raw.githubusercontent.com/lescai-teaching/eduomics_testdata/refs/heads/main/dna/gatk_bundle/1000G_omni2_5_chr22_q11-21_GRCh38.vcf.gz', checkIfExists: true),
                     file('https://raw.githubusercontent.com/lescai-teaching/eduomics_testdata/refs/heads/main/dna/gatk_bundle/1000G_omni2_5_chr22_q11-21_GRCh38.vcf.gz.tbi', checkIfExists: true)
                 ])
 
                 // ch_dbsnp
                 input[8] = Channel.value([
-                    [ id:'test', chromosome:'chr22' ],
                     file('https://raw.githubusercontent.com/lescai-teaching/eduomics_testdata/refs/heads/main/dna/whole_chr22/dbsnp_146.hg38_chr22.vcf.gz', checkIfExists: true),
                     file('https://raw.githubusercontent.com/lescai-teaching/eduomics_testdata/refs/heads/main/dna/whole_chr22/dbsnp_146.hg38_chr22.vcf.gz.tbi', checkIfExists: true),
                 ])
 
 
                 // ch_clinvar_vcf
-                input[9] = Channel.value([
-                    [ id:'test', chromosome:'chr22' ],
+                input[9] = Channel.value(
                     file('https://raw.githubusercontent.com/lescai-teaching/eduomics_testdata/main/dna/clinvar_data/clinvar_20250317_chr22q11-21.vcf.gz', checkIfExists: true)
-                ])
+                )
                 """
             }
         }
@@ -89,19 +85,20 @@ nextflow_workflow {
                 { assert workflow.out.target_bed },
                 { assert workflow.out.target_bed_pad50 },
                 { assert workflow.out.target_bed_pad500 },
-                { assert workflow.out.target_gnomad_vcf },
-                { assert workflow.out.target_gnomad_tbi },
-                { assert workflow.out.target_mills_vcf },
-                { assert workflow.out.target_mills_tbi },
-                { assert workflow.out.target_1000g_vcf },
-                { assert workflow.out.target_1000g_tbi },
-                { assert workflow.out.target_dbsnp_vcf },
-                { assert workflow.out.target_dbsnp_tbi },
-                { assert workflow.out.clinvar_benign_vcf },
-                { assert workflow.out.clinvar_pathogenic_vcf },
+                { assert workflow.out.target_dict },
+                { assert workflow.out.target_gnomad_vcf != null }, // if no variants in capture regions
+                { assert workflow.out.target_gnomad_tbi != null },
+                { assert workflow.out.target_mills_vcf != null },
+                { assert workflow.out.target_mills_tbi != null },
+                { assert workflow.out.target_1000g_vcf != null },
+                { assert workflow.out.target_1000g_tbi != null },
+                { assert workflow.out.target_dbsnp_vcf != null },
+                { assert workflow.out.target_dbsnp_tbi != null },
+                { assert workflow.out.clinvar_benign_vcf != null },
+                { assert workflow.out.clinvar_pathogenic_vcf != null },
                 { assert workflow.out.clinvar_selected_vcf != null },
                 { assert workflow.out.versions }
-           )
+            )
         }
     }
 }
