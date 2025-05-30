@@ -8,12 +8,11 @@ process SUBSETCAPTURE {
         'community.wave.seqera.io/library/bedtools_htslib:04fa82f202d44d67' }"
 
     input:
-    tuple val(meta), val(chromosome)
+    val(meta)
     path target_chrom_size
     path capture_bed
 
     output:
-    //tuple val(meta), path("*_target.chrom.sizes"), emit: target_chrom_size
     tuple val(meta), path("*.capture.bed.gz"), emit: capture_bed_gz
     tuple val(meta), path("*.capture.bed.gz.tbi"), emit: capture_bed_index
     tuple val(meta), path("*_target.bed"), emit: target_bed
@@ -34,16 +33,17 @@ process SUBSETCAPTURE {
     tabix -p bed ${prefix}.capture.bed.gz
 
     # Subset by chrom
-    tabix -p bed ${prefix}.capture.bed.gz ${chromosome} > ${prefix}_${chromosome}_target.bed
+    tabix -p bed ${prefix}.capture.bed.gz ${meta.chromosome} > ${prefix}_${meta.chromosome}_target.bed
 
 
     #padding
-    bedtools slop -i ${prefix}_${chromosome}_target.bed -g ${target_chrom_size} -b 500 > ${prefix}_${chromosome}_target.pad500.bed
-    bedtools slop -i ${prefix}_${chromosome}_target.bed -g ${target_chrom_size} -b 50 > ${prefix}_${chromosome}_target.pad50.bed
+    bedtools slop -i ${prefix}_${meta.chromosome}_target.bed -g ${target_chrom_size} -b 500 > ${prefix}_${meta.chromosome}_target.pad500.bed
+    bedtools slop -i ${prefix}_${meta.chromosome}_target.bed -g ${target_chrom_size} -b 50 > ${prefix}_${meta.chromosome}_target.pad50.bed
 
     cat <<-END_VERSIONS > versions.yml
     "${task.process}":
-        subsetcapture: \$(samtools --version |& sed '1!d ; s/samtools //')
+        bedtools: \$(bedtools --version | sed -e "s/bedtools v//g")
+        tabix: \$(echo \$(tabix -h 2>&1) | sed 's/^.*Version: //; s/ .*\$//')
     END_VERSIONS
     """
 
@@ -51,11 +51,16 @@ process SUBSETCAPTURE {
     def args = task.ext.args ?: ''
     def prefix = task.ext.prefix ?: "${meta.id}"
     """
-    touch ${prefix}.bam
+    touch ${prefix}.capture.bed.gz
+    touch ${prefix}.capture.bed.gz.tbi
+    touch ${prefix}_${meta.chromosome}_target.bed
+    touch ${prefix}_${meta.chromosome}_target.pad50.bed
+    touch ${prefix}_${meta.chromosome}_target.pad500.bed
 
     cat <<-END_VERSIONS > versions.yml
     "${task.process}":
-        subsetcapture: \$(samtools --version |& sed '1!d ; s/samtools //')
+        bedtools: \$(bedtools --version | sed -e "s/bedtools v//g")
+        tabix: \$(echo \$(tabix -h 2>&1) | sed 's/^.*Version: //; s/ .*\$//')
     END_VERSIONS
     """
 }
