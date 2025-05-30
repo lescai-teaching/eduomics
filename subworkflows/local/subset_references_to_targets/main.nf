@@ -84,7 +84,7 @@ workflow SUBSET_REFERENCES_TO_TARGETS {
 
 
     emit:
-    target_fa         = SAMTOOLS_FAIDX_SUBSET.out.fa                                 // channel:  [ val(meta), [ fa, fasta ] ]
+    target_fa         = SAMTOOLS_FAIDX_SUBSET.out.fa                                 // channel:  [ val(meta), [ fasta ] ]
     target_fai        = SAMTOOLS_FAIDX_INDEX.out.fai                                 // channel: [ val(meta), [ fai ] ]
     target_sizes      = SAMTOOLS_FAIDX_SIZES.out.sizes                               // channel: [ val(meta), [ sizes ] ]
     capture_bed_gz    = SUBSETCAPTURE.out.capture_bed_gz.map { meta, bed -> bed }    // channel: [ [ capture_bed_gz ] ]
