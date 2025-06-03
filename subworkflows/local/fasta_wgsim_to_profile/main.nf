@@ -2,7 +2,6 @@ include { WGSIM                          } from '../../../modules/nf-core/wgsim/
 include { SAMTOOLS_INDEX                 } from '../../../modules/nf-core/samtools/index/main'
 include { SAMTOOLS_INDEX as INDEX_MD     } from '../../../modules/nf-core/samtools/index/main'
 include { SAMTOOLS_INDEX as INDEX_RECAL  } from '../../../modules/nf-core/samtools/index/main'
-//include { SAMTOOLS_SORT                  } from '../../../modules/nf-core/samtools/sort/main'
 include { BWA_MEM                        } from '../../../modules/nf-core/bwa/mem/main'
 include { GATK4_MARKDUPLICATES           } from '../../../modules/nf-core/gatk4/markduplicates/main'
 include { GATK4_BASERECALIBRATOR         } from '../../../modules/nf-core/gatk4/baserecalibrator/main'
