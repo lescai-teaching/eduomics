@@ -27,19 +27,23 @@ include { getGenomeAttribute      } from './subworkflows/local/utils_nfcore_eduo
 */
 
 // getting attributes for genome files
-params.fasta    = getGenomeAttribute('fasta')
-params.fai      = getGenomeAttribute('fai')
-params.gnomad   = getGenomeAttribute('gnomad')
-params.mills    = getGenomeAttribute('mills')
-params.vcf1000g = getGenomeAttribute('vcf1000g')
-params.dbsnp    = getGenomeAttribute('dbsnp')
-params.clinvar  = getGenomeAttribute('clinvar')
-params.gff3     = getGenomeAttribute('gff3')
-params.txfasta  = getGenomeAttribute('txfasta')
+params.fasta       = getGenomeAttribute('fasta')
+params.fai         = getGenomeAttribute('fai')
+params.gnomad      = getGenomeAttribute('gnomad')
+params.mills       = getGenomeAttribute('mills')
+params.vcf1000g    = getGenomeAttribute('vcf1000g')
+params.dbsnp       = getGenomeAttribute('dbsnp')
+params.clinvar     = getGenomeAttribute('clinvar')
+params.gff3        = getGenomeAttribute('gff3')
+params.txfasta     = getGenomeAttribute('txfasta')
+params.capture_bed = getGenomeAttribute('capture_bed')
+params.bwa_index   = getGenomeAttribute('bwa_index')
 
 // other parameters for granular control of modules
 params.salmon_libtype   = "IU"
 params.salmon_alignmode = false
+params.get_sizes_bool   = false
+
 
 /*
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
