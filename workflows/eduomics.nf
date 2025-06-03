@@ -47,10 +47,9 @@ workflow EDUOMICS {
 
     // CREATING CHANNELS FROM REFERENCE FILES
     ch_fasta       = Channel.fromPath(params.fasta)
-    ch_fai         = Channel.fromPath(params.fai)
     ch_txfasta     = Channel.fromPath(params.txfasta)
     ch_gff3        = Channel.fromPath(params.gff3)
-    ch_capture_bed = Channel.fromPath(params.capture_bed)
+    ch_capture_bed = Channel.fromPath(params.capture)
     ch_gnomad      = Channel.fromPath(params.gnomad)
     ch_mills       = Channel.fromPath(params.mills)
     ch_1000g       = Channel.fromPath(params.vcf1000g)
@@ -70,6 +69,8 @@ workflow EDUOMICS {
         ch_fasta
     )
 
+    ch_versions = ch_versions.mix(PREPARE_RNA_GENOME.out.versions)
+
     ch_foldchange = Channel.empty()
 
     SIMULATE_RNASEQ_READS(
@@ -79,6 +80,8 @@ workflow EDUOMICS {
         ch_foldchange,
         PREPARE_RNA_GENOME.out.gene_list_association
     )
+
+    ch_versions = ch_versions.mix(SIMULATE_RNASEQ_READS.out.versions)
 
     QUANTIFY_DEANALYSIS_ENRICH_VALIDATE(
         SIMULATE_RNASEQ_READS.out.simreads,
@@ -90,13 +93,14 @@ workflow EDUOMICS {
         PREPARE_RNA_GENOME.out.filtered_transcript_data
     )
 
+    ch_versions = ch_versions.mix(QUANTIFY_DEANALYSIS_ENRICH_VALIDATE.out.versions)
+
     ch_rna_scenario = QUANTIFY_DEANALYSIS_ENRICH_VALIDATE.out.deseq2_tx2gene
         .map { m, tx ->
             return [m, false, m.genes]
         }
     ch_scenarios = ch_scenarios.mix(ch_rna_scenario)
 
-    AISCENARIOS(ch_scenarios)
 
 /*
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -116,6 +120,8 @@ workflow EDUOMICS {
         ch_clinvar
         )
 
+    ch_versions = ch_versions.mix(SUBSET_REFERENCES_TO_TARGETS.out.versions)
+
     FASTA_WGSIM_TO_PROFILE(
         SUBSET_REFERENCES_TO_TARGETS.out.target_fa,
         SUBSET_REFERENCES_TO_TARGETS.out.target_fai,
@@ -128,6 +134,8 @@ workflow EDUOMICS {
         SUBSET_REFERENCES_TO_TARGETS.out.target_bed
     )
 
+    ch_versions = ch_versions.mix(FASTA_WGSIM_TO_PROFILE.out.versions)
+
     ch_fasta_fai = SUBSET_REFERENCES_TO_TARGETS.out.target_fa
             .join(SUBSET_REFERENCES_TO_TARGETS.out.target_fai)
             .map { meta, fasta, fai -> [fasta, fai] }
@@ -139,6 +147,8 @@ workflow EDUOMICS {
         ch_fasta_fai,
         SUBSET_REFERENCES_TO_TARGETS.out.target_bed_pad500
     )
+
+    ch_versions = ch_versions.mix(PROFILE_SIMULATE_VARS_FASTQ.out.versions)
 
     FASTQ_VARIANT_TO_VALIDATION(
         PROFILE_SIMULATE_VARS_FASTQ.out.simreads,
@@ -153,13 +163,18 @@ workflow EDUOMICS {
         SUBSET_REFERENCES_TO_TARGETS.out.target_bed
     )
 
+    ch_versions = ch_versions.mix(FASTQ_VARIANT_TO_VALIDATION.out.versions)
+
     ch_dna_scenario = FASTQ_VARIANT_TO_VALIDATION.out.scenario
         .map { m, var ->
             return [m, m.var, false]
         }
     ch_scenarios = ch_scenarios.mix(ch_dna_scenario)
 
+
     AISCENARIOS(ch_scenarios)
+
+    ch_versions = ch_versions.mix(AISCENARIOS.out.versions)
 
 
     //
@@ -172,8 +187,12 @@ workflow EDUOMICS {
             sort: true,
             newLine: true
         ).set { ch_collated_versions }
+
     emit:
-    versions       = ch_versions                 // channel: [ path(versions.yml) ]
+    versions                 = ch_collated_versions
+    fastq_validated_variants = FASTQ_VARIANT_TO_VALIDATION.out.simulation
+    rnaseq_validated_reads   = QUANTIFY_DEANALYSIS_ENRICH_VALIDATE.out.rnaseq_validated_results
+    scenario_description     = AISCENARIOS.out.scenario
 
 }
 
