@@ -17,7 +17,6 @@ workflow SUBSET_REFERENCES_TO_TARGETS {
     take:
     ch_meta          // channel: [ val(meta)   ]
     ch_fasta         // channel: [ path(fasta) ]
-    ch_fai           // channel: [ path(fai)   ]
     ch_get_sizes     // channel: [ get_sizes   ] // boolean
     ch_capture_bed   // channel: [ path(capture_bed) ]
     ch_gnomad        // channel: [ path(vcf), path(vcf_idx) ]
@@ -31,7 +30,6 @@ workflow SUBSET_REFERENCES_TO_TARGETS {
     ch_versions = Channel.empty()
 
     ch_fasta_with_meta = ch_meta.combine(ch_fasta).map { meta, fasta -> [meta, fasta] }
-    ch_fai_with_meta = ch_meta.combine(ch_fai).map { meta, fai -> [meta, fai] }
 
     SAMTOOLS_FAIDX_SUBSET ( ch_fasta_with_meta, [[],[]], ch_get_sizes )
     ch_versions = ch_versions.mix(SAMTOOLS_FAIDX_SUBSET.out.versions)
