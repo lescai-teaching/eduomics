@@ -108,7 +108,7 @@ workflow EDUOMICS {
         input_bytype_ch.dna.map { meta, capture -> meta},
         ch_fasta,
         ch_fai,
-        params.get_sizes,
+        params.get_sizes_bool,
         ch_capture_bed,
         ch_gnomad,
         ch_mills,

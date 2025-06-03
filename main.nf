@@ -42,7 +42,8 @@ params.bwa_index   = getGenomeAttribute('bwa_index')
 // other parameters for granular control of modules
 params.salmon_libtype   = "IU"
 params.salmon_alignmode = false
-params.get_sizes        = false
+params.get_sizes_bool   = false
+
 
 /*
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
