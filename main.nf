@@ -15,10 +15,12 @@
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 */
 
-include { EDUOMICS  } from './workflows/eduomics'
-include { PIPELINE_INITIALISATION } from './subworkflows/local/utils_nfcore_eduomics_pipeline'
-include { PIPELINE_COMPLETION     } from './subworkflows/local/utils_nfcore_eduomics_pipeline'
-include { getGenomeAttribute      } from './subworkflows/local/utils_nfcore_eduomics_pipeline'
+include { EDUOMICS                     } from './workflows/eduomics'
+include { SUBSET_REFERENCES_TO_TARGETS } from './subworkflows/local/subset_references_to_targets'
+include { PREPARE_RNA_GENOME           } from './subworkflows/local/prepare_rna_genome'
+include { PIPELINE_INITIALISATION      } from './subworkflows/local/utils_nfcore_eduomics_pipeline'
+include { PIPELINE_COMPLETION          } from './subworkflows/local/utils_nfcore_eduomics_pipeline'
+include { getGenomeAttribute           } from './subworkflows/local/utils_nfcore_eduomics_pipeline'
 
 /*
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -101,6 +103,51 @@ workflow {
         params.monochrome_logs,
         params.hook_url,
     )
+
+    publish:
+    // software versions
+    softwareversions = EDUOMICS.out.versions
+    //simulation results
+    dnasimulation    = EDUOMICS.out.fastq_validated_variants
+    rnasimulation    = EDUOMICS.out.rnaseq_validated_reads
+    scenario         = EDUOMICS.out.scenario_description
+    // dna reference and bundle needed for the analysis of simulated DNA data
+    dnabundle        = SUBSET_REFERENCES_TO_TARGETS.out.dna_bundle
+    // rna reference and bundle needed for the analysis of simulated RNA data
+    rnabundle        = PREPARE_RNA_GENOME.out.rna_bundle
+
+}
+
+output {
+
+    softwareversions {
+        path "${params.outdir}/pipeline_info"
+    }
+
+    dnasimulation {
+        path { meta, files ->
+            "dna_simulations/${meta.id}/${meta.simulatedvar}"
+        }
+    }
+
+    dnabundle {
+        path { meta, files ->
+            "dna_simulations/${meta.id}/references"
+        }
+    }
+
+    rnasimulation {
+        path { meta, files ->
+            def simfolder = meta.genes.take(16)
+            "rna_simulations/${meta.id}/${simfolder}"
+        }
+    }
+
+    rnabundle {
+        path { meta, files ->
+            "rna_simulations/${meta.id}/references"
+        }
+    }
 
 
 }

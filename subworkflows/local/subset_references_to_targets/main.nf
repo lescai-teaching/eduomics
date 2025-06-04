@@ -8,6 +8,7 @@ include { GATK4_SELECTVARIANTS as GATK4_SELECTVARIANTS_MILLS  } from '../../../m
 include { GATK4_SELECTVARIANTS as GATK4_SELECTVARIANTS_1000G  } from '../../../modules/nf-core/gatk4/selectvariants/main'
 include { GATK4_SELECTVARIANTS as GATK4_SELECTVARIANTS_DBSNP  } from '../../../modules/nf-core/gatk4/selectvariants/main'
 include { GATK4_CREATESEQUENCEDICTIONARY                      } from '../../../modules/nf-core/gatk4/createsequencedictionary/main'
+include { BWA_INDEX                                           } from '../../../modules/nf-core/bwa/index'
 
 
 
@@ -39,6 +40,9 @@ workflow SUBSET_REFERENCES_TO_TARGETS {
 
     SAMTOOLS_FAIDX_SIZES ( SAMTOOLS_FAIDX_SUBSET.out.fa, SAMTOOLS_FAIDX_INDEX.out.fai, true )
     ch_versions = ch_versions.mix(SAMTOOLS_FAIDX_SIZES.out.versions)
+
+    BWA_INDEX( SAMTOOLS_FAIDX_SUBSET.out.fa )
+    ch_versions = ch_versions.mix(BWA_INDEX.out.versions)
 
     GATK4_CREATESEQUENCEDICTIONARY ( SAMTOOLS_FAIDX_SUBSET.out.fa )
     ch_versions = ch_versions.mix(GATK4_CREATESEQUENCEDICTIONARY.out.versions)
@@ -81,27 +85,42 @@ workflow SUBSET_REFERENCES_TO_TARGETS {
 
     ch_versions = ch_versions.mix(SUBVAR.out.versions)
 
+    ch_dna_bundle = SAMTOOLS_FAIDX_SUBSET.out.fa
+        .join(SAMTOOLS_FAIDX_INDEX.out.fai)
+        .join(SUBSETCAPTURE.out.target_bed)
+        .join(SUBSETCAPTURE.out.target_bed_pad50)
+        .join(GATK4_SELECTVARIANTS_GNOMAD.out.vcf)
+        .join(GATK4_SELECTVARIANTS_MILLS.out.tbi)
+        .join(GATK4_SELECTVARIANTS_1000G.out.vcf)
+        .join(GATK4_SELECTVARIANTS_1000G.out.tbi)
+        .join(GATK4_SELECTVARIANTS_DBSNP.out.vcf)
+        .join(GATK4_SELECTVARIANTS_DBSNP.out.tbi)
+        .join(GATK4_CREATESEQUENCEDICTIONARY.out.dict)
+        .join(BWA_INDEX.out.index)
+
 
     emit:
-    target_fa               = SAMTOOLS_FAIDX_SUBSET.out.fa                                 // channel: [ val(meta), [ fasta ] ]
-    target_fai              = SAMTOOLS_FAIDX_INDEX.out.fai                                 // channel: [ val(meta), [ fai ] ]
-    target_sizes            = SAMTOOLS_FAIDX_SIZES.out.sizes                               // channel: [ val(meta), [ sizes ] ]
-    capture_bed_gz          = SUBSETCAPTURE.out.capture_bed_gz.map    { meta, bed -> bed } // channel: [ [ capture_bed_gz ] ]
-    capture_bed_index       = SUBSETCAPTURE.out.capture_bed_index.map { meta, bed -> bed } // channel: [ [ capture_bed_index ] ]
-    target_bed              = SUBSETCAPTURE.out.target_bed.map        { meta, bed -> bed } // channel: [ [ target_bed ] ]
-    target_bed_pad50        = SUBSETCAPTURE.out.target_bed_pad50.map  { meta, bed -> bed } // channel: [ [ target_bed_pad50 ] ]
-    target_bed_pad500       = SUBSETCAPTURE.out.target_bed_pad500.map { meta, bed -> bed } // channel: [ [ target_bed_pad500 ] ]
-    target_gnomad_vcf       = GATK4_SELECTVARIANTS_GNOMAD.out.vcf.map { meta, vcf -> vcf } // channel: [ [ vcf ] ]
-    target_gnomad_tbi       = GATK4_SELECTVARIANTS_GNOMAD.out.tbi.map { meta, tbi -> tbi } // channel: [ [ tbi ] ]
-    target_mills_vcf        = GATK4_SELECTVARIANTS_MILLS.out.vcf.map  { meta, vcf -> vcf } // channel: [ [ vcf ] ]
-    target_mills_tbi        = GATK4_SELECTVARIANTS_MILLS.out.tbi.map  { meta, tbi -> tbi } // channel: [ [ tbi ] ]
-    target_1000g_vcf        = GATK4_SELECTVARIANTS_1000G.out.vcf.map  { meta, vcf -> vcf } // channel: [ [ vcf ] ]
-    target_1000g_tbi        = GATK4_SELECTVARIANTS_1000G.out.tbi.map  { meta, tbi -> tbi } // channel: [ [ tbi ] ]
-    target_dbsnp_vcf        = GATK4_SELECTVARIANTS_DBSNP.out.vcf.map  { meta, vcf -> vcf } // channel: [ [ vcf ] ]
-    target_dbsnp_tbi        = GATK4_SELECTVARIANTS_DBSNP.out.tbi.map  { meta, tbi -> tbi } // channel: [ [ tbi ] ]
-    clinvar_benign_vcf      = SUBVAR.out.benign_vcf                                        // channel: [ val(meta), [ benign_vcf ] ]
-    clinvar_pathogenic_vcf  = SUBVAR.out.pathogenic_vcf                                    // channel: [ val(meta), [ pathogenic_vcf ] ]
-    clinvar_selected_vcf    = SUBVAR.out.selected_vcf                                      // channel: [ val(meta), [ selected_vcf ] ]
-    target_dict             = GATK4_CREATESEQUENCEDICTIONARY.out.dict                      // channel: [ val(meta), [ dict ] ]
-    versions                = ch_versions                                                  // channel: [ versions.yml ]
+    target_fa               = SAMTOOLS_FAIDX_SUBSET.out.fa                                 // channel: [ val(meta), [ fasta ]               ]
+    target_fai              = SAMTOOLS_FAIDX_INDEX.out.fai                                 // channel: [ val(meta), [ fai ]                 ]
+    target_sizes            = SAMTOOLS_FAIDX_SIZES.out.sizes                               // channel: [ val(meta), [ sizes ]               ]
+    target_bwa_index        = BWA_INDEX.out.index                                          // channel: [ val(meta), [ bwa ]                 ]
+    capture_bed_gz          = SUBSETCAPTURE.out.capture_bed_gz.map    { meta, bed -> bed } // channel: [ [ capture_bed_gz ]                 ]
+    capture_bed_index       = SUBSETCAPTURE.out.capture_bed_index.map { meta, bed -> bed } // channel: [ [ capture_bed_index ]              ]
+    target_bed              = SUBSETCAPTURE.out.target_bed.map        { meta, bed -> bed } // channel: [ [ target_bed ]                     ]
+    target_bed_pad50        = SUBSETCAPTURE.out.target_bed_pad50.map  { meta, bed -> bed } // channel: [ [ target_bed_pad50 ]               ]
+    target_bed_pad500       = SUBSETCAPTURE.out.target_bed_pad500.map { meta, bed -> bed } // channel: [ [ target_bed_pad500 ]              ]
+    target_gnomad_vcf       = GATK4_SELECTVARIANTS_GNOMAD.out.vcf.map { meta, vcf -> vcf } // channel: [ [ vcf ]                            ]
+    target_gnomad_tbi       = GATK4_SELECTVARIANTS_GNOMAD.out.tbi.map { meta, tbi -> tbi } // channel: [ [ tbi ]                            ]
+    target_mills_vcf        = GATK4_SELECTVARIANTS_MILLS.out.vcf.map  { meta, vcf -> vcf } // channel: [ [ vcf ]                            ]
+    target_mills_tbi        = GATK4_SELECTVARIANTS_MILLS.out.tbi.map  { meta, tbi -> tbi } // channel: [ [ tbi ]                            ]
+    target_1000g_vcf        = GATK4_SELECTVARIANTS_1000G.out.vcf.map  { meta, vcf -> vcf } // channel: [ [ vcf ]                            ]
+    target_1000g_tbi        = GATK4_SELECTVARIANTS_1000G.out.tbi.map  { meta, tbi -> tbi } // channel: [ [ tbi ]                            ]
+    target_dbsnp_vcf        = GATK4_SELECTVARIANTS_DBSNP.out.vcf.map  { meta, vcf -> vcf } // channel: [ [ vcf ]                            ]
+    target_dbsnp_tbi        = GATK4_SELECTVARIANTS_DBSNP.out.tbi.map  { meta, tbi -> tbi } // channel: [ [ tbi ]                            ]
+    clinvar_benign_vcf      = SUBVAR.out.benign_vcf                                        // channel: [ val(meta), [ benign_vcf ]          ]
+    clinvar_pathogenic_vcf  = SUBVAR.out.pathogenic_vcf                                    // channel: [ val(meta), [ pathogenic_vcf ]      ]
+    clinvar_selected_vcf    = SUBVAR.out.selected_vcf                                      // channel: [ val(meta), [ selected_vcf ]        ]
+    target_dict             = GATK4_CREATESEQUENCEDICTIONARY.out.dict                      // channel: [ val(meta), [ dict ]                ]
+    versions                = ch_versions                                                  // channel: [ versions.yml                       ]
+    dna_bundle              = ch_dna_bundle                                                // channel: [ val(meta), [all references bundle] ]
 }
