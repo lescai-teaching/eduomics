@@ -111,11 +111,43 @@ workflow {
     dnasimulation    = EDUOMICS.out.fastq_validated_variants
     rnasimulation    = EDUOMICS.out.rnaseq_validated_reads
     scenario         = EDUOMICS.out.scenario_description
-    // dna reference needed for the analysis of simulated DNA data
-    dnareference     = SUBSET_REFERENCES_TO_TARGETS.out.target_fa
-    dnareferenceindex = SUBSET_REFERENCES_TO_TARGETS.out.target_fai
-    // gatk bundke needed for the analysis of simulated DNA data
+    // dna reference and bundle needed for the analysis of simulated DNA data
+    dnabundle        = SUBSET_REFERENCES_TO_TARGETS.out.dna_bundle
+    // rna reference and bundle needed for the analysis of simulated RNA data
+    rnabundle        = PREPARE_RNA_GENOME.out.rna_bundle
 
+}
+
+output {
+
+    softwareversions {
+        path "${params.outdir}/pipeline_info"
+    }
+
+    dnasimulation {
+        path { meta, files ->
+            "dna_simulations/${meta.id}/${meta.simulatedvar}"
+        }
+    }
+
+    dnabundle {
+        path { meta, files ->
+            "dna_simulations/${meta.id}/references"
+        }
+    }
+
+    rnasimulation {
+        path { meta, files ->
+            def simfolder = meta.genes.take(16)
+            "rna_simulations/${meta.id}/${simfolder}"
+        }
+    }
+
+    rnabundle {
+        path { meta, files ->
+            "rna_simulations/${meta.id}/references"
+        }
+    }
 
 
 }

@@ -55,7 +55,6 @@ workflow EDUOMICS {
     ch_1000g       = Channel.fromPath(params.vcf1000g)
     ch_dbsnp       = Channel.fromPath(params.dbsnp)
     ch_clinvar     = Channel.fromPath(params.clinvar)
-    ch_bwa_index   = Channel.fromPath(params.bwa_index)
 
 /*
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -126,7 +125,7 @@ workflow EDUOMICS {
         SUBSET_REFERENCES_TO_TARGETS.out.target_fa,
         SUBSET_REFERENCES_TO_TARGETS.out.target_fai,
         SUBSET_REFERENCES_TO_TARGETS.out.target_dict,
-        ch_bwa_index,
+        SUBSET_REFERENCES_TO_TARGETS.out.target_bwa_index,
         SUBSET_REFERENCES_TO_TARGETS.out.target_dbsnp_vcf,
         SUBSET_REFERENCES_TO_TARGETS.out.target_dbsnp_tbi,
         SUBSET_REFERENCES_TO_TARGETS.out.target_mills_vcf,
@@ -155,7 +154,7 @@ workflow EDUOMICS {
         SUBSET_REFERENCES_TO_TARGETS.out.target_fa,
         SUBSET_REFERENCES_TO_TARGETS.out.target_fai,
         SUBSET_REFERENCES_TO_TARGETS.out.target_dict,
-        ch_bwa_index,
+        SUBSET_REFERENCES_TO_TARGETS.out.target_bwa_index,
         SUBSET_REFERENCES_TO_TARGETS.out.target_dbsnp_vcf,
         SUBSET_REFERENCES_TO_TARGETS.out.target_dbsnp_tbi,
         SUBSET_REFERENCES_TO_TARGETS.out.target_mills_vcf,
@@ -189,10 +188,10 @@ workflow EDUOMICS {
         ).set { ch_collated_versions }
 
     emit:
-    versions                 = ch_collated_versions
-    fastq_validated_variants = FASTQ_VARIANT_TO_VALIDATION.out.simulation
-    rnaseq_validated_reads   = QUANTIFY_DEANALYSIS_ENRICH_VALIDATE.out.rnaseq_validated_results
-    scenario_description     = AISCENARIOS.out.scenario
+    versions                 = ch_collated_versions                                               // channel: [ path(versions.yml)                          ]
+    fastq_validated_variants = FASTQ_VARIANT_TO_VALIDATION.out.simulation                         // channel: [ val(meta), path(validated_results_folder/*) ]
+    rnaseq_validated_reads   = QUANTIFY_DEANALYSIS_ENRICH_VALIDATE.out.rnaseq_validated_results   // channel: [ val(meta), path(rnaseq_validation)          ]
+    scenario_description     = AISCENARIOS.out.scenario                                           // channel: [ val(meta), path(scenario.txt)               ]
 
 }
 
