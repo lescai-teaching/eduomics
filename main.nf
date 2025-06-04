@@ -15,10 +15,12 @@
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 */
 
-include { EDUOMICS  } from './workflows/eduomics'
-include { PIPELINE_INITIALISATION } from './subworkflows/local/utils_nfcore_eduomics_pipeline'
-include { PIPELINE_COMPLETION     } from './subworkflows/local/utils_nfcore_eduomics_pipeline'
-include { getGenomeAttribute      } from './subworkflows/local/utils_nfcore_eduomics_pipeline'
+include { EDUOMICS                     } from './workflows/eduomics'
+include { SUBSET_REFERENCES_TO_TARGETS } from './subworkflows/local/subset_references_to_targets'
+include { PREPARE_RNA_GENOME           } from './subworkflows/local/prepare_rna_genome'
+include { PIPELINE_INITIALISATION      } from './subworkflows/local/utils_nfcore_eduomics_pipeline'
+include { PIPELINE_COMPLETION          } from './subworkflows/local/utils_nfcore_eduomics_pipeline'
+include { getGenomeAttribute           } from './subworkflows/local/utils_nfcore_eduomics_pipeline'
 
 /*
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -101,6 +103,19 @@ workflow {
         params.monochrome_logs,
         params.hook_url,
     )
+
+    publish:
+    // software versions
+    softwareversions = EDUOMICS.out.versions
+    //simulation results
+    dnasimulation    = EDUOMICS.out.fastq_validated_variants
+    rnasimulation    = EDUOMICS.out.rnaseq_validated_reads
+    scenario         = EDUOMICS.out.scenario_description
+    // dna reference needed for the analysis of simulated DNA data
+    dnareference     = SUBSET_REFERENCES_TO_TARGETS.out.target_fa
+    dnareferenceindex = SUBSET_REFERENCES_TO_TARGETS.out.target_fai
+    // gatk bundke needed for the analysis of simulated DNA data
+
 
 
 }
