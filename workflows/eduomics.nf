@@ -84,7 +84,7 @@ workflow EDUOMICS {
 
     // Set to true in test.config to run the test with a smaller dataset
     if (params.istest) {
-        SIMULATE_RNASEQ_READS.out.simreads = SIMULATE_RNASEQ_READS.out.simreads.take(5)
+        SIMULATE_RNASEQ_READS.out.simreads = SIMULATE_RNASEQ_READS.out.simreads.take(params.test_limit)
     }
 
     QUANTIFY_DEANALYSIS_ENRICH_VALIDATE(
@@ -157,7 +157,7 @@ workflow EDUOMICS {
 
     // Set to true in test.config to run the test with a smaller dataset
     if (params.istest) {
-        PROFILE_SIMULATE_VARS_FASTQ.out.simreads = PROFILE_SIMULATE_VARS_FASTQ.out.simreads.take(5)
+        PROFILE_SIMULATE_VARS_FASTQ.out.simreads = PROFILE_SIMULATE_VARS_FASTQ.out.simreads.take(params.test_limit)
     }
 
     FASTQ_VARIANT_TO_VALIDATION(
