@@ -83,12 +83,12 @@ workflow EDUOMICS {
     ch_versions = ch_versions.mix(SIMULATE_RNASEQ_READS.out.versions)
 
     // Set to true in test.config to run the test with a smaller dataset
-    if (params.istest) {
-        SIMULATE_RNASEQ_READS.out.simreads = SIMULATE_RNASEQ_READS.out.simreads.take(params.test_limit)
-    }
+    ch_rna_simreads = params.istest
+        ? SIMULATE_RNASEQ_READS.out.simreads.take(params.test_limit)
+        : SIMULATE_RNASEQ_READS.out.simreads
 
     QUANTIFY_DEANALYSIS_ENRICH_VALIDATE(
-        SIMULATE_RNASEQ_READS.out.simreads,
+        ch_rna_simreads,
         PREPARE_RNA_GENOME.out.txfasta_index,
         PREPARE_RNA_GENOME.out.filtered_annotation,
         PREPARE_RNA_GENOME.out.filtered_txfasta,
@@ -126,7 +126,6 @@ workflow EDUOMICS {
 
     ch_versions = ch_versions.mix(SUBSET_REFERENCES_TO_TARGETS.out.versions)
 
-
     FASTA_WGSIM_TO_PROFILE(
         SUBSET_REFERENCES_TO_TARGETS.out.target_fa,
         SUBSET_REFERENCES_TO_TARGETS.out.target_fai,
@@ -156,12 +155,12 @@ workflow EDUOMICS {
     ch_versions = ch_versions.mix(PROFILE_SIMULATE_VARS_FASTQ.out.versions)
 
     // Set to true in test.config to run the test with a smaller dataset
-    if (params.istest) {
-        PROFILE_SIMULATE_VARS_FASTQ.out.simreads = PROFILE_SIMULATE_VARS_FASTQ.out.simreads.take(params.test_limit)
-    }
+    ch_dna_simreads = params.istest
+        ? PROFILE_SIMULATE_VARS_FASTQ.out.simreads.take(params.test_limit)
+        : PROFILE_SIMULATE_VARS_FASTQ.out.simreads
 
     FASTQ_VARIANT_TO_VALIDATION(
-        PROFILE_SIMULATE_VARS_FASTQ.out.simreads,
+        ch_dna_simreads,
         SUBSET_REFERENCES_TO_TARGETS.out.target_fa,
         SUBSET_REFERENCES_TO_TARGETS.out.target_fai,
         SUBSET_REFERENCES_TO_TARGETS.out.target_dict,
