@@ -49,7 +49,7 @@ workflow EDUOMICS {
     ch_fasta       = Channel.fromPath(params.fasta)
     ch_txfasta     = Channel.fromPath(params.txfasta)
     ch_gff3        = Channel.fromPath(params.gff3)
-    ch_capture_bed = Channel.fromPath(params.capture)
+    ch_capture_bed = input_bytype_ch.dna.map { meta, capture -> capture}
     ch_gnomad      = Channel.fromPath(params.gnomad)
     ch_mills       = Channel.fromPath(params.mills)
     ch_1000g       = Channel.fromPath(params.vcf1000g)
