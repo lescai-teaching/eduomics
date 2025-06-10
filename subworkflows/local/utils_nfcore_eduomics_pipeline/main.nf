@@ -74,14 +74,6 @@ workflow PIPELINE_INITIALISATION {
 
     Channel
         .fromList(samplesheetToList(params.input, "${projectDir}/assets/schema_input.json"))
-        .map {
-            meta, capture ->
-                if (capture.isEmpty()) {
-                    return([ meta, false ])
-                } else {
-                    return([ meta, capture ])
-                }
-        }
         .set { ch_samplesheet }
 
     emit:
