@@ -270,10 +270,12 @@
     "properties": {
         "istest": {
             "type": "boolean",
+            "description": "Whether the pipeline is being run in test mode: this will limit the number of samples processed to a small number defined by the parameter test_limit.",
             "hidden": true
         },
         "test_limit": {
-            "type": "string",
+            "type": "integer",
+            "description": "The maximum number of samples to process when running the pipeline in test mode.",
             "hidden": true,
             "default": "5"
         }
