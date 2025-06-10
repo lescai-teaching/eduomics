@@ -50,10 +50,6 @@
                     "fa_icon": "fas fa-book",
                     "help_text": "If using a reference genome configured in the pipeline using iGenomes, use this parameter to give the ID for the reference. This is then used to build the full paths for all required reference genome files e.g. `--genome GRCh38`. \n\nSee the [nf-core website docs](https://nf-co.re/usage/reference_genomes) for more details."
                 },
-                "capture": {
-                    "type": "string",
-                    "description": "Path to capture file when simulating DNA (should be set in input CSV)"
-                },
                 "igenomes_ignore": {
                     "type": "boolean",
                     "description": "Do not load the iGenomes reference config.",
@@ -79,6 +75,61 @@
                     "type": "boolean",
                     "hidden": true,
                     "description": "Whether Salmon should be run in alignment mode rather than quasi-mapping mode"
+                },
+                "fasta": {
+                    "type": "string",
+                    "format": "file-path",
+                    "exists": true,
+                    "mimetype": "text/plain",
+                    "pattern": "^\\S+\\.fn?a(sta)?(\\.gz)?$",
+                    "description": "Path to FASTA genome file. (usually defined in genome config file)",
+                    "help_text": "This parameter is *mandatory* if `--genome` is not specified. If you don't have a BWA index available this will be generated for you automatically. Combine with `--save_reference` to save BWA index for future runs.",
+                    "fa_icon": "far fa-file-code",
+                    "hidden": true
+                },
+                "bwa_index": {
+                    "type": "string",
+                    "hidden": true,
+                    "description": "Path to BWA mem index file.  (usually defined in genome config file)"
+                },
+                "gnomad": {
+                    "type": "string",
+                    "hidden": true,
+                    "description": "Path to Gnomad VCF file.  (usually defined in genome config file)"
+                },
+                "mills": {
+                    "type": "string",
+                    "hidden": true,
+                    "description": "Path to Mills et al. INDELs VCF file.  (usually defined in genome config file)"
+                },
+                "vcf1000g": {
+                    "type": "string",
+                    "hidden": true,
+                    "description": "Path to 1000 Genomes VCF file.  (usually defined in genome config file)"
+                },
+                "dbsnp": {
+                    "type": "string",
+                    "hidden": true,
+                    "description": "Path to dbSNP VCF file.  (usually defined in genome config file)"
+                },
+                "clinvar": {
+                    "type": "string",
+                    "hidden": true,
+                    "description": "Path to ClinVar VCF file.  (usually defined in genome config file)"
+                },
+                "gff3": {
+                    "type": "string",
+                    "hidden": true,
+                    "description": "Path to GENCODE gff3 file.  (usually defined in genome config file)"
+                },
+                "txfasta": {
+                    "type": "string",
+                    "hidden": true,
+                    "description": "Path to GENCODE transcripts fasta file.  (usually defined in genome config file)"
+                },
+                "get_sizes_bool": {
+                    "type": "boolean",
+                    "description": "Whether to generate or not a chromosome sizes file"
                 }
             }
         },
@@ -217,60 +268,16 @@
         }
     ],
     "properties": {
-        "fasta": {
-            "type": "string",
-            "format": "file-path",
-            "exists": true,
-            "mimetype": "text/plain",
-            "pattern": "^\\S+\\.fn?a(sta)?(\\.gz)?$",
-            "description": "Path to FASTA genome file. (usually defined in genome config file)",
-            "help_text": "This parameter is *mandatory* if `--genome` is not specified. If you don't have a BWA index available this will be generated for you automatically. Combine with `--save_reference` to save BWA index for future runs.",
-            "fa_icon": "far fa-file-code",
+        "istest": {
+            "type": "boolean",
+            "description": "Whether the pipeline is being run in test mode: this will limit the number of samples processed to a small number defined by the parameter test_limit.",
             "hidden": true
         },
-        "bwa_index": {
-            "type": "string",
+        "test_limit": {
+            "type": "integer",
+            "description": "The maximum number of samples to process when running the pipeline in test mode.",
             "hidden": true,
-            "description": "Path to BWA mem index file.  (usually defined in genome config file)"
-        },
-        "gnomad": {
-            "type": "string",
-            "hidden": true,
-            "description": "Path to Gnomad VCF file.  (usually defined in genome config file)"
-        },
-        "mills": {
-            "type": "string",
-            "hidden": true,
-            "description": "Path to Mills et al. INDELs VCF file.  (usually defined in genome config file)"
-        },
-        "vcf1000g": {
-            "type": "string",
-            "hidden": true,
-            "description": "Path to 1000 Genomes VCF file.  (usually defined in genome config file)"
-        },
-        "dbsnp": {
-            "type": "string",
-            "hidden": true,
-            "description": "Path to dbSNP VCF file.  (usually defined in genome config file)"
-        },
-        "clinvar": {
-            "type": "string",
-            "hidden": true,
-            "description": "Path to ClinVar VCF file.  (usually defined in genome config file)"
-        },
-        "gff3": {
-            "type": "string",
-            "hidden": true,
-            "description": "Path to GENCODE gff3 file.  (usually defined in genome config file)"
-        },
-        "txfasta": {
-            "type": "string",
-            "hidden": true,
-            "description": "Path to GENCODE transcripts fasta file.  (usually defined in genome config file)"
-        },
-        "get_sizes_bool": {
-            "type": "boolean",
-            "description": "Whether to generate or not a chromosome sizes file"
+            "default": "5"
         }
     }
 }
