@@ -103,7 +103,6 @@ workflow FASTA_WGSIM_TO_PROFILE {
     SIMUSCOP_SEQTOPROFILE(
         GATK4_APPLYBQSR.out.bam,
         GATK4_HAPLOTYPECALLER.out.vcf,
-        capture,
         fasta.map{ meta, it -> [ it ] }
     )
     ch_versions = ch_versions.mix(SIMUSCOP_SEQTOPROFILE.out.versions)
