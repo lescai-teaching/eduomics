@@ -32,8 +32,8 @@ process SUBVAR {
 
     cat <<-END_VERSIONS > versions.yml
     "${task.process}":
-        tabix: \$(tabix --version 2>&1 | sed 's/^.*tabix //')
-        bgzip: \$(bgzip --version 2>&1 | sed 's/^.*bgzip //')
+        tabix: \$(echo \$(tabix -h 2>&1) | sed 's/^.*Version: //; s/ .*\$//')
+        bgzip: \$(bgzip --version |& sed '1!d ; s/bgzip (htslib) //')
     END_VERSIONS
     """
 
@@ -47,8 +47,8 @@ process SUBVAR {
 
     cat <<-END_VERSIONS > versions.yml
     "${task.process}":
-        tabix: \$(echo "1.20")
-        bgzip: \$(echo "1.20")
+        tabix: \$(echo \$(tabix -h 2>&1) | sed 's/^.*Version: //; s/ .*\$//')
+        bgzip: \$(bgzip --version |& sed '1!d ; s/bgzip (htslib) //')
     END_VERSIONS
     """
 }
