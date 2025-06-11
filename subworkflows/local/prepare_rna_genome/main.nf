@@ -32,10 +32,10 @@ workflow PREPARE_RNA_GENOME {
     ch_versions = ch_versions.mix(SALMON_INDEX.out.versions.first())
 
     ch_rna_bundle = SUBSETFASTATX.out.filtered_txfasta
-        .mix(SUBSETGFF.out.filtered_annotation.map{ meta, gff3 -> gff3 })
-        .mix(SALMON_INDEX.out.index)
-        .map{ meta, txfasta, gff3, index ->
-            [meta, [txfasta, gff3, index]]
+        .join(SUBSETGFF.out.filtered_annotation)
+        .combine(SALMON_INDEX.out.index)
+        .map { it ->
+            [it[0], it[1..-1]]
         }
 
     emit:
