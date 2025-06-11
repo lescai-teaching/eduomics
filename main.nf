@@ -31,16 +31,19 @@ include { getGenomeAttribute           } from './subworkflows/local/utils_nfcore
 */
 
 // getting attributes for genome files
-params.fasta       = getGenomeAttribute('fasta')
-params.gnomad      = getGenomeAttribute('germline_resource')
-params.mills       = getGenomeAttribute('known_indels')
-params.vcf1000g    = getGenomeAttribute('known_snps')
-params.dbsnp       = getGenomeAttribute('dbsnp')
-params.clinvar     = getGenomeAttribute('clinvar_vcf')
-params.gff3        = getGenomeAttribute('gff3')
-params.txfasta     = getGenomeAttribute('txfasta')
-params.bwa_index   = getGenomeAttribute('bwa_index')
-
+params.fasta           = getGenomeAttribute('fasta')
+params.gnomad_tbi      = getGenomeAttribute('germline_resource_tbi')
+params.mills_tbi       = getGenomeAttribute('known_indels_tbi')
+params.vcf1000g_tbi    = getGenomeAttribute('known_snps_tbi')
+params.dbsnp_tbi       = getGenomeAttribute('dbsnp_tbi')
+params.gnomad_vcf      = getGenomeAttribute('germline_resource')
+params.mills_vcf       = getGenomeAttribute('known_indels')
+params.vcf1000g_vcf    = getGenomeAttribute('known_snps')
+params.dbsnp_vcf       = getGenomeAttribute('dbsnp')
+params.clinvar         = getGenomeAttribute('clinvar_vcf')
+params.gff3            = getGenomeAttribute('gff3')
+params.txfasta         = getGenomeAttribute('txfasta')
+params.bwa_index       = getGenomeAttribute('bwa_index')
 
 
 /*
@@ -67,15 +70,23 @@ workflow NFCORE_EDUOMICS {
     .set{ input_bytype_ch }
 
     // CREATING CHANNELS FROM REFERENCE FILES
-    ch_fasta       = Channel.fromPath(params.fasta)
-    ch_txfasta     = Channel.fromPath(params.txfasta)
-    ch_gff3        = Channel.fromPath(params.gff3)
-    ch_capture_bed = input_bytype_ch.dna.map { meta, capture -> capture }
-    ch_gnomad      = Channel.fromPath(params.gnomad)
-    ch_mills       = Channel.fromPath(params.mills)
-    ch_1000g       = Channel.fromPath(params.vcf1000g)
-    ch_dbsnp       = Channel.fromPath(params.dbsnp)
-    ch_clinvar     = Channel.fromPath(params.clinvar)
+    ch_fasta          = Channel.fromPath(params.fasta)Add commentMore actions
+    ch_txfasta        = Channel.fromPath(params.txfasta)
+    ch_gff3           = Channel.fromPath(params.gff3)
+    ch_capture_bed    = input_bytype_ch.dna.map { meta, capture -> capture }
+    ch_gnomad_vcf     = Channel.fromPath(params.gnomad_vcf)
+    ch_gnomad_tbi     = Channel.fromPath(params.gnomad_tbi)
+    ch_gnomad_vcf_tbi = ch_gnomad_vcf.combine(ch_gnomad_tbi)
+    ch_mills_vcf      = Channel.fromPath(params.mills_vcf)
+    ch_mills_tbi      = Channel.fromPath(params.mills_tbi)
+    ch_mills_vcf_tbi  = ch_mills_vcf.combine(ch_mills_tbi)
+    ch_1000g_vcf      = Channel.fromPath(params.vcf1000g_vcf)
+    ch_1000g_tbi      = Channel.fromPath(params.vcf1000g_tbi)
+    ch_1000g_vcf_tbi  = ch_1000g_vcf.combine(ch_1000g_tbi)
+    ch_dbsnp_vcf      = Channel.fromPath(params.dbsnp_vcf)
+    ch_dbsnp_tbi      = Channel.fromPath(params.dbsnp_tbi)
+    ch_dbsnp_vcf_tbi  = ch_dbsnp_vcf.combine(ch_dbsnp_tbi)
+    ch_clinvar        = Channel.fromPath(params.clinvar))
 
     //
     // WORKFLOW: Run pipeline
@@ -87,10 +98,10 @@ workflow NFCORE_EDUOMICS {
         ch_txfasta,
         ch_gff3,
         ch_capture_bed,
-        ch_gnomad,
-        ch_mills,
-        ch_1000g,
-        ch_dbsnp,
+        ch_gnomad_vcf_tbi,
+        ch_mills_vcf_tbi,
+        ch_1000g_vcf_tbi,
+        ch_dbsnp_vcf_tbi,
         ch_clinvar
     )
 
