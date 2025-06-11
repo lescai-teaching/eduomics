@@ -70,7 +70,7 @@ workflow NFCORE_EDUOMICS {
     .set{ input_bytype_ch }
 
     // CREATING CHANNELS FROM REFERENCE FILES
-    ch_fasta          = Channel.fromPath(params.fasta)Add commentMore actions
+    ch_fasta          = Channel.fromPath(params.fasta)
     ch_txfasta        = Channel.fromPath(params.txfasta)
     ch_gff3           = Channel.fromPath(params.gff3)
     ch_capture_bed    = input_bytype_ch.dna.map { meta, capture -> capture }
