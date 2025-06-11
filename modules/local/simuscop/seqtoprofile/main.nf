@@ -11,7 +11,6 @@ process SIMUSCOP_SEQTOPROFILE {
     input:
     tuple val(meta), path(bam)
     tuple val(meta2), path(vcf)
-    path(capture)
     path(fasta)
 
 
@@ -33,7 +32,6 @@ process SIMUSCOP_SEQTOPROFILE {
     seqToProfile \\
     -b $bam \\
     -v \$vcf_file \\
-    -t $capture \\
     -r $fasta \\
     $args >${prefix}.profile
 

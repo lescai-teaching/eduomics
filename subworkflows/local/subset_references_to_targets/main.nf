@@ -99,8 +99,8 @@ workflow SUBSET_REFERENCES_TO_TARGETS {
         .join(GATK4_SELECTVARIANTS_DBSNP.out.tbi)
         .join(GATK4_CREATESEQUENCEDICTIONARY.out.dict)
         .join(BWA_INDEX.out.index)
-        .map { meta, fasta, fai, bed, pad, gnomad, gnomad_tbi, mills, mills_tbi, g, g_tbi, dbsnp, dbsnp_tbi, dict, bwaindex ->
-            [ meta, [ fasta, fai, bed, pad, gnomad, gnomad_tbi, mills, mills_tbi, g, g_tbi, dbsnp, dbsnp_tbi, dict, bwaindex ] ]
+        .map { it ->
+            [it[0], it[1..-1]]
         }
 
 
