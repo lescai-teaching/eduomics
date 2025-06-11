@@ -86,7 +86,7 @@ workflow NFCORE_EDUOMICS {
     ch_dbsnp_vcf      = Channel.fromPath(params.dbsnp_vcf)
     ch_dbsnp_tbi      = Channel.fromPath(params.dbsnp_tbi)
     ch_dbsnp_vcf_tbi  = ch_dbsnp_vcf.combine(ch_dbsnp_tbi)
-    ch_clinvar        = Channel.fromPath(params.clinvar))
+    ch_clinvar        = Channel.fromPath(params.clinvar)
 
     //
     // WORKFLOW: Run pipeline
