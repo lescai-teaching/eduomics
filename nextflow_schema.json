@@ -27,7 +27,8 @@
                     "type": "string",
                     "format": "directory-path",
                     "description": "The output directory where the results will be saved. You have to use absolute paths to storage on Cloud infrastructure.",
-                    "fa_icon": "fas fa-folder-open"
+                    "fa_icon": "fas fa-folder-open",
+                    "default": "./results"
                 },
                 "email": {
                     "type": "string",
@@ -92,31 +93,6 @@
                     "hidden": true,
                     "description": "Path to BWA mem index file.  (usually defined in genome config file)"
                 },
-                "gnomad": {
-                    "type": "string",
-                    "hidden": true,
-                    "description": "Path to Gnomad VCF file.  (usually defined in genome config file)"
-                },
-                "mills": {
-                    "type": "string",
-                    "hidden": true,
-                    "description": "Path to Mills et al. INDELs VCF file.  (usually defined in genome config file)"
-                },
-                "vcf1000g": {
-                    "type": "string",
-                    "hidden": true,
-                    "description": "Path to 1000 Genomes VCF file.  (usually defined in genome config file)"
-                },
-                "dbsnp": {
-                    "type": "string",
-                    "hidden": true,
-                    "description": "Path to dbSNP VCF file.  (usually defined in genome config file)"
-                },
-                "clinvar": {
-                    "type": "string",
-                    "hidden": true,
-                    "description": "Path to ClinVar VCF file.  (usually defined in genome config file)"
-                },
                 "gff3": {
                     "type": "string",
                     "hidden": true,
@@ -130,54 +106,46 @@
                 "get_sizes_bool": {
                     "type": "boolean",
                     "description": "Whether to generate or not a chromosome sizes file"
-                }
-            }
-        },
-        "institutional_config_options": {
-            "title": "Institutional config options",
-            "type": "object",
-            "fa_icon": "fas fa-university",
-            "description": "Parameters used to describe centralised config profiles. These should not be edited.",
-            "help_text": "The centralised nf-core configuration profiles use a handful of pipeline parameters to describe themselves. This information is then printed to the Nextflow log when you run a pipeline. You should not need to change these values when you run a pipeline.",
-            "properties": {
-                "custom_config_version": {
-                    "type": "string",
-                    "description": "Git commit id for Institutional configs.",
-                    "default": "master",
-                    "hidden": true,
-                    "fa_icon": "fas fa-users-cog"
                 },
-                "custom_config_base": {
+                "gnomad_vcf": {
                     "type": "string",
-                    "description": "Base directory for Institutional configs.",
-                    "default": "https://raw.githubusercontent.com/nf-core/configs/master",
-                    "hidden": true,
-                    "help_text": "If you're running offline, Nextflow will not be able to fetch the institutional config files from the internet. If you don't need them, then this is not a problem. If you do need them, you should download the files from the repo and tell Nextflow where to find them with this parameter.",
-                    "fa_icon": "fas fa-users-cog"
+                    "hidden": true
                 },
-                "config_profile_name": {
+                "gnomad_tbi": {
                     "type": "string",
-                    "description": "Institutional config name.",
-                    "hidden": true,
-                    "fa_icon": "fas fa-users-cog"
+                    "hidden": true
                 },
-                "config_profile_description": {
+                "mills_vcf": {
                     "type": "string",
-                    "description": "Institutional config description.",
-                    "hidden": true,
-                    "fa_icon": "fas fa-users-cog"
+                    "hidden": true
                 },
-                "config_profile_contact": {
+                "mills_tbi": {
                     "type": "string",
-                    "description": "Institutional config contact information.",
-                    "hidden": true,
-                    "fa_icon": "fas fa-users-cog"
+                    "hidden": true
                 },
-                "config_profile_url": {
+                "vcf1000g_vcf": {
                     "type": "string",
-                    "description": "Institutional config URL link.",
-                    "hidden": true,
-                    "fa_icon": "fas fa-users-cog"
+                    "hidden": true
+                },
+                "vcf1000g_tbi": {
+                    "type": "string",
+                    "hidden": true
+                },
+                "dbsnp_vcf": {
+                    "type": "string",
+                    "hidden": true
+                },
+                "dbsnp_tbi": {
+                    "type": "string",
+                    "hidden": true
+                },
+                "clinvar_vcf": {
+                    "type": "string",
+                    "hidden": true
+                },
+                "clinvar_tbi": {
+                    "type": "string",
+                    "hidden": true
                 }
             }
         },
@@ -249,6 +217,65 @@
                     "fa_icon": "far calendar",
                     "description": "Suffix to add to the trace report filename. Default is the date and time in the format yyyy-MM-dd_HH-mm-ss.",
                     "hidden": true
+                },
+                "istest": {
+                    "type": "boolean",
+                    "description": "Whether the pipeline is being run in test mode: this will limit the number of samples processed to a small number defined by the parameter test_limit.",
+                    "hidden": true
+                },
+                "test_limit": {
+                    "type": "integer",
+                    "description": "The maximum number of samples to process when running the pipeline in test mode.",
+                    "hidden": true,
+                    "default": 3
+                }
+            }
+        },
+        "institutional_config_options": {
+            "title": "Institutional config options",
+            "type": "object",
+            "fa_icon": "fas fa-university",
+            "description": "Parameters used to describe centralised config profiles. These should not be edited.",
+            "help_text": "The centralised nf-core configuration profiles use a handful of pipeline parameters to describe themselves. This information is then printed to the Nextflow log when you run a pipeline. You should not need to change these values when you run a pipeline.",
+            "properties": {
+                "custom_config_version": {
+                    "type": "string",
+                    "description": "Git commit id for Institutional configs.",
+                    "default": "master",
+                    "hidden": true,
+                    "fa_icon": "fas fa-users-cog"
+                },
+                "custom_config_base": {
+                    "type": "string",
+                    "description": "Base directory for Institutional configs.",
+                    "default": "https://raw.githubusercontent.com/nf-core/configs/master",
+                    "hidden": true,
+                    "help_text": "If you're running offline, Nextflow will not be able to fetch the institutional config files from the internet. If you don't need them, then this is not a problem. If you do need them, you should download the files from the repo and tell Nextflow where to find them with this parameter.",
+                    "fa_icon": "fas fa-users-cog"
+                },
+                "config_profile_name": {
+                    "type": "string",
+                    "description": "Institutional config name.",
+                    "hidden": true,
+                    "fa_icon": "fas fa-users-cog"
+                },
+                "config_profile_description": {
+                    "type": "string",
+                    "description": "Institutional config description.",
+                    "hidden": true,
+                    "fa_icon": "fas fa-users-cog"
+                },
+                "config_profile_contact": {
+                    "type": "string",
+                    "description": "Institutional config contact information.",
+                    "hidden": true,
+                    "fa_icon": "fas fa-users-cog"
+                },
+                "config_profile_url": {
+                    "type": "string",
+                    "description": "Institutional config URL link.",
+                    "hidden": true,
+                    "fa_icon": "fas fa-users-cog"
                 }
             }
         }
@@ -261,23 +288,10 @@
             "$ref": "#/$defs/reference_genome_options"
         },
         {
-            "$ref": "#/$defs/institutional_config_options"
+            "$ref": "#/$defs/generic_options"
         },
         {
-            "$ref": "#/$defs/generic_options"
+            "$ref": "#/$defs/institutional_config_options"
         }
-    ],
-    "properties": {
-        "istest": {
-            "type": "boolean",
-            "description": "Whether the pipeline is being run in test mode: this will limit the number of samples processed to a small number defined by the parameter test_limit.",
-            "hidden": true
-        },
-        "test_limit": {
-            "type": "integer",
-            "description": "The maximum number of samples to process when running the pipeline in test mode.",
-            "hidden": true,
-            "default": "5"
-        }
-    }
+    ]
 }
