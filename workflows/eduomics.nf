@@ -49,57 +49,6 @@ workflow EDUOMICS {
     ch_scenarios = Channel.empty()
 
 
-
-/*
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-    RNA ANALYSIS BRANCH
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-*/
-    PREPARE_RNA_GENOME(
-        ch_rna_sim.map { meta, capture -> meta},
-        ch_gff3,
-        ch_txfasta,
-        ch_fasta
-    )
-
-    ch_versions = ch_versions.mix(PREPARE_RNA_GENOME.out.versions)
-
-    ch_foldchange = Channel.empty()
-
-    SIMULATE_RNASEQ_READS(
-        PREPARE_RNA_GENOME.out.filtered_txfasta,
-        PREPARE_RNA_GENOME.out.filtered_transcript_data,
-        PREPARE_RNA_GENOME.out.gene_lists,
-        ch_foldchange,
-        PREPARE_RNA_GENOME.out.gene_list_association
-    )
-
-    ch_versions = ch_versions.mix(SIMULATE_RNASEQ_READS.out.versions)
-
-    // Set to true in test.config to run the test with a smaller dataset
-    ch_rna_simreads = params.istest
-        ? SIMULATE_RNASEQ_READS.out.simreads.take(params.test_limit)
-        : SIMULATE_RNASEQ_READS.out.simreads
-
-    QUANTIFY_DEANALYSIS_ENRICH_VALIDATE(
-        ch_rna_simreads,
-        PREPARE_RNA_GENOME.out.txfasta_index,
-        PREPARE_RNA_GENOME.out.filtered_annotation,
-        PREPARE_RNA_GENOME.out.filtered_txfasta,
-        params.salmon_alignmode,
-        params.salmon_libtype,
-        PREPARE_RNA_GENOME.out.filtered_transcript_data
-    )
-
-    ch_versions = ch_versions.mix(QUANTIFY_DEANALYSIS_ENRICH_VALIDATE.out.versions)
-
-    ch_rna_scenario = QUANTIFY_DEANALYSIS_ENRICH_VALIDATE.out.deseq2_tx2gene
-        .map { m, tx ->
-            return [m, false, m.genes]
-        }
-    ch_scenarios = ch_scenarios.mix(ch_rna_scenario)
-
-
 /*
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     DNA ANALYSIS BRANCH
@@ -174,7 +123,60 @@ workflow EDUOMICS {
         }
     ch_scenarios = ch_scenarios.mix(ch_dna_scenario)
 
+/*
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    RNA ANALYSIS BRANCH
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+*/
+    PREPARE_RNA_GENOME(
+        ch_rna_sim.map { meta, capture -> meta},
+        ch_gff3,
+        ch_txfasta,
+        SUBSET_REFERENCES_TO_TARGETS.out.target_fa.map { meta, fasta -> fasta }
+    )
 
+    ch_versions = ch_versions.mix(PREPARE_RNA_GENOME.out.versions)
+
+    ch_foldchange = Channel.empty()
+
+    SIMULATE_RNASEQ_READS(
+        PREPARE_RNA_GENOME.out.filtered_txfasta,
+        PREPARE_RNA_GENOME.out.filtered_transcript_data,
+        PREPARE_RNA_GENOME.out.gene_lists,
+        ch_foldchange,
+        PREPARE_RNA_GENOME.out.gene_list_association
+    )
+
+    ch_versions = ch_versions.mix(SIMULATE_RNASEQ_READS.out.versions)
+
+    // Set to true in test.config to run the test with a smaller dataset
+    ch_rna_simreads = params.istest
+        ? SIMULATE_RNASEQ_READS.out.simreads.take(params.test_limit)
+        : SIMULATE_RNASEQ_READS.out.simreads
+
+    QUANTIFY_DEANALYSIS_ENRICH_VALIDATE(
+        ch_rna_simreads,
+        PREPARE_RNA_GENOME.out.txfasta_index,
+        PREPARE_RNA_GENOME.out.filtered_annotation,
+        PREPARE_RNA_GENOME.out.filtered_txfasta,
+        params.salmon_alignmode,
+        params.salmon_libtype,
+        PREPARE_RNA_GENOME.out.filtered_transcript_data
+    )
+
+    ch_versions = ch_versions.mix(QUANTIFY_DEANALYSIS_ENRICH_VALIDATE.out.versions)
+
+    ch_rna_scenario = QUANTIFY_DEANALYSIS_ENRICH_VALIDATE.out.deseq2_tx2gene
+        .map { m, tx ->
+            return [m, false, m.genes]
+        }
+    ch_scenarios = ch_scenarios.mix(ch_rna_scenario)
+
+/*
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    SINGLE MODULE TO GENERATE PLAUSIBLE SCENARIOS WITH LLM
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+*/
     AISCENARIOS(ch_scenarios)
 
     ch_versions = ch_versions.mix(AISCENARIOS.out.versions)
