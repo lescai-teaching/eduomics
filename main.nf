@@ -32,15 +32,16 @@ include { getGenomeAttribute           } from './subworkflows/local/utils_nfcore
 
 // getting attributes for genome files
 params.fasta           = getGenomeAttribute('fasta')
-params.gnomad_tbi      = getGenomeAttribute('germline_resource_tbi')
-params.mills_tbi       = getGenomeAttribute('known_indels_tbi')
-params.vcf1000g_tbi    = getGenomeAttribute('known_snps_tbi')
-params.dbsnp_tbi       = getGenomeAttribute('dbsnp_tbi')
 params.gnomad_vcf      = getGenomeAttribute('germline_resource')
+params.gnomad_tbi      = getGenomeAttribute('germline_resource_tbi')
 params.mills_vcf       = getGenomeAttribute('known_indels')
+params.mills_tbi       = getGenomeAttribute('known_indels_tbi')
 params.vcf1000g_vcf    = getGenomeAttribute('known_snps')
+params.vcf1000g_tbi    = getGenomeAttribute('known_snps_tbi')
 params.dbsnp_vcf       = getGenomeAttribute('dbsnp')
-params.clinvar         = getGenomeAttribute('clinvar_vcf')
+params.dbsnp_tbi       = getGenomeAttribute('dbsnp_tbi')
+params.clinvar_vcf     = getGenomeAttribute('clinvar_vcf')
+params.clinvar_tbi     = getGenomeAttribute('clinvar_vcf')
 params.gff3            = getGenomeAttribute('gff3')
 params.txfasta         = getGenomeAttribute('txfasta')
 params.bwa_index       = getGenomeAttribute('bwa_index')
@@ -86,7 +87,7 @@ workflow NFCORE_EDUOMICS {
     ch_dbsnp_vcf      = Channel.fromPath(params.dbsnp_vcf)
     ch_dbsnp_tbi      = Channel.fromPath(params.dbsnp_tbi)
     ch_dbsnp_vcf_tbi  = ch_dbsnp_vcf.combine(ch_dbsnp_tbi)
-    ch_clinvar        = Channel.fromPath(params.clinvar)
+    ch_clinvar_vcf    = Channel.fromPath(params.clinvar_vcf)
 
     //
     // WORKFLOW: Run pipeline
@@ -102,7 +103,7 @@ workflow NFCORE_EDUOMICS {
         ch_mills_vcf_tbi,
         ch_1000g_vcf_tbi,
         ch_dbsnp_vcf_tbi,
-        ch_clinvar
+        ch_clinvar_vcf
     )
 
     emit:
