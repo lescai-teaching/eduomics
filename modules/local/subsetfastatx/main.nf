@@ -12,9 +12,9 @@ process SUBSETFASTATX {
     tuple val(meta), path(filtered_transcript_data)
 
     output:
-    tuple val(meta), path ("gencode_transcripts_noversion.fasta")    , emit: filtered_txfasta
-    tuple val(meta), path ("subsetfastatx_parsing_log.txt")          , emit: subsetfastatx_parsing_log
-    path "versions.yml"                                              , emit: versions
+    tuple val(meta), path ("gencode_transcripts_novers_*.fasta"), emit: filtered_txfasta
+    tuple val(meta), path ("subsetfastatx_parsing_log.txt")     , emit: subsetfastatx_parsing_log
+    path "versions.yml"                                         , emit: versions
 
     when:
     task.ext.when == null || task.ext.when
