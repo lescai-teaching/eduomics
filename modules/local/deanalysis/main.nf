@@ -24,7 +24,7 @@ process DEANALYSIS {
     def prefix = task.ext.prefix ?: "${meta.id}"
 
     """
-    Rscript ${baseDir}/bin/de_analysis.R \\
+    de_analysis.R \\
         '${meta.reps}' \\
         '${meta.groups}' \\
         '${transcriptData}' \\

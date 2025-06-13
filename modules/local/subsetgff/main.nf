@@ -27,7 +27,7 @@ process SUBSETGFF {
     def prefix = task.ext.prefix ?: "${meta.id}"
 
     """
-    Rscript ${baseDir}/bin/subset_gff.R ${meta.chromosome} ${meta.simthreshold} ${gff3}
+    subset_gff.R ${meta.chromosome} ${meta.simthreshold} ${gff3}
 
     cat <<-END_VERSIONS > versions.yml
     "${task.process}":

@@ -23,7 +23,7 @@ process ENRICHMENT {
     def prefix = task.ext.prefix ?: "${meta.id}"
 
     """
-    Rscript ${baseDir}/bin/enrichment.R \\
+    enrichment.R \\
         '${resdata}' \\
         '${tx2gene}'
 

@@ -27,7 +27,7 @@ process COUNTMATRICES {
     def simgroups = meta.groups ?: 2
 
     """
-    Rscript ${baseDir}/bin/count_matrices.R \\
+    count_matrices.R \\
         '${meta.coverage}' \\
         '${simreps}' \\
         '${simgroups}' \\

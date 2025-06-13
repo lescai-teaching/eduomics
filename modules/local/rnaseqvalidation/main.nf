@@ -25,7 +25,7 @@ process RNASEQVALIDATION {
     def prefix = task.ext.prefix ?: "${meta.id}"
 
     """
-    Rscript ${baseDir}/bin/rnaseqvalidation.R ${enrichment_rds}
+    rnaseqvalidation.R ${enrichment_rds}
 
     if [ "\$(cat validation_result.txt)" == "GOOD SIMULATION" ]; then
         mkdir -p rnaseq_validation/validated_reads

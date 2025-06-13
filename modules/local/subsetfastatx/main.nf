@@ -24,7 +24,7 @@ process SUBSETFASTATX {
     def prefix = task.ext.prefix ?: "${meta.id}"
 
     """
-    Rscript ${baseDir}/bin/subset_fastatx.R ${meta.chromosome} ${txfasta} ${filtered_transcript_data}
+    subset_fastatx.R ${meta.chromosome} ${txfasta} ${filtered_transcript_data}
 
     cat <<-END_VERSIONS > versions.yml
     "${task.process}":
