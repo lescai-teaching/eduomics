@@ -27,15 +27,15 @@ process PYCONVERTOSIM {
     """
     convert_vcf_to_variation.py \
         -i ${vcf_benign} \
-        -o ${prefix}_base_variation.txt \
+        -o ${prefix}_base_variation_unsorted.txt \
         -n True
 
     convert_vcf_to_variation.py \
         -i ${vcf_pathogenic} \
-        -o ${prefix}_patho_variation.txt
+        -o ${prefix}_patho_variation_unsorted.txt
 
-    sort -k4 -n ${prefix}_base_variation.txt > tmp && mv tmp ${prefix}_base_variation.txt
-    sort -k4 -n ${prefix}_patho_variation.txt > tmp && mv tmp ${prefix}_patho_variation.txt
+    sort -k4 -n ${prefix}_base_variation_unsorted.txt > ${prefix}_base_variation.txt
+    sort -k4 -n ${prefix}_patho_variation_unsorted.txt > ${prefix}_patho_variation.txt
 
     # Process pathogenic variants one by one
     counter=0
@@ -44,8 +44,8 @@ process PYCONVERTOSIM {
         counter=\$((counter+1))
         variant=\$(echo -e \"\$line\" | awk -F'\\t' '{print \$3 "-" \$4 "-" \$5 "-" \$6}')
         cp ${prefix}_base_variation.txt ${prefix}_simvar_\${variant}_\${counter}.txt
-        echo "\$line" >> ${prefix}_simvar_\${variant}_\${counter}.txt
-        sort -k4 -n ${prefix}_simvar_\${variant}_\${counter}.txt > tmp && mv tmp ${prefix}_simvar_\${variant}_\${counter}.txt
+        echo "\$line" >> ${prefix}_simvar_\${variant}_\${counter}_unsorted.txt
+        sort -k4 -n ${prefix}_simvar_\${variant}_\${counter}_unsorted.txt > ${prefix}_simvar_\${variant}_\${counter}.txt
     done < ${prefix}_patho_variation.txt
 
     cat <<-END_VERSIONS > versions.yml
