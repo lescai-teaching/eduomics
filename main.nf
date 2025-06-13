@@ -176,37 +176,37 @@ output {
 
     dnasimulation {
         path { meta, files ->
-            "dna_simulations/${meta.id}/${meta.simulatedvar}"
+            "${params.outdir}/dna_simulations/${meta.id}/${meta.simulatedvar}"
         }
     }
 
     dnabundle {
         path { meta, files ->
-            "dna_simulations/${meta.id}/references"
+            "${params.outdir}/dna_simulations/${meta.id}/references"
         }
     }
 
     rnasimulation {
         path { meta, files ->
             def simfolder = meta.genes.take(16)
-            "rna_simulations/${meta.id}/${simfolder}"
+            "${params.outdir}/rna_simulations/${meta.id}/${simfolder}"
         }
     }
 
     rnabundle {
         path { meta, files ->
-            "rna_simulations/${meta.id}/references"
+            "${params.outdir}/rna_simulations/${meta.id}/references"
         }
     }
 
     scenario {
         path { meta, text ->
             if (meta.type == "dna"){
-                "dna_simulations/${meta.id}/${meta.simulatedvar}"
+                "${params.outdir}/dna_simulations/${meta.id}/${meta.simulatedvar}"
             }
             else {
                 def simfolder = meta.genes.take(16)
-                "rna_simulations/${meta.id}/${simfolder}"
+                "${params.outdir}/rna_simulations/${meta.id}/${simfolder}"
             }
         }
     }
