@@ -88,6 +88,7 @@ workflow EDUOMICS {
             .map { meta, fasta, fai -> [fasta, fai] }
 
     ch_simulation_profile = FASTA_WGSIM_TO_PROFILE.out.profile.first() // has to be a value channel
+    ch_simulation_profile.dump(tag: 'simulation profile')
 
     PROFILE_SIMULATE_VARS_FASTQ(
         SUBSET_REFERENCES_TO_TARGETS.out.clinvar_benign_vcf,
