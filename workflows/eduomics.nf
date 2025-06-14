@@ -147,7 +147,7 @@ workflow EDUOMICS {
     ch_versions = ch_versions.mix(PREPARE_RNA_GENOME.out.versions)
 
     SIMULATE_RNASEQ_READS(
-        PREPARE_RNA_GENOME.out.filtered_txfasta,
+        PREPARE_RNA_GENOME.out.filtered_txfasta.first(), // make sure it is interpreted as a value channel
         PREPARE_RNA_GENOME.out.filtered_transcript_data,
         PREPARE_RNA_GENOME.out.gene_lists,
         PREPARE_RNA_GENOME.out.gene_list_association

@@ -42,8 +42,12 @@ workflow SIMULATE_RNASEQ_READS {
     ch_matrices_with_genes.dump(tag: 'count matrices with genes')
     ch_fold_change = Channel.value([[id: 'null'], []]) // this simulation is currently not implemented
 
+    ch_matrices_with_genes_limited = params.istest
+        ? ch_matrices_with_genes.take(params.test_limit)
+        : ch_matrices_with_genes
+
     // Simulate the reads
-    POLYESTER_SIMULATE(ch_matrices_with_genes, ch_fold_change, ch_filtered_txfasta)
+    POLYESTER_SIMULATE(ch_matrices_with_genes_limited, ch_fold_change, ch_filtered_txfasta)
     ch_versions = ch_versions.mix(POLYESTER_SIMULATE.out.versions.first())
 
     emit:
