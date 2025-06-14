@@ -46,7 +46,7 @@ workflow PREPARE_RNA_GENOME {
     filtered_txfasta         = SUBSETFASTATX.out.filtered_txfasta.collect()     // channel: [ val(meta), path(filtered_txfasta)                         ]
     txfasta_index            = SALMON_INDEX.out.index.collect()                 // channel: [ path(salmon_index)                                        ]
     log_files                = ch_log                                           // channel: [ val(meta), path(log_files)                                ]
-    rna_bundle               = ch_rna_bundle.fist()                             // channel: [ val(meta), [path(txfasta), path(gff3), path(salmonindex)] ]
+    rna_bundle               = ch_rna_bundle.first()                             // channel: [ val(meta), [path(txfasta), path(gff3), path(salmonindex)] ]
     versions                 = ch_versions                                      // channel: [ versions.yml                                              ]
 }
 
