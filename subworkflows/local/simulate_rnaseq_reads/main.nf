@@ -7,7 +7,6 @@ workflow SIMULATE_RNASEQ_READS {
     ch_filtered_txfasta            // channel: [ val(meta), path(filtered_txfasta)        ]
     ch_filtered_transcriptData     // channel: [ val(meta), path(filtered_transcriptData) ]
     ch_genelists                   // channel: [ val(meta), path(genelists)               ]
-    ch_foldchange                  // channel: [ val(meta), path(foldchange)              ]
     ch_gene_list_association       // channel: [ val(meta), path(gene_list_association)     ]
 
     main:
@@ -41,9 +40,10 @@ workflow SIMULATE_RNASEQ_READS {
                 [newmeta, filterd_path] }
         }
     ch_matrices_with_genes.dump(tag: 'count matrices with genes')
+    ch_fold_change = Channel.value([[id: 'null'], []]) // this simulation is currently not implemented
 
     // Simulate the reads
-    POLYESTER_SIMULATE(ch_matrices_with_genes, ch_foldchange, ch_filtered_txfasta)
+    POLYESTER_SIMULATE(ch_matrices_with_genes, ch_fold_change, ch_filtered_txfasta)
     ch_versions = ch_versions.mix(POLYESTER_SIMULATE.out.versions.first())
 
     emit:
