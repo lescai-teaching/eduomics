@@ -14,31 +14,20 @@ include { DNAVALIDATION                  } from '../../../modules/local/dnavalid
 workflow FASTQ_VARIANT_TO_VALIDATION {
 
     take:
-    reads          // channel: [mandatory] [ val(meta), [ reads ] ] <- NB: this channel contains 4 reads 2 * case + 2 * control / modified in sub-workflow
-    ch_fasta       // channel: [mandatory] [ val(meta), [ fasta ] ]
-    ch_fai         // channel: [mandatory] [ val(meta), [fai] ]
-    ch_dict        // channel: [mandatory] [ val(meta), [dict] ]
-    ch_bwa_index   // channel: [mandatory] [ val(meta), [bwa_index] ]
-    ch_dbsnp       // channel: [mandatory] [ [dbsnp] ]
-    ch_dbsnp_tbi   // channel: [mandatory] [ [dbsnp_tbi] ]
-    ch_mills       // channel: [mandatory] [ [mills] ]
-    ch_mills_tbi   // channel: [mandatory] [ [mills_tbi] ]
-    ch_capture     // channel: [mandatory] [ [capture] ]
+    reads       // channel: [mandatory] [ val(meta), [ reads ] ] <- NB: this channel contains 4 reads 2 * case + 2 * control / modified in sub-workflow
+    fasta       // channel: [mandatory] [ val(meta), [ fasta ] ]
+    fai         // channel: [mandatory] [ val(meta), [fai] ]
+    dict        // channel: [mandatory] [ val(meta), [dict] ]
+    bwa_index   // channel: [mandatory] [ val(meta), [bwa_index] ]
+    dbsnp       // channel: [mandatory] [ [dbsnp] ]
+    dbsnp_tbi   // channel: [mandatory] [ [dbsnp_tbi] ]
+    mills       // channel: [mandatory] [ [mills] ]
+    mills_tbi   // channel: [mandatory] [ [mills_tbi] ]
+    capture     // channel: [mandatory] [ [capture] ]
 
     main:
 
     ch_versions = Channel.empty()
-
-    // all references as value channels
-    fasta     = ch_fasta.collect()
-    fai       = ch_fai.collect
-    dict      = ch_dict.collect()
-    bwa_index = ch_bwa_index.collect()
-    dbsnp     = ch_dbsnp.collect()
-    dbsnp_tbi = ch_dbsnp_tbi.collect()
-    mills     = ch_mills.collect()
-    mills_tbi = ch_mills_tbi.collect
-    capture   = ch_capture.collect()
 
     simulated_reads_ch = reads
             .map{ m, files ->
