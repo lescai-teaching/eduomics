@@ -23,12 +23,16 @@ workflow PROFILE_SIMULATE_VARS_FASTQ {
                                                 def newmeta = m + [simulatedvar: "${var}"]
                                                 return [newmeta, file]
                                                 } }
+    ch_variants_to_inject = params.istest
+        ? variants_to_inject.take(params.test_limit)
+        : variants_to_inject
+
     variants_to_inject.dump(tag: 'variants to inject')
 
     SIMUSCOP_SIMUREADS(
         simprofile,
         fasta_fai,
-        variants_to_inject,
+        ch_variants_to_inject,
         capture
     )
     ch_versions = ch_versions.mix(SIMUSCOP_SIMUREADS.out.versions)
