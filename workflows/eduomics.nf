@@ -90,12 +90,16 @@ workflow EDUOMICS {
     ch_simulation_profile = FASTA_WGSIM_TO_PROFILE.out.profile.first() // has to be a value channel
     ch_simulation_profile.dump(tag: 'simulation profile')
 
+    ch_benign_vcf     = SUBSET_REFERENCES_TO_TARGETS.out.clinvar_benign_vcf.first()     // has to be a value channel
+    ch_pathogenic_vcf = SUBSET_REFERENCES_TO_TARGETS.out.clinvar_pathogenic_vcf.first() // has to be a value channel
+    ch_padded_capture = SUBSET_REFERENCES_TO_TARGETS.out.target_bed_pad500.first()      // has to be a value channel
+
     PROFILE_SIMULATE_VARS_FASTQ(
-        SUBSET_REFERENCES_TO_TARGETS.out.clinvar_benign_vcf,
-        SUBSET_REFERENCES_TO_TARGETS.out.clinvar_pathogenic_vcf,
+        ch_benign_vcf,
+        ch_pathogenic_vcf,
         ch_simulation_profile,
         ch_fasta_fai,
-        SUBSET_REFERENCES_TO_TARGETS.out.target_bed_pad500
+        ch_padded_capture
     )
 
     ch_versions = ch_versions.mix(PROFILE_SIMULATE_VARS_FASTQ.out.versions)
