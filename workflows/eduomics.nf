@@ -87,10 +87,12 @@ workflow EDUOMICS {
             .join(SUBSET_REFERENCES_TO_TARGETS.out.target_fai)
             .map { meta, fasta, fai -> [fasta, fai] }
 
+    ch_simulation_profile = FASTA_WGSIM_TO_PROFILE.out.profile.first() // has to be a value channel
+
     PROFILE_SIMULATE_VARS_FASTQ(
         SUBSET_REFERENCES_TO_TARGETS.out.clinvar_benign_vcf,
         SUBSET_REFERENCES_TO_TARGETS.out.clinvar_pathogenic_vcf,
-        FASTA_WGSIM_TO_PROFILE.out.profile,
+        ch_simulation_profile,
         ch_fasta_fai,
         SUBSET_REFERENCES_TO_TARGETS.out.target_bed_pad500
     )
@@ -101,6 +103,8 @@ workflow EDUOMICS {
     ch_dna_simreads = params.istest
         ? PROFILE_SIMULATE_VARS_FASTQ.out.simreads.take(params.test_limit)
         : PROFILE_SIMULATE_VARS_FASTQ.out.simreads
+
+    ch_dna_simreads.dump(tag: 'simulated reads')
 
     FASTQ_VARIANT_TO_VALIDATION(
         ch_dna_simreads,

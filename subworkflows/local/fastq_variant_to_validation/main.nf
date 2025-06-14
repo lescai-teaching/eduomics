@@ -43,6 +43,7 @@ workflow FASTQ_VARIANT_TO_VALIDATION {
                 m, samplereads ->
                 [m, samplereads]
             }
+    simulated_reads_ch.dump(tag: 'sim reads by sample')
 
     // align simulated reads to their reference
     BWA_MEM( simulated_reads_ch, bwa_index, fasta, true )
