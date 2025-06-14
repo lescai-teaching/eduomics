@@ -87,16 +87,15 @@ workflow EDUOMICS {
             .join(SUBSET_REFERENCES_TO_TARGETS.out.target_fai)
             .map { meta, fasta, fai -> [fasta, fai] }
 
-    ch_simulation_profile = FASTA_WGSIM_TO_PROFILE.out.profile.first() // has to be a value channel
-    ch_simulation_profile.dump(tag: 'simulation profile')
+    FASTA_WGSIM_TO_PROFILE.out.profile.dump(tag: 'simulation profile')
 
 
     PROFILE_SIMULATE_VARS_FASTQ(
-        ch_benign_vcf,
-        ch_pathogenic_vcf,
-        ch_simulation_profile,
+        SUBSET_REFERENCES_TO_TARGETS.out.clinvar_benign_vcf,
+        SUBSET_REFERENCES_TO_TARGETS.out.clinvar_pathogenic_vcf,
+        FASTA_WGSIM_TO_PROFILE.out.profile,
         ch_fasta_fai,
-        ch_padded_capture
+        SUBSET_REFERENCES_TO_TARGETS.out.target_bed_pad500
     )
 
     ch_versions = ch_versions.mix(PROFILE_SIMULATE_VARS_FASTQ.out.versions)
@@ -144,7 +143,7 @@ workflow EDUOMICS {
     ch_versions = ch_versions.mix(PREPARE_RNA_GENOME.out.versions)
 
     SIMULATE_RNASEQ_READS(
-        PREPARE_RNA_GENOME.out.filtered_txfasta.first(), // make sure it is interpreted as a value channel
+        PREPARE_RNA_GENOME.out.filtered_txfasta,
         PREPARE_RNA_GENOME.out.filtered_transcript_data,
         PREPARE_RNA_GENOME.out.gene_lists,
         PREPARE_RNA_GENOME.out.gene_list_association
@@ -159,12 +158,12 @@ workflow EDUOMICS {
 
     QUANTIFY_DEANALYSIS_ENRICH_VALIDATE(
         ch_rna_simreads,
-        PREPARE_RNA_GENOME.out.txfasta_index.first(), // make sure it is interpreted as a value channel
-        PREPARE_RNA_GENOME.out.filtered_annotation.first(), // make sure it is interpreted as a value channel
-        PREPARE_RNA_GENOME.out.filtered_txfasta.first(), // make sure it is interpreted as a value channel
+        PREPARE_RNA_GENOME.out.txfasta_index,
+        PREPARE_RNA_GENOME.out.filtered_annotation,
+        PREPARE_RNA_GENOME.out.filtered_txfasta,
         params.salmon_alignmode,
         params.salmon_libtype,
-        PREPARE_RNA_GENOME.out.filtered_transcript_data.first() // make sure it is interpreted as a value channel
+        PREPARE_RNA_GENOME.out.filtered_transcript_data
     )
 
     ch_versions = ch_versions.mix(QUANTIFY_DEANALYSIS_ENRICH_VALIDATE.out.versions)
