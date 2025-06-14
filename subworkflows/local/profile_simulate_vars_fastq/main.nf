@@ -23,7 +23,7 @@ workflow PROFILE_SIMULATE_VARS_FASTQ {
                                                 def newmeta = m + [simulatedvar: "${var}"]
                                                 return [newmeta, file]
                                                 } }
-
+    variants_to_inject.dump(tag: 'variants to inject')
 
     SIMUSCOP_SIMUREADS(
         simprofile,
