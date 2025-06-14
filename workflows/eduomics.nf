@@ -162,12 +162,12 @@ workflow EDUOMICS {
 
     QUANTIFY_DEANALYSIS_ENRICH_VALIDATE(
         ch_rna_simreads,
-        PREPARE_RNA_GENOME.out.txfasta_index,
-        PREPARE_RNA_GENOME.out.filtered_annotation,
-        PREPARE_RNA_GENOME.out.filtered_txfasta,
+        PREPARE_RNA_GENOME.out.txfasta_index.first(), // make sure it is interpreted as a value channel
+        PREPARE_RNA_GENOME.out.filtered_annotation.first(), // make sure it is interpreted as a value channel
+        PREPARE_RNA_GENOME.out.filtered_txfasta.first(), // make sure it is interpreted as a value channel
         params.salmon_alignmode,
         params.salmon_libtype,
-        PREPARE_RNA_GENOME.out.filtered_transcript_data
+        PREPARE_RNA_GENOME.out.filtered_transcript_data.first() // make sure it is interpreted as a value channel
     )
 
     ch_versions = ch_versions.mix(QUANTIFY_DEANALYSIS_ENRICH_VALIDATE.out.versions)
