@@ -110,9 +110,9 @@ workflow FASTA_WGSIM_TO_PROFILE {
 
 
     emit:
-    bam      = GATK4_APPLYBQSR.out.bam              // channel: [ val(meta), [ bam ] ]
-    vcf      = GATK4_HAPLOTYPECALLER.out.vcf        // channel: [ val(meta), [ vcf ] ]
-    profile  = SIMUSCOP_SEQTOPROFILE.out.profile    // channel: [ val(meta), [ profile ] ]
-    versions = ch_versions                          // channel: [ versions.yml ]
+    bam      = GATK4_APPLYBQSR.out.bam.collect()              // channel: [ val(meta), [ bam ] ]
+    vcf      = GATK4_HAPLOTYPECALLER.out.vcf.collect()        // channel: [ val(meta), [ vcf ] ]
+    profile  = SIMUSCOP_SEQTOPROFILE.out.profile.collect()    // channel: [ val(meta), [ profile ] ]
+    versions = ch_versions                                    // channel: [ versions.yml ]
 }
 
