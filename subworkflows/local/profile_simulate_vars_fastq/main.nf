@@ -28,6 +28,7 @@ workflow PROFILE_SIMULATE_VARS_FASTQ {
         : variants_to_inject
 
     variants_to_inject.dump(tag: 'variants to inject')
+    ch_variants_to_inject.dump(tag: 'variants selected for injection')
 
     SIMUSCOP_SIMUREADS(
         simprofile,
