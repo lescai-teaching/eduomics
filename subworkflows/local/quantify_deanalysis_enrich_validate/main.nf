@@ -46,6 +46,8 @@ workflow QUANTIFY_DEANALYSIS_ENRICH_VALIDATE {
     )
     ch_versions = ch_versions.mix(SALMON_QUANT.out.versions.first())
 
+    SALMON_QUANT.out.results.dump(tag: 'salmon quant results')
+
     // Restore original `meta.id` for downstream DE analysis (grouping by meta)
     ch_deanalysis_input = SALMON_QUANT.out.results.map { meta, quant_dir ->
         def cleaned_meta = meta.clone()
