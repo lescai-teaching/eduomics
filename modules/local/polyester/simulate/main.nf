@@ -1,6 +1,6 @@
 process POLYESTER_SIMULATE {
     tag "$meta.id"
-    label 'process_single'
+    label 'process_medium'
 
     conda "${moduleDir}/environment.yml"
     container "${ workflow.containerEngine == 'singularity' && !task.ext.singularity_pull_docker_container ?
@@ -29,8 +29,8 @@ process POLYESTER_SIMULATE {
     def readData = countmatrix ? "countmat = readRDS('${countmatrix}')" : "fold_changes = readRDS('${foldchange}')"
     def readsPerTxFactor = meta.coverage ?: 30
     def simulation_function = countmatrix ?
-        "simulate_experiment_countmat('${filtered_txfasta}', readmat=countmat, outdir='simulated_reads')" :
-        "simulate_experiment('${filtered_txfasta}', reads_per_transcript=readspertx, ${numRepsString}, fold_changes=fold_changes, outdir='simulated_reads')"
+        "simulate_experiment_countmat('${filtered_txfasta}', readmat=countmat, outdir='simulated_reads', cores = ${task.cpus}, error_model = 'illumina5', gzip = TRUE)" :
+        "simulate_experiment('${filtered_txfasta}', reads_per_transcript=readspertx, ${numRepsString}, fold_changes=fold_changes, outdir='simulated_reads', cores = ${task.cpus}, error_model = 'illumina5', gzip = TRUE)"
 
     """
     cat <<EOF >simulate_reads.R
@@ -50,10 +50,6 @@ process POLYESTER_SIMULATE {
     EOF
 
     Rscript simulate_reads.R
-
-    for file in simulated_reads/*.fasta; do
-        gzip -f \${file}
-    done
 
     cat <<-END_VERSIONS > versions.yml
     "${task.process}":
