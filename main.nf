@@ -78,7 +78,7 @@ workflow NFCORE_EDUOMICS {
     ch_fasta          = Channel.fromPath(params.fasta).collect()
     ch_txfasta        = Channel.fromPath(params.txfasta).collect()
     ch_gff3           = Channel.fromPath(params.gff3).collect()
-    ch_capture_bed    = input_bytype_ch.dna.map { meta, capture -> capture }.collect()
+    ch_capture_bed    = input_ch_dna.map { meta, capture -> capture }.collect()
     ch_gnomad_vcf     = Channel.fromPath(params.gnomad_vcf).collect()
     ch_gnomad_tbi     = Channel.fromPath(params.gnomad_tbi).collect()
     ch_gnomad_vcf_tbi = ch_gnomad_vcf.combine(ch_gnomad_tbi)
