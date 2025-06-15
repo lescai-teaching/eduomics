@@ -29,6 +29,8 @@ workflow QUANTIFY_DEANALYSIS_ENRICH_VALIDATE {
         tuple(new_meta, reads)
     }
 
+    ch_simreads_modified.dump(tag: "rna simreads modified")
+
     // Strip away meta for filtered gff3 and transcript fasta
     ch_filteredgff3_nometa = ch_filteredgff3.map { meta, gff3 -> gff3 }
     ch_filteredtxfasta_nometa = ch_filteredtxfasta.map { meta, txfasta -> txfasta }
