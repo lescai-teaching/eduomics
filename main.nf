@@ -70,6 +70,10 @@ workflow NFCORE_EDUOMICS {
     }
     .set{ input_bytype_ch }
 
+    // handle samplesheet with one type only
+    input_ch_dna = input_bytype_ch.dna.ifEmpty([ [id: 'null'], [] ])
+    input_ch_rna = input_bytype_ch.rna.ifEmpty([ [id: 'null'], [] ])
+
     // CREATING CHANNELS FROM REFERENCE FILES
     ch_fasta          = Channel.fromPath(params.fasta).collect()
     ch_txfasta        = Channel.fromPath(params.txfasta).collect()
@@ -93,8 +97,8 @@ workflow NFCORE_EDUOMICS {
     // WORKFLOW: Run pipeline
     //
     EDUOMICS (
-        input_bytype_ch.dna,
-        input_bytype_ch.rna,
+        input_ch_dna,
+        input_ch_rna,
         ch_fasta,
         ch_txfasta,
         ch_gff3,
