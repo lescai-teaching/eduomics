@@ -91,10 +91,12 @@ workflow EDUOMICS {
     // simulated variant. Without converting to a value channel the paired
     // reference files would be consumed after the first use, resulting in
     // `SIMUSCOP_SIMUREADS` running only once.
-    ch_fasta_fai = SUBSET_REFERENCES_TO_TARGETS.out.target_fa
+    ch_fasta_fai = SUBSET_REFERENCES_TO_TARGETS.out.target_fa ?
+            SUBSET_REFERENCES_TO_TARGETS.out.target_fa
             .join(SUBSET_REFERENCES_TO_TARGETS.out.target_fai)
             .map { meta, fasta, fai -> [fasta, fai] }
             .first()
+            : Channel.empty
 
     FASTA_WGSIM_TO_PROFILE.out.profile.dump(tag: 'simulation profile')
 
