@@ -70,31 +70,35 @@ workflow NFCORE_EDUOMICS {
     }
     .set{ input_bytype_ch }
 
+    // handle samplesheet with one type only
+    input_ch_dna = input_bytype_ch.dna.ifEmpty([ [], [] ])
+    input_ch_rna = input_bytype_ch.rna.ifEmpty([ [], [] ])
+
     // CREATING CHANNELS FROM REFERENCE FILES
-    ch_fasta          = Channel.fromPath(params.fasta)
-    ch_txfasta        = Channel.fromPath(params.txfasta)
-    ch_gff3           = Channel.fromPath(params.gff3)
-    ch_capture_bed    = input_bytype_ch.dna.map { meta, capture -> capture }
-    ch_gnomad_vcf     = Channel.fromPath(params.gnomad_vcf)
-    ch_gnomad_tbi     = Channel.fromPath(params.gnomad_tbi)
+    ch_fasta          = Channel.fromPath(params.fasta).collect()
+    ch_txfasta        = Channel.fromPath(params.txfasta).collect()
+    ch_gff3           = Channel.fromPath(params.gff3).collect()
+    ch_capture_bed    = input_ch_dna.map { meta, capture -> capture }.collect()
+    ch_gnomad_vcf     = Channel.fromPath(params.gnomad_vcf).collect()
+    ch_gnomad_tbi     = Channel.fromPath(params.gnomad_tbi).collect()
     ch_gnomad_vcf_tbi = ch_gnomad_vcf.combine(ch_gnomad_tbi)
-    ch_mills_vcf      = Channel.fromPath(params.mills_vcf)
-    ch_mills_tbi      = Channel.fromPath(params.mills_tbi)
+    ch_mills_vcf      = Channel.fromPath(params.mills_vcf).collect()
+    ch_mills_tbi      = Channel.fromPath(params.mills_tbi).collect()
     ch_mills_vcf_tbi  = ch_mills_vcf.combine(ch_mills_tbi)
-    ch_1000g_vcf      = Channel.fromPath(params.vcf1000g_vcf)
-    ch_1000g_tbi      = Channel.fromPath(params.vcf1000g_tbi)
+    ch_1000g_vcf      = Channel.fromPath(params.vcf1000g_vcf).collect()
+    ch_1000g_tbi      = Channel.fromPath(params.vcf1000g_tbi).collect()
     ch_1000g_vcf_tbi  = ch_1000g_vcf.combine(ch_1000g_tbi)
-    ch_dbsnp_vcf      = Channel.fromPath(params.dbsnp_vcf)
-    ch_dbsnp_tbi      = Channel.fromPath(params.dbsnp_tbi)
+    ch_dbsnp_vcf      = Channel.fromPath(params.dbsnp_vcf).collect()
+    ch_dbsnp_tbi      = Channel.fromPath(params.dbsnp_tbi).collect()
     ch_dbsnp_vcf_tbi  = ch_dbsnp_vcf.combine(ch_dbsnp_tbi)
-    ch_clinvar_vcf    = Channel.fromPath(params.clinvar_vcf)
+    ch_clinvar_vcf    = Channel.fromPath(params.clinvar_vcf).collect()
 
     //
     // WORKFLOW: Run pipeline
     //
     EDUOMICS (
-        input_bytype_ch.dna,
-        input_bytype_ch.rna,
+        input_ch_dna,
+        input_ch_rna,
         ch_fasta,
         ch_txfasta,
         ch_gff3,

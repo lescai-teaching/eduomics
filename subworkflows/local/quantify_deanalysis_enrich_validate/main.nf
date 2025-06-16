@@ -29,6 +29,8 @@ workflow QUANTIFY_DEANALYSIS_ENRICH_VALIDATE {
         tuple(new_meta, reads)
     }
 
+    ch_simreads_modified.dump(tag: "rna simreads modified")
+
     // Strip away meta for filtered gff3 and transcript fasta
     ch_filteredgff3_nometa = ch_filteredgff3.map { meta, gff3 -> gff3 }
     ch_filteredtxfasta_nometa = ch_filteredtxfasta.map { meta, txfasta -> txfasta }
@@ -44,6 +46,8 @@ workflow QUANTIFY_DEANALYSIS_ENRICH_VALIDATE {
     )
     ch_versions = ch_versions.mix(SALMON_QUANT.out.versions.first())
 
+    SALMON_QUANT.out.results.dump(tag: 'salmon quant results')
+
     // Restore original `meta.id` for downstream DE analysis (grouping by meta)
     ch_deanalysis_input = SALMON_QUANT.out.results.map { meta, quant_dir ->
         def cleaned_meta = meta.clone()
@@ -53,6 +57,8 @@ workflow QUANTIFY_DEANALYSIS_ENRICH_VALIDATE {
         tuple(cleaned_meta, quant_dir)
     }
     .groupTuple(by: 0)
+
+    ch_deanalysis_input.dump(tag: 'quant dirs')
 
     // Run differential expression analysis
     DEANALYSIS ( ch_deanalysis_input, ch_filtered_transcriptData )
