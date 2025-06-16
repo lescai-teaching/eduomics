@@ -95,8 +95,7 @@ workflow EDUOMICS {
             SUBSET_REFERENCES_TO_TARGETS.out.target_fa
             .join(SUBSET_REFERENCES_TO_TARGETS.out.target_fai)
             .map { meta, fasta, fai -> [fasta, fai] }
-            .first()
-            : Channel.empty
+            .collect()
 
     FASTA_WGSIM_TO_PROFILE.out.profile.dump(tag: 'simulation profile')
 
