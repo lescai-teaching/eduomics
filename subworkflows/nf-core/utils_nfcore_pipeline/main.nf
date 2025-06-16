@@ -213,10 +213,10 @@ def getSingleReport(multiqc_reports) {
             log.warn("[${workflow.manifest.name}] No reports found from process 'MULTIQC'")
             return null
         } else if (multiqc_reports.size() == 1) {
-            return multiqc_reports.take(1)
+            return multiqc_reports.first()
         } else {
             log.warn("[${workflow.manifest.name}] Found multiple reports from process 'MULTIQC', will use only one")
-            return multiqc_reports.take(1)
+            return multiqc_reports.first()
         }
     } else {
         return null
