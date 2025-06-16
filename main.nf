@@ -162,13 +162,13 @@ workflow {
     // software versions
     softwareversions = NFCORE_EDUOMICS.out.versions
     //simulation results
-    dnasimulation    = NFCORE_EDUOMICS.out.fastq_validated_variants
-    rnasimulation    = NFCORE_EDUOMICS.out.rnaseq_validated_reads
+    dnasimulation    = NFCORE_EDUOMICS.out.fastq_validated_variants.ifEmpty([[id:'none', simulatedvar: 'none'], []])
+    rnasimulation    = NFCORE_EDUOMICS.out.rnaseq_validated_reads.ifEmpty([[id:'none', genes: 'none'], []])
     scenario         = NFCORE_EDUOMICS.out.scenario_description
     // dna reference and bundle needed for the analysis of simulated DNA data
-    dnabundle        = NFCORE_EDUOMICS.out.dnabundle
+    dnabundle        = NFCORE_EDUOMICS.out.dnabundle.ifEmpty([[id:'none', simulatedvar: 'none'], []])
     // rna reference and bundle needed for the analysis of simulated RNA data
-    rnabundle        = NFCORE_EDUOMICS.out.rnabundle
+    rnabundle        = NFCORE_EDUOMICS.out.rnabundle.ifEmpty([[id:'none', genes: 'none'], []])
 
 }
 
