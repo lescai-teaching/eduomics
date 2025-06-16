@@ -209,12 +209,12 @@ workflow EDUOMICS {
         ).set { ch_collated_versions }
 
     emit:
-    versions                 = ch_collated_versions.ifEmpty(Channel.empty())                                               // channel: [ path(versions.yml)                          ]
-    fastq_validated_variants = FASTQ_VARIANT_TO_VALIDATION.out.simulation.ifEmpty(Channel.empty())                         // channel: [ val(meta), path(validated_results_folder/*) ]
-    rnaseq_validated_reads   = QUANTIFY_DEANALYSIS_ENRICH_VALIDATE.out.rnaseq_validated_results.ifEmpty(Channel.empty())   // channel: [ val(meta), path(rnaseq_validation)          ]
-    dnabundle                = SUBSET_REFERENCES_TO_TARGETS.out.dna_bundle.ifEmpty(Channel.empty())                        // channel: [ val(meta), [all references bundle] ]
-    rnabundle                = PREPARE_RNA_GENOME.out.rna_bundle.ifEmpty(Channel.empty())                                  // channel: [ val(meta), [path(txfasta), path(gff3), path(salmonindex)] ]
-    scenario_description     = AISCENARIOS.out.scenario.ifEmpty(Channel.empty())                                           // channel: [ val(meta), path(scenario.txt)               ]
+    versions                 = ch_collated_versions                                               // channel: [ path(versions.yml)                          ]
+    fastq_validated_variants = FASTQ_VARIANT_TO_VALIDATION.out.simulation                         // channel: [ val(meta), path(validated_results_folder/*) ]
+    rnaseq_validated_reads   = QUANTIFY_DEANALYSIS_ENRICH_VALIDATE.out.rnaseq_validated_results   // channel: [ val(meta), path(rnaseq_validation)          ]
+    dnabundle                = SUBSET_REFERENCES_TO_TARGETS.out.dna_bundle                        // channel: [ val(meta), [all references bundle] ]
+    rnabundle                = PREPARE_RNA_GENOME.out.rna_bundle                                  // channel: [ val(meta), [path(txfasta), path(gff3), path(salmonindex)] ]
+    scenario_description     = AISCENARIOS.out.scenario                                           // channel: [ val(meta), path(scenario.txt)               ]
 
 }
 
