@@ -33,7 +33,7 @@ workflow FASTA_WGSIM_TO_PROFILE {
     BWA_MEM( WGSIM.out.fastq, bwa_index, fasta, true )
 
     SAMTOOLS_INDEX ( BWA_MEM.out.bam )
-    ch_versions = ch_versions.mix(SAMTOOLS_INDEX.out.versions.first())
+    ch_versions = ch_versions.mix(SAMTOOLS_INDEX.out.versions.ifEmpty([]).first())
 
     // ----> GATK4 MINI WORKFLOW to call normal variants <-----
 
@@ -42,12 +42,12 @@ workflow FASTA_WGSIM_TO_PROFILE {
         fasta.map{ meta, it -> [ it ] },
         fai.map{ meta, it -> [ it ] },
         )
-    ch_versions = ch_versions.mix(GATK4_MARKDUPLICATES.out.versions)
+    ch_versions = ch_versions.mix(GATK4_MARKDUPLICATES.out.versions.ifEmpty([]))
 
     empty_intervals_ch = Channel.value([[]])
 
     INDEX_MD(GATK4_MARKDUPLICATES.out.bam)
-    ch_versions = ch_versions.mix(INDEX_MD.out.versions)
+    ch_versions = ch_versions.mix(INDEX_MD.out.versions.ifEmpty([]))
 
     bam_for_recal = GATK4_MARKDUPLICATES.out.bam
                         .combine(INDEX_MD.out.bai, by: 0)
@@ -64,7 +64,7 @@ workflow FASTA_WGSIM_TO_PROFILE {
         known_sites_all.map{ it -> [[id:'sites'], it] },
         known_sites_all_tbi.map{ it -> [[id:'sites'], it] }
         )
-    ch_versions = ch_versions.mix(GATK4_BASERECALIBRATOR.out.versions)
+    ch_versions = ch_versions.mix(GATK4_BASERECALIBRATOR.out.versions.ifEmpty([]))
 
     bam_for_applybqsr = BWA_MEM.out.bam
         .combine(SAMTOOLS_INDEX.out.bai, by: 0)
@@ -77,7 +77,7 @@ workflow FASTA_WGSIM_TO_PROFILE {
         fai.map{ meta, it -> [ it ] },
         dict.map{ meta, it -> [ it ] }
     )
-    ch_versions = ch_versions.mix(GATK4_APPLYBQSR.out.versions)
+    ch_versions = ch_versions.mix(GATK4_APPLYBQSR.out.versions.ifEmpty([]))
 
     INDEX_RECAL(GATK4_APPLYBQSR.out.bam)
 
@@ -97,7 +97,7 @@ workflow FASTA_WGSIM_TO_PROFILE {
         dbsnp.map{ it -> [[id:'test'], it] },
         dbsnp_tbi.map{ it -> [[id:'test'], it] }
     )
-    ch_versions = ch_versions.mix(GATK4_HAPLOTYPECALLER.out.versions)
+    ch_versions = ch_versions.mix(GATK4_HAPLOTYPECALLER.out.versions.ifEmpty([]))
 
 
     SIMUSCOP_SEQTOPROFILE(
@@ -105,7 +105,7 @@ workflow FASTA_WGSIM_TO_PROFILE {
         GATK4_HAPLOTYPECALLER.out.vcf,
         fasta.map{ meta, it -> [ it ] }
     )
-    ch_versions = ch_versions.mix(SIMUSCOP_SEQTOPROFILE.out.versions)
+    ch_versions = ch_versions.mix(SIMUSCOP_SEQTOPROFILE.out.versions.ifEmpty([]))
 
 
 

@@ -17,7 +17,7 @@ workflow SIMULATE_RNASEQ_READS {
 
     // Generate count matrices
     COUNTMATRICES(ch_filtered_txfasta, ch_filtered_transcriptData, ch_genelists)
-    ch_versions = ch_versions.mix(COUNTMATRICES.out.versions.first())
+    ch_versions = ch_versions.mix(COUNTMATRICES.out.versions.ifEmpty([]))
 
     // Build gene map
     genesMap = ch_gene_list_association
@@ -48,7 +48,7 @@ workflow SIMULATE_RNASEQ_READS {
 
     // Simulate the reads
     POLYESTER_SIMULATE(ch_matrices_with_genes_limited, ch_fold_change, ch_filtered_txfasta)
-    ch_versions = ch_versions.mix(POLYESTER_SIMULATE.out.versions.first())
+    ch_versions = ch_versions.mix(POLYESTER_SIMULATE.out.versions.ifEmpty([]))
 
     emit:
     countMatrix    = COUNTMATRICES.out.simcountMatrix  // channel: [ val(meta),    path(countMatrix)    ]

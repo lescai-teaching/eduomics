@@ -33,19 +33,19 @@ workflow SUBSET_REFERENCES_TO_TARGETS {
     ch_fasta_with_meta = ch_meta.combine(ch_fasta).map { meta, fasta -> [meta, fasta] }
 
     SAMTOOLS_FAIDX_SUBSET ( ch_fasta_with_meta, [[],[]], ch_get_sizes )
-    ch_versions = ch_versions.mix(SAMTOOLS_FAIDX_SUBSET.out.versions)
+    ch_versions = ch_versions.mix(SAMTOOLS_FAIDX_SUBSET.out.versions.ifEmpty([]))
 
     SAMTOOLS_FAIDX_INDEX (SAMTOOLS_FAIDX_SUBSET.out.fa, [[],[]], ch_get_sizes )
-    ch_versions = ch_versions.mix(SAMTOOLS_FAIDX_INDEX.out.versions)
+    ch_versions = ch_versions.mix(SAMTOOLS_FAIDX_INDEX.out.versions.ifEmpty([]))
 
     SAMTOOLS_FAIDX_SIZES ( SAMTOOLS_FAIDX_SUBSET.out.fa, SAMTOOLS_FAIDX_INDEX.out.fai, true )
-    ch_versions = ch_versions.mix(SAMTOOLS_FAIDX_SIZES.out.versions)
+    ch_versions = ch_versions.mix(SAMTOOLS_FAIDX_SIZES.out.versions.ifEmpty([]))
 
     BWA_INDEX( SAMTOOLS_FAIDX_SUBSET.out.fa )
-    ch_versions = ch_versions.mix(BWA_INDEX.out.versions)
+    ch_versions = ch_versions.mix(BWA_INDEX.out.versions.ifEmpty([]))
 
     GATK4_CREATESEQUENCEDICTIONARY ( SAMTOOLS_FAIDX_SUBSET.out.fa )
-    ch_versions = ch_versions.mix(GATK4_CREATESEQUENCEDICTIONARY.out.versions)
+    ch_versions = ch_versions.mix(GATK4_CREATESEQUENCEDICTIONARY.out.versions.ifEmpty([]))
 
     //Subset capture regions by chrom
     SUBSETCAPTURE (
@@ -54,28 +54,28 @@ workflow SUBSET_REFERENCES_TO_TARGETS {
         ch_capture_bed
         )
 
-    ch_versions = ch_versions.mix(SUBSETCAPTURE.out.versions)
+    ch_versions = ch_versions.mix(SUBSETCAPTURE.out.versions.ifEmpty([]))
 
     // Subset gatk bundle vcf
     GATK4_SELECTVARIANTS_GNOMAD ( SUBSETCAPTURE.out.target_bed.combine(ch_gnomad).map { meta, target_bed, vcf, vcf_idx ->
         [meta, vcf, vcf_idx, target_bed]
     })
-    ch_versions = ch_versions.mix(GATK4_SELECTVARIANTS_GNOMAD.out.versions)
+    ch_versions = ch_versions.mix(GATK4_SELECTVARIANTS_GNOMAD.out.versions.ifEmpty([]))
 
     GATK4_SELECTVARIANTS_MILLS ( SUBSETCAPTURE.out.target_bed.combine(ch_mills).map { meta, target_bed, vcf, vcf_idx ->
         [meta, vcf, vcf_idx, target_bed]
     })
-    ch_versions = ch_versions.mix(GATK4_SELECTVARIANTS_MILLS.out.versions)
+    ch_versions = ch_versions.mix(GATK4_SELECTVARIANTS_MILLS.out.versions.ifEmpty([]))
 
     GATK4_SELECTVARIANTS_1000G ( SUBSETCAPTURE.out.target_bed.combine(ch_1000g).map { meta, target_bed, vcf, vcf_idx ->
         [meta, vcf, vcf_idx, target_bed]
     })
-    ch_versions = ch_versions.mix(GATK4_SELECTVARIANTS_1000G.out.versions)
+    ch_versions = ch_versions.mix(GATK4_SELECTVARIANTS_1000G.out.versions.ifEmpty([]))
 
     GATK4_SELECTVARIANTS_DBSNP (SUBSETCAPTURE.out.target_bed.combine(ch_dbsnp).map { meta, target_bed, vcf, vcf_idx ->
         [meta, vcf, vcf_idx, target_bed]
     })
-    ch_versions = ch_versions.mix(GATK4_SELECTVARIANTS_DBSNP.out.versions)
+    ch_versions = ch_versions.mix(GATK4_SELECTVARIANTS_DBSNP.out.versions.ifEmpty([]))
 
     // Subset clinvar variants
     SUBVAR (
@@ -83,7 +83,7 @@ workflow SUBSET_REFERENCES_TO_TARGETS {
     SUBSETCAPTURE.out.target_bed.map { meta, target_bed -> target_bed }
     )
 
-    ch_versions = ch_versions.mix(SUBVAR.out.versions)
+    ch_versions = ch_versions.mix(SUBVAR.out.versions.ifEmpty([]))
 
     ch_dna_bundle = SAMTOOLS_FAIDX_SUBSET.out.fa
         .join(SAMTOOLS_FAIDX_INDEX.out.fai)

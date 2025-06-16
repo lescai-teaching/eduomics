@@ -44,7 +44,7 @@ workflow QUANTIFY_DEANALYSIS_ENRICH_VALIDATE {
         ch_alignment_mode,
         ch_libtype
     )
-    ch_versions = ch_versions.mix(SALMON_QUANT.out.versions.first())
+    ch_versions = ch_versions.mix(SALMON_QUANT.out.versions.ifEmpty([]).first())
 
     SALMON_QUANT.out.results.dump(tag: 'salmon quant results')
 
@@ -62,7 +62,7 @@ workflow QUANTIFY_DEANALYSIS_ENRICH_VALIDATE {
 
     // Run differential expression analysis
     DEANALYSIS ( ch_deanalysis_input, ch_filtered_transcriptData )
-    ch_versions = ch_versions.mix(DEANALYSIS.out.versions.first())
+    ch_versions = ch_versions.mix(DEANALYSIS.out.versions.ifEmpty([]))
 
     // Extract only deseq2_results.tsv for enrichment module
     ch_deseq2_results_tsv_only = DEANALYSIS.out.deseq2_results.map { meta, tsv, file1, list1 ->
@@ -71,7 +71,7 @@ workflow QUANTIFY_DEANALYSIS_ENRICH_VALIDATE {
 
     // Run enrichment analysis
     ENRICHMENT ( ch_deseq2_results_tsv_only, DEANALYSIS.out.deseq2_tx2gene )
-    ch_versions = ch_versions.mix(ENRICHMENT.out.versions.first())
+    ch_versions = ch_versions.mix(ENRICHMENT.out.versions.ifEmpty([]))
 
     // Perform final validation of results
     RNASEQVALIDATION (
@@ -80,7 +80,7 @@ workflow QUANTIFY_DEANALYSIS_ENRICH_VALIDATE {
         ENRICHMENT.out.enrichment_results,
         DEANALYSIS.out.deseq2_tx2gene
     )
-    ch_versions = ch_versions.mix(RNASEQVALIDATION.out.versions.first())
+    ch_versions = ch_versions.mix(RNASEQVALIDATION.out.versions.ifEmpty([]))
 
     emit:
     // SALMON_QUANT outputs

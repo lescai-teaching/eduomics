@@ -15,7 +15,7 @@ workflow PROFILE_SIMULATE_VARS_FASTQ {
     ch_versions = Channel.empty()
 
     PYCONVERTOSIM( vcf_benign, vcf_patho )
-    ch_versions = ch_versions.mix(PYCONVERTOSIM.out.versions)
+    ch_versions = ch_versions.mix(PYCONVERTOSIM.out.versions.ifEmpty([]))
 
     variants_to_inject = PYCONVERTOSIM.out.combined_variations.flatMap { m, files ->
                                                 files.collect { file ->
@@ -36,7 +36,7 @@ workflow PROFILE_SIMULATE_VARS_FASTQ {
         ch_variants_to_inject,
         capture
     )
-    ch_versions = ch_versions.mix(SIMUSCOP_SIMUREADS.out.versions)
+    ch_versions = ch_versions.mix(SIMUSCOP_SIMUREADS.out.versions.ifEmpty([]))
 
 
     emit:
