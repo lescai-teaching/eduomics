@@ -49,7 +49,7 @@ workflow FASTQ_VARIANT_TO_VALIDATION {
     BWA_MEM( simulated_reads_ch, bwa_index, fasta, true )
 
     SAMTOOLS_INDEX ( BWA_MEM.out.bam )
-    ch_versions = ch_versions.mix(SAMTOOLS_INDEX.out.versions.ifEmpty([]))
+    ch_versions = ch_versions.mix(SAMTOOLS_INDEX.out.versions)
 
     // ----> GATK4 MINI WORKFLOW to call normal variants <-----
 
@@ -58,12 +58,12 @@ workflow FASTQ_VARIANT_TO_VALIDATION {
         fasta.map{ meta, it -> [ it ] },
         fai.map{ meta, it -> [ it ] },
         )
-    ch_versions = ch_versions.mix(GATK4_MARKDUPLICATES.out.versions.ifEmpty([]))
+    ch_versions = ch_versions.mix(GATK4_MARKDUPLICATES.out.versions)
 
     empty_intervals_ch = Channel.value([[]])
 
     INDEX_MD(GATK4_MARKDUPLICATES.out.bam)
-    ch_versions = ch_versions.mix(INDEX_MD.out.versions.ifEmpty([]))
+    ch_versions = ch_versions.mix(INDEX_MD.out.versions)
 
     bam_for_recal = GATK4_MARKDUPLICATES.out.bam
                         .combine(INDEX_MD.out.bai, by: 0)
@@ -80,7 +80,7 @@ workflow FASTQ_VARIANT_TO_VALIDATION {
         known_sites_all.map{ it -> [[id:'sites'], it] },
         known_sites_all_tbi.map{ it -> [[id:'sites'], it] }
         )
-    ch_versions = ch_versions.mix(GATK4_BASERECALIBRATOR.out.versions.ifEmpty([]))
+    ch_versions = ch_versions.mix(GATK4_BASERECALIBRATOR.out.versions)
 
     bam_for_applybqsr = BWA_MEM.out.bam
         .combine(SAMTOOLS_INDEX.out.bai, by: 0)
@@ -93,7 +93,7 @@ workflow FASTQ_VARIANT_TO_VALIDATION {
         fai.map{ meta, it -> [ it ] },
         dict.map{ meta, it -> [ it ] }
     )
-    ch_versions = ch_versions.mix(GATK4_APPLYBQSR.out.versions.ifEmpty([]))
+    ch_versions = ch_versions.mix(GATK4_APPLYBQSR.out.versions)
 
     INDEX_RECAL(GATK4_APPLYBQSR.out.bam)
 
@@ -114,7 +114,7 @@ workflow FASTQ_VARIANT_TO_VALIDATION {
         dbsnp.map{ it -> [[id:'test'], it] },
         dbsnp_tbi.map{ it -> [[id:'test'], it] }
     )
-    ch_versions = ch_versions.mix(GATK4_HAPLOTYPECALLER.out.versions.ifEmpty([]))
+    ch_versions = ch_versions.mix(GATK4_HAPLOTYPECALLER.out.versions)
 
     // even if the samples in this execution will all be about the same variant
     // we need to collect the VCFs and we cannot just group by meta because
@@ -143,7 +143,7 @@ workflow FASTQ_VARIANT_TO_VALIDATION {
         false, // run_updatewspace
         false  // input_map
     )
-    ch_versions = ch_versions.mix(GATK4_GENOMICSDBIMPORT.out.versions.ifEmpty([]))
+    ch_versions = ch_versions.mix(GATK4_GENOMICSDBIMPORT.out.versions)
 
     GATK4_GENOMICSDBIMPORT.out.genomicsdb.dump(tag: 'genomicsDB out')
 
@@ -156,7 +156,7 @@ workflow FASTQ_VARIANT_TO_VALIDATION {
         dbsnp.map{ it -> [[id:'test'], it] },
         dbsnp_tbi.map{ it -> [[id:'test'], it] }
     )
-    ch_versions = ch_versions.mix(GATK4_GENOTYPEGVCFS.out.versions.ifEmpty([]))
+    ch_versions = ch_versions.mix(GATK4_GENOTYPEGVCFS.out.versions)
 
     reads.dump(tag: 'original reads')
 
@@ -174,7 +174,7 @@ workflow FASTQ_VARIANT_TO_VALIDATION {
     validation_ch.dump(tag: 'validation CH')
 
     DNAVALIDATION( validation_ch )
-    ch_versions = ch_versions.mix(DNAVALIDATION.out.versions.ifEmpty([]))
+    ch_versions = ch_versions.mix(DNAVALIDATION.out.versions)
 
     scenarios_ch = DNAVALIDATION.out.dna_validated_results
         .map { meta, results ->

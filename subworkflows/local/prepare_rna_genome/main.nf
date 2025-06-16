@@ -16,11 +16,11 @@ workflow PREPARE_RNA_GENOME {
     ch_log      = Channel.empty()
 
     SUBSETGFF ( ch_meta, ch_gff3 )
-    ch_versions = ch_versions.mix(SUBSETGFF.out.versions.ifEmpty([]).first())
+    ch_versions = ch_versions.mix(SUBSETGFF.out.versions)
     ch_log      = ch_log.mix(SUBSETGFF.out.subsetgff_parsing_log)
 
     SUBSETFASTATX ( ch_txfasta, SUBSETGFF.out.filtered_transcript_data )
-    ch_versions = ch_versions.mix(SUBSETFASTATX.out.versions.ifEmpty([]).first())
+    ch_versions = ch_versions.mix(SUBSETFASTATX.out.versions)
     ch_log      = ch_log.mix(SUBSETFASTATX.out.subsetfastatx_parsing_log)
 
     // Remove the meta from the filtered txfasta
@@ -29,7 +29,7 @@ workflow PREPARE_RNA_GENOME {
         .map { meta, fasta -> fasta }
 
     SALMON_INDEX ( ch_fasta, ch_filtered_txfasta_nometa )
-    ch_versions = ch_versions.mix(SALMON_INDEX.out.versions.ifEmpty([]).first())
+    ch_versions = ch_versions.mix(SALMON_INDEX.out.versions)
 
     ch_rna_bundle = SUBSETFASTATX.out.filtered_txfasta
         .join(SUBSETGFF.out.filtered_annotation)

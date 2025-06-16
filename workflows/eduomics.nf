@@ -71,7 +71,7 @@ workflow EDUOMICS {
         ch_clinvar
         )
 
-    ch_versions = ch_versions.mix(SUBSET_REFERENCES_TO_TARGETS.out.versions.ifEmpty([]))
+    ch_versions = ch_versions.mix(SUBSET_REFERENCES_TO_TARGETS.out.versions)
 
     FASTA_WGSIM_TO_PROFILE(
         SUBSET_REFERENCES_TO_TARGETS.out.target_fa,
@@ -85,7 +85,7 @@ workflow EDUOMICS {
         SUBSET_REFERENCES_TO_TARGETS.out.target_bed
     )
 
-    ch_versions = ch_versions.mix(FASTA_WGSIM_TO_PROFILE.out.versions.ifEmpty([]))
+    ch_versions = ch_versions.mix(FASTA_WGSIM_TO_PROFILE.out.versions)
 
     // Create a value channel for fasta and fai so it can be reused for each
     // simulated variant. Without converting to a value channel the paired
@@ -107,7 +107,7 @@ workflow EDUOMICS {
         SUBSET_REFERENCES_TO_TARGETS.out.target_bed_pad500
     )
 
-    ch_versions = ch_versions.mix(PROFILE_SIMULATE_VARS_FASTQ.out.versions.ifEmpty([]))
+    ch_versions = ch_versions.mix(PROFILE_SIMULATE_VARS_FASTQ.out.versions)
 
     // Set to true in test.config to run the test with a smaller dataset
     ch_dna_simreads = params.istest
@@ -129,7 +129,7 @@ workflow EDUOMICS {
         SUBSET_REFERENCES_TO_TARGETS.out.target_bed
     )
 
-    ch_versions = ch_versions.mix(FASTQ_VARIANT_TO_VALIDATION.out.versions.ifEmpty([]))
+    ch_versions = ch_versions.mix(FASTQ_VARIANT_TO_VALIDATION.out.versions)
 
     ch_dna_scenario = FASTQ_VARIANT_TO_VALIDATION.out.scenario
         .map { m, var ->
@@ -153,7 +153,7 @@ workflow EDUOMICS {
         SUBSET_REFERENCES_TO_TARGETS.out.target_fa.map { meta, fasta -> fasta }
     )
 
-    ch_versions = ch_versions.mix(PREPARE_RNA_GENOME.out.versions.ifEmpty([]))
+    ch_versions = ch_versions.mix(PREPARE_RNA_GENOME.out.versions)
 
     SIMULATE_RNASEQ_READS(
         PREPARE_RNA_GENOME.out.filtered_txfasta,
@@ -162,7 +162,7 @@ workflow EDUOMICS {
         PREPARE_RNA_GENOME.out.gene_list_association
     )
 
-    ch_versions = ch_versions.mix(SIMULATE_RNASEQ_READS.out.versions.ifEmpty([]))
+    ch_versions = ch_versions.mix(SIMULATE_RNASEQ_READS.out.versions)
 
     // Set to true in test.config to run the test with a smaller dataset
     ch_rna_simreads = params.istest
@@ -179,7 +179,7 @@ workflow EDUOMICS {
         PREPARE_RNA_GENOME.out.filtered_transcript_data
     )
 
-    ch_versions = ch_versions.mix(QUANTIFY_DEANALYSIS_ENRICH_VALIDATE.out.versions.ifEmpty([]))
+    ch_versions = ch_versions.mix(QUANTIFY_DEANALYSIS_ENRICH_VALIDATE.out.versions)
 
     ch_rna_scenario = QUANTIFY_DEANALYSIS_ENRICH_VALIDATE.out.deseq2_tx2gene
         .map { m, tx ->
@@ -194,7 +194,7 @@ workflow EDUOMICS {
 */
     AISCENARIOS(ch_scenarios)
 
-    ch_versions = ch_versions.mix(AISCENARIOS.out.versions.ifEmpty([]))
+    ch_versions = ch_versions.mix(AISCENARIOS.out.versions)
 
 
     //
