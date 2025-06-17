@@ -45,15 +45,10 @@ nextflow_workflow {
                         'https://raw.githubusercontent.com/lescai-teaching/eduomics_testdata/refs/heads/main/rnaseq/raw_reads_enrichment/sample_06_2.fasta.gz'
                     ]
                 ]
-                input[0] = Channel
-                    .fromList(sample_urls.entrySet())
-                    .map { entry ->
-                        def sample_id = entry.key
-                        def urls = entry.value
-                        def meta = [ id: 'simtest', chromosome: 'chr22', reps: 3, groups: 2, genes: 'A,B,C' ]
-                        def files = urls.collect { file(it) }
-                        [meta, files]
-                    }
+                input[0] = Channel.value([
+                    [ id: 'simtest', chromosome: 'chr22', reps: 3, groups: 2, genes: 'A,B,C' ],
+                    sample_urls.values().flatten().collect { file(it) }
+                ])
                 def index_urls = [
                     'https://raw.githubusercontent.com/lescai-teaching/eduomics_testdata/refs/heads/main/rnaseq/salmonquantify/chr22_transcripts_index/complete_ref_lens.bin',
                     'https://raw.githubusercontent.com/lescai-teaching/eduomics_testdata/refs/heads/main/rnaseq/salmonquantify/chr22_transcripts_index/ctable.bin',
