@@ -33,7 +33,7 @@ workflow FASTA_WGSIM_TO_PROFILE {
     BWA_MEM( WGSIM.out.fastq, bwa_index, fasta, true )
 
     SAMTOOLS_INDEX ( BWA_MEM.out.bam )
-    ch_versions = ch_versions.mix(SAMTOOLS_INDEX.out.versions.first())
+    ch_versions = ch_versions.mix(SAMTOOLS_INDEX.out.versions)
 
     // ----> GATK4 MINI WORKFLOW to call normal variants <-----
 

@@ -49,7 +49,7 @@ workflow FASTQ_VARIANT_TO_VALIDATION {
     BWA_MEM( simulated_reads_ch, bwa_index, fasta, true )
 
     SAMTOOLS_INDEX ( BWA_MEM.out.bam )
-    ch_versions = ch_versions.mix(SAMTOOLS_INDEX.out.versions.first())
+    ch_versions = ch_versions.mix(SAMTOOLS_INDEX.out.versions)
 
     // ----> GATK4 MINI WORKFLOW to call normal variants <-----
 

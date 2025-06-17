@@ -54,9 +54,13 @@ workflow EDUOMICS {
     DNA ANALYSIS BRANCH
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 */
+    // Filter for DNA samples only
+    ch_dna_meta = ch_dna_sim
+        .filter { meta, capture -> meta.type == "dna" }
+        .map { meta, capture -> meta }
 
     SUBSET_REFERENCES_TO_TARGETS(
-        ch_dna_sim.map { meta, capture -> meta},
+        ch_dna_meta,
         ch_fasta,
         params.get_sizes_bool,
         ch_capture_bed,
@@ -90,7 +94,7 @@ workflow EDUOMICS {
     ch_fasta_fai = SUBSET_REFERENCES_TO_TARGETS.out.target_fa
             .join(SUBSET_REFERENCES_TO_TARGETS.out.target_fai)
             .map { meta, fasta, fai -> [fasta, fai] }
-            .first()
+            .collect()
 
     FASTA_WGSIM_TO_PROFILE.out.profile.dump(tag: 'simulation profile')
 
@@ -138,8 +142,12 @@ workflow EDUOMICS {
     RNA ANALYSIS BRANCH
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 */
+    ch_rna_meta = ch_rna_sim
+        .filter { meta, capture -> meta.type == "rna" }
+        .map { meta, capture -> meta }
+
     PREPARE_RNA_GENOME(
-        ch_rna_sim.map { meta, capture -> meta},
+        ch_rna_meta,
         ch_gff3,
         ch_txfasta,
         SUBSET_REFERENCES_TO_TARGETS.out.target_fa.map { meta, fasta -> fasta }
