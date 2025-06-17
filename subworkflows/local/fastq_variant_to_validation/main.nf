@@ -83,8 +83,8 @@ workflow FASTQ_VARIANT_TO_VALIDATION {
         )
     ch_versions = ch_versions.mix(GATK4_BASERECALIBRATOR.out.versions)
 
-    bam_for_applybqsr = BWA_MEM.out.bam
-        .combine(SAMTOOLS_INDEX.out.bai, by: 0)
+    bam_for_applybqsr = GATK4_MARKDUPLICATES.out.bam
+        .combine(INDEX_MD.out.bai, by: 0)
         .combine(GATK4_BASERECALIBRATOR.out.table, by: 0)
         .combine(capture)
 
