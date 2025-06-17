@@ -150,7 +150,7 @@ workflow EDUOMICS {
         ch_rna_meta,
         ch_gff3,
         ch_txfasta,
-        SUBSET_REFERENCES_TO_TARGETS.out.target_fa.map { meta, fasta -> fasta }
+        ch_fasta
     )
 
     ch_versions = ch_versions.mix(PREPARE_RNA_GENOME.out.versions)

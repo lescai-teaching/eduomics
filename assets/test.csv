@@ -1,0 +1,2 @@
+id,type,chromosome,coverage,capture,reps,groups,simthreshold
+simulation2,rna,chr22,30,,3,2,0.3
