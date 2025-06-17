@@ -61,7 +61,7 @@ workflow PREPARE_RNA_GENOME {
     filtered_genomefasta     = SAMTOOLS_FAIDX_SUBSET.out.fa.collect()           // channel: [ val(meta), path(filtered_genomefasta)                                                                    ]
     txfasta_index            = SALMON_INDEX.out.index.collect()                 // channel: [ path(salmon_index)                                                                                       ]
     log_files                = ch_log                                           // channel: [ val(meta), path(log_files)                                                                               ]
-    rna_bundle               = ch_rna_bundle.collect()                          // channel: [ val(meta), [path(filtered_txfasta), path(filtered_gff3), path(gfiltered_genomefasta), path(salmonindex)] ]
+    rna_bundle               = ch_rna_bundle.collect()                          // channel: [ val(meta), [path(filtered_txfasta), path(filtered_gff3), path(filtered_genomefasta), path(salmonindex)] ]
     versions                 = ch_versions                                      // channel: [ versions.yml                                                                                             ]
 }
 
