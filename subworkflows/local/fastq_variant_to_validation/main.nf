@@ -68,6 +68,7 @@ workflow FASTQ_VARIANT_TO_VALIDATION {
     bam_for_recal = GATK4_MARKDUPLICATES.out.bam
                         .combine(INDEX_MD.out.bai, by: 0)
                         .combine(empty_intervals_ch)
+    bam_for_recal.dump(tag: 'bam for recal')
 
     known_sites_all = dbsnp.mix(mills).collect()
     known_sites_all_tbi = dbsnp_tbi.mix(mills_tbi).collect()
