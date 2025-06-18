@@ -9,7 +9,7 @@ process SUBSETFASTATX {
 
     input:
     path(txfasta)
-    tuple val(meta), path(filtered_transcript_data)
+    tuple val(meta), path(transcript_data)
 
     output:
     tuple val(meta), path ("gencode_transcripts_novers_*.fasta"), emit: filtered_txfasta
@@ -24,7 +24,7 @@ process SUBSETFASTATX {
     def prefix = task.ext.prefix ?: "${meta.id}"
 
     """
-    subset_fastatx.R ${meta.chromosome} ${txfasta} ${filtered_transcript_data}
+    subset_fastatx.R ${meta.chromosome} ${txfasta} ${transcript_data}
 
     cat <<-END_VERSIONS > versions.yml
     "${task.process}":

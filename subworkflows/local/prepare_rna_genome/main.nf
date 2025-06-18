@@ -21,7 +21,7 @@ workflow PREPARE_RNA_GENOME {
     ch_versions = ch_versions.mix(SUBSETGFF.out.versions)
     ch_log      = ch_log.mix(SUBSETGFF.out.subsetgff_parsing_log)
 
-    SUBSETFASTATX ( ch_txfasta, SUBSETGFF.out.filtered_transcript_data )
+    SUBSETFASTATX ( ch_txfasta, SUBSETGFF.out.transcript_data )
     ch_versions = ch_versions.mix(SUBSETFASTATX.out.versions)
     ch_log      = ch_log.mix(SUBSETFASTATX.out.subsetfastatx_parsing_log)
 
@@ -56,12 +56,12 @@ workflow PREPARE_RNA_GENOME {
     filtered_annotation      = SUBSETGFF.out.filtered_annotation.collect()      // channel: [ val(meta), path(filtered_annotation)                                                                     ]
     gene_lists               = SUBSETGFF.out.geneLists                          // channel: [ val(meta), path(geneLists)                                                                               ]
     gene_list_association    = SUBSETGFF.out.genes_list_association             // channel: [ val(meta), path(gene_list_association)                                                                   ]
-    filtered_transcript_data = SUBSETGFF.out.filtered_transcript_data.collect() // channel: [ val(meta), path(filtered_transcript_data)                                                                ]
+    transcript_data          = SUBSETGFF.out.transcript_data.collect()          // channel: [ val(meta), path(transcript_data)                                                                         ]
     filtered_txfasta         = SUBSETFASTATX.out.filtered_txfasta.collect()     // channel: [ val(meta), path(filtered_txfasta)                                                                        ]
     filtered_genomefasta     = SAMTOOLS_FAIDX_SUBSET.out.fa.collect()           // channel: [ val(meta), path(filtered_genomefasta)                                                                    ]
     txfasta_index            = SALMON_INDEX.out.index.collect()                 // channel: [ path(salmon_index)                                                                                       ]
     log_files                = ch_log                                           // channel: [ val(meta), path(log_files)                                                                               ]
-    rna_bundle               = ch_rna_bundle.collect()                          // channel: [ val(meta), [path(filtered_txfasta), path(filtered_gff3), path(filtered_genomefasta), path(salmonindex)] ]
+    rna_bundle               = ch_rna_bundle.collect()                          // channel: [ val(meta), [path(filtered_txfasta), path(filtered_gff3), path(filtered_genomefasta), path(salmonindex)]  ]
     versions                 = ch_versions                                      // channel: [ versions.yml                                                                                             ]
 }
 

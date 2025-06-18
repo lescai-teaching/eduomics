@@ -13,13 +13,13 @@ coverage <- as.numeric(argv[1])
 replica <- as.numeric(argv[2])
 group <- as.numeric(argv[3])
 filtered_txfasta <- argv[4]
-filtered_gff3 <- argv[5]
+transcriptData <- argv[5]
 geneList <- argv[6]
 
 
 #### Load the input files ####
 fasta_annotated = readDNAStringSet(filtered_txfasta)
-annotation_data = readRDS(filtered_gff3)
+annotation_data = readRDS(transcriptData)
 geneList = readRDS(geneList)
 
 

@@ -24,20 +24,20 @@ input:
             type: file
             description: transcriptome FASTA file containing transcripts from the simulated chromosome
             pattern: "gencode_transcripts_noversion.fasta"
-  - ch_filtered_transcriptData:
+  - ch_transcriptData:
       description: |
         Channel containing the filtered transcript data from the simulated chromosome
-        Structure: [ val(meta), path(filtered_transcriptData) ]
+        Structure: [ val(meta), path(transcriptData) ]
       structure:
         - meta:
             type: map
             description: |
               Groovy Map containing sample information
               e.g. `[ id:'test', chromosome: 'chr22', coverage: 30, reps: 3, groups: 2, simthreshold: 0.3 ]`
-        - filtered_transcriptData:
+        - transcriptData:
             type: file
             description: RDS file containing filtered transcript data from the simulated chromosome
-            pattern: "filtered_transcriptData.rds"
+            pattern: "transcriptData.rds"
   - ch_genelists:
       description: |
         Channel containing those gene lists that should give an enrichment with EnrichGO

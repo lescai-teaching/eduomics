@@ -163,6 +163,13 @@ percent_de_genes <- 0.1
 transcript_data <- transcript_data %>%
 left_join(membership_tb, by = "transcript_id")
 
+cat("\n4) Number of genes in the simulated chromosome\n",
+    length(unique(transcript_data$gene_name)),
+    "genes extracted from", chromosome_of_interest, "\n",
+    file = log_file, append = TRUE)
+
+saveRDS(transcript_data, "transcript_data.rds")
+
 
 #### PHENOTYPE DATA FROM MONARCH ####
 
@@ -209,7 +216,7 @@ left_join(membership_tb, by = "transcript_id")
 #   dplyr::select(-phenotypes)
 
 # Tidy the data before enrichment
-transcript_data <- transcript_data %>%
+transcript_data_filt <- transcript_data %>%
     filter(!is.na(membership)) %>%
     group_by(membership) %>%
     mutate(
@@ -224,7 +231,7 @@ transcript_data <- transcript_data %>%
 #### Enrichment with EnrichGO ####
 
 # Construct the gene list
-gene_lists <- transcript_data %>%
+gene_lists <- transcript_data_filt %>%
     group_by(membership) %>%
     summarise(
         unique_genes = list(unique(gene_name)),
@@ -234,7 +241,7 @@ gene_lists <- transcript_data %>%
         gene_list = paste0("list", row_number())
     )
 
-cat("\n4) Number of Gene Lists\nRetrieved", nrow(gene_lists),
+cat("\n5) Number of Gene Lists\nRetrieved", nrow(gene_lists),
     "gene lists from", paste0(chromosome_of_interest),
     "\n", file = log_file, append = TRUE)
 
@@ -257,7 +264,7 @@ executeGO <- function(sig_genes, universe, ontology) {
 # Initialise an empty list to store significant results (both positive and negative)
 significant_results <- list()
 
-write("\n5) GO enrichment", file = log_file, append = TRUE)
+write("\n6) GO enrichment", file = log_file, append = TRUE)
 for (i in 1:nrow(gene_lists)) {
     sig_genes <- gene_lists$unique_genes[[i]]  # Extract the unique genes for the group
     universe <- unique_genes                   # Define the universe
@@ -296,7 +303,7 @@ for (i in 1:nrow(gene_lists)) {
 # Initialise an empty list to store valid gene lists
 valid_gene_lists <- list()
 
-write("\n6) Valid gene sets", file = log_file, append = TRUE)
+write("\n7) Valid gene sets", file = log_file, append = TRUE)
 for (i in 1:length(significant_results)) {
     # Create a variable to store enriched categories for the current gene list
     enriched_categories <- c()
@@ -340,4 +347,3 @@ valid_gene_lists_df <- tibble(
 #### Save the resulting key files ####
 write.table(valid_gene_lists_df, file = "list_gene_association.tsv", sep = "\t", row.names = FALSE, quote = FALSE)
 saveRDS(valid_gene_lists, "valid_gene_lists.rds")
-saveRDS(transcript_data, "filtered_transcript_data.rds")

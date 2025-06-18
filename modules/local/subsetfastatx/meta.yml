@@ -31,10 +31,10 @@ input:
         description: |
           Groovy Map containing sample information
           e.g. `[ id:'test', chromosome: 'chr22', coverage: 30, reps: 3, groups: 2, simthreshold: 0.3 ]`
-    - filtered_transcript_data:
+    - transcript_data:
         type: file
         description: RDS file containing transcript data from the simulated chromosome
-        pattern: "filtered_transcript_data.rds"
+        pattern: "transcript_data.rds"
 output:
   - filtered_txfasta:
       - meta:

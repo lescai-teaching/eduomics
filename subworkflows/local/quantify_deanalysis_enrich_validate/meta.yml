@@ -80,10 +80,10 @@ input:
         - libtype:
             type: string
             description: library type based on strandedness
-  - ch_filtered_transcriptData:
+  - ch_transcriptData:
       description: |
         Channel containing the transcript data from the simulated chromosome
-        Structure: [ val(meta), path(filtered_transcriptData) ]
+        Structure: [ val(meta), path(transcriptData) ]
       structure:
         - meta:
             type: map
@@ -93,7 +93,7 @@ input:
         - filtered_transcriptData:
             type: file
             description: RDS file containing transcript data from the simulated chromosome
-            pattern: "filtered_transcriptData.rds"
+            pattern: "transcriptData.rds"
 output:
   - salmon_results:
       description: |

@@ -126,16 +126,16 @@ output:
           type: file
           description: TSV file containing the association between genes and the corrisponding list
           pattern: "list_gene_association.tsv"
-  - filtered_transcript_data:
+  - transcript_data:
       - meta:
           type: file
           description: |
             Groovy Map containing sample information
             e.g. `[ id:'test', chromosome: 'chr22', coverage: 30, reps: 3, groups: 2, simthreshold: 0.3 ]`
-      - "filtered_transcript_data.rds":
+      - "transcript_data.rds":
           type: file
           description: RDS file containing transcript data from the simulated chromosome
-          pattern: "filtered_transcript_data.rds"
+          pattern: "transcript_data.rds"
   - subsetgff_parsing_log:
       - meta:
           type: file

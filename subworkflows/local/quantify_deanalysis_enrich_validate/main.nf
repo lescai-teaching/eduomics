@@ -13,11 +13,13 @@ workflow QUANTIFY_DEANALYSIS_ENRICH_VALIDATE {
     ch_filteredtxfasta            // channel: [ val(meta), path(filteredtxfasta)                   ]
     ch_alignment_mode             // value  : [ boolean                                            ]
     ch_libtype                    // value  : [ val(libtype)                                       ]
-    ch_filtered_transcriptData    // channel: [ val(meta), path(filtered_transcriptData)           ]
+    ch_transcriptData             // channel: [ val(meta), path(transcriptData)                    ]
 
     main:
 
     ch_versions = Channel.empty()
+
+    ch_simreads.dump(tag: "rna simreads")
 
     // Modify `meta.id` to make it unique for each sample based on filenames
     ch_simreads_modified = ch_simreads.map{ m, files ->
@@ -65,7 +67,7 @@ workflow QUANTIFY_DEANALYSIS_ENRICH_VALIDATE {
     ch_deanalysis_input.dump(tag: 'quant dirs')
 
     // Run differential expression analysis
-    DEANALYSIS ( ch_deanalysis_input, ch_filtered_transcriptData )
+    DEANALYSIS ( ch_deanalysis_input, ch_transcriptData )
     ch_versions = ch_versions.mix(DEANALYSIS.out.versions)
 
     // Extract only deseq2_results.tsv for enrichment module

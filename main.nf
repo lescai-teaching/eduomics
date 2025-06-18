@@ -209,7 +209,7 @@ output {
                 "${params.outdir}/dna_simulations/${meta.id}/${meta.simulatedvar}"
             }
             else {
-                def simfolder = meta.genes.take(16)
+                def simfolder = meta.genes.take(5).replaceAll(',', '_')
                 "${params.outdir}/rna_simulations/${meta.id}/${simfolder}"
             }
         }

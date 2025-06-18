@@ -81,20 +81,20 @@ output:
             type: file
             description: TSV file containing the association between a specific list and its genes (required in the following steps)
             pattern: "list_gene_association.tsv"
-  - filtered_transcript_data:
+  - transcript_data:
       description: |
         Channel containing the filtered transcript data from the simulated chromosome
-        Structure: [ val(meta), path(filtered_transcript_data) ]
+        Structure: [ val(meta), path(transcript_data) ]
       structure:
         - meta:
             type: map
             description: |
               Groovy Map containing sample information
               e.g. `[ id:'simtest', chromosome: 'chr22', coverage: 30, reps: 3, groups: 2, simthreshold: 0.3 ]`
-        - filtered_transcript_data:
+        - transcript_data:
             type: file
             description: RDS containing filtered transcript data from the simulated chromosome
-            pattern: "filtered_transcript_data.rds"
+            pattern: "transcript_data.rds"
   - filtered_txfasta:
       description: |
         Channel containing the filtered txfasta file with the transcripts from the simulated chromosome
