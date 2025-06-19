@@ -192,7 +192,7 @@ output {
 
     rnasimulation {
         path { meta, files ->
-            def simfolder = meta.genes.take(16)
+            def simfolder = meta.genes.split(',').take(5).join('_')
             "${params.outdir}/rna_simulations/${meta.id}/${simfolder}"
         }
     }
@@ -203,13 +203,14 @@ output {
         }
     }
 
+
     scenario {
         path { meta, text ->
             if (meta.type == "dna"){
                 "${params.outdir}/dna_simulations/${meta.id}/${meta.simulatedvar}"
             }
             else {
-                def simfolder = meta.genes.take(5).replaceAll(',', '_')
+                def simfolder = meta.genes.split(',').take(5).join('_')
                 "${params.outdir}/rna_simulations/${meta.id}/${simfolder}"
             }
         }
