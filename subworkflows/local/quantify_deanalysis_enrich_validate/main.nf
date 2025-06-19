@@ -13,21 +13,27 @@ workflow QUANTIFY_DEANALYSIS_ENRICH_VALIDATE {
     ch_filteredtxfasta            // channel: [ val(meta), path(filteredtxfasta)                   ]
     ch_alignment_mode             // value  : [ boolean                                            ]
     ch_libtype                    // value  : [ val(libtype)                                       ]
-    ch_filtered_transcriptData    // channel: [ val(meta), path(filtered_transcriptData)           ]
+    ch_transcriptData             // channel: [ val(meta), path(transcriptData)                    ]
 
     main:
 
     ch_versions = Channel.empty()
 
+    ch_simreads.dump(tag: "rna simreads")
+
     // Modify `meta.id` to make it unique for each sample based on filenames
-    ch_simreads_modified = ch_simreads.map { meta, reads ->
-        def new_meta = meta.clone()                                  // clone the original meta to mantain it. It is required in the following steps
-        def base_name = reads[0].getBaseName()                       // e.g. "sample_01_1"
-        def sample = base_name.split('_')[0..1].join('_')            // e.g. "sample_01"
-        new_meta.original_id = meta.id
-        new_meta.id = sample                                         // update meta.id with sample name
-        tuple(new_meta, reads)
-    }
+    ch_simreads_modified = ch_simreads.map{ m, files ->
+                def grouped = files.groupBy { file ->
+                    file.name.replaceFirst(/_[12]\.fasta\.gz$/, '')
+                    }
+                grouped.collect { sampleName, group ->
+                    def updatedMeta = m.clone()
+                    updatedMeta.original_id = m.id
+                    updatedMeta.id = sampleName
+                    [updatedMeta, group.sort()]
+                    }
+            }
+            .flatMap()
 
     ch_simreads_modified.dump(tag: "rna simreads modified")
 
@@ -61,7 +67,7 @@ workflow QUANTIFY_DEANALYSIS_ENRICH_VALIDATE {
     ch_deanalysis_input.dump(tag: 'quant dirs')
 
     // Run differential expression analysis
-    DEANALYSIS ( ch_deanalysis_input, ch_filtered_transcriptData )
+    DEANALYSIS ( ch_deanalysis_input, ch_transcriptData )
     ch_versions = ch_versions.mix(DEANALYSIS.out.versions)
 
     // Extract only deseq2_results.tsv for enrichment module
@@ -89,8 +95,8 @@ workflow QUANTIFY_DEANALYSIS_ENRICH_VALIDATE {
     salmon_lib_format   = SALMON_QUANT.out.lib_format_counts                     // channel: [ val(meta), path(lib_format_counts) ], optional
 
     // DEANALYSIS outputs
-    deseq2_results      = DEANALYSIS.out.deseq2_results                           // channel: [ val(meta), path(deseq2_results), path(deseq2_de_genes), path(*.pdf) ]
-    deseq2_tx2gene      = DEANALYSIS.out.deseq2_tx2gene                           // channel: [ val(meta), path(deseq2_tx2gene)                                     ]
+    deseq2_results      = DEANALYSIS.out.deseq2_results                          // channel: [ val(meta), path(deseq2_results), path(deseq2_de_genes), path(*.pdf) ]
+    deseq2_tx2gene      = DEANALYSIS.out.deseq2_tx2gene                          // channel: [ val(meta), path(deseq2_tx2gene)                                     ]
 
     // ENRICHMENT outputs
     enrichment_results  = ENRICHMENT.out.enrichment_results                      // channel: [ val(meta), path(enrichment_results), path(*.png) ]

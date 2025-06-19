@@ -150,14 +150,14 @@ workflow EDUOMICS {
         ch_rna_meta,
         ch_gff3,
         ch_txfasta,
-        SUBSET_REFERENCES_TO_TARGETS.out.target_fa.map { meta, fasta -> fasta }
+        ch_fasta
     )
 
     ch_versions = ch_versions.mix(PREPARE_RNA_GENOME.out.versions)
 
     SIMULATE_RNASEQ_READS(
         PREPARE_RNA_GENOME.out.filtered_txfasta,
-        PREPARE_RNA_GENOME.out.filtered_transcript_data,
+        PREPARE_RNA_GENOME.out.transcript_data,
         PREPARE_RNA_GENOME.out.gene_lists,
         PREPARE_RNA_GENOME.out.gene_list_association
     )
@@ -176,7 +176,7 @@ workflow EDUOMICS {
         PREPARE_RNA_GENOME.out.filtered_txfasta,
         params.salmon_alignmode,
         params.salmon_libtype,
-        PREPARE_RNA_GENOME.out.filtered_transcript_data
+        PREPARE_RNA_GENOME.out.transcript_data
     )
 
     ch_versions = ch_versions.mix(QUANTIFY_DEANALYSIS_ENRICH_VALIDATE.out.versions)

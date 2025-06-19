@@ -5,9 +5,9 @@ workflow SIMULATE_RNASEQ_READS {
 
     take:
     ch_filtered_txfasta            // channel: [ val(meta), path(filtered_txfasta)        ]
-    ch_filtered_transcriptData     // channel: [ val(meta), path(filtered_transcriptData) ]
+    ch_transcriptData              // channel: [ val(meta), path(transcriptData)          ]
     ch_genelists                   // channel: [ val(meta), path(genelists)               ]
-    ch_gene_list_association       // channel: [ val(meta), path(gene_list_association)     ]
+    ch_gene_list_association       // channel: [ val(meta), path(gene_list_association)   ]
 
     main:
 
@@ -16,7 +16,7 @@ workflow SIMULATE_RNASEQ_READS {
     ch_gene_list_association.dump(tag: 'gene list association')
 
     // Generate count matrices
-    COUNTMATRICES(ch_filtered_txfasta, ch_filtered_transcriptData, ch_genelists)
+    COUNTMATRICES(ch_filtered_txfasta, ch_transcriptData, ch_genelists)
     ch_versions = ch_versions.mix(COUNTMATRICES.out.versions)
 
     // Build gene map

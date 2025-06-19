@@ -9,7 +9,7 @@ process COUNTMATRICES {
 
     input:
     tuple val(meta),  path(filtered_txfasta)
-    tuple val(meta2), path(filtered_transcriptData)
+    tuple val(meta2), path(transcriptData)
     tuple val(meta3), path(geneLists)
 
     output:
@@ -32,7 +32,7 @@ process COUNTMATRICES {
         '${simreps}' \\
         '${simgroups}' \\
         '${filtered_txfasta}' \\
-        '${filtered_transcriptData}' \\
+        '${transcriptData}' \\
         '${geneLists}'
 
     cat <<-END_VERSIONS > versions.yml

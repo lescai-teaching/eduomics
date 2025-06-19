@@ -15,7 +15,7 @@ process SUBSETGFF {
     tuple val(meta), path("filtered_annotation.gff3")        , emit: filtered_annotation
     tuple val(meta), path("valid_gene_lists.rds")            , emit: geneLists
     tuple val(meta), path("list_gene_association.tsv")       , emit: genes_list_association
-    tuple val(meta), path("filtered_transcript_data.rds")    , emit: filtered_transcript_data
+    tuple val(meta), path("transcript_data.rds")             , emit: transcript_data
     tuple val(meta), path("subsetgff_parsing_log.txt")       , emit: subsetgff_parsing_log
     path "versions.yml"                                      , emit: versions
 
