@@ -23,7 +23,7 @@ process DNAVALIDATION {
     def variant = meta.simulatedvar ?: ''
     """
     variantpos=\$(echo "${variant}" | cut -d"-" -f2)
-    if grep -q "\${variantpos}" ${vcf}; then
+    if zcat ${vcf} | grep -v \"#\" | grep -q "\${variantpos}"; then
         mkdir -p dna_${variant}_validation
         echo "${variant}" > dna_${variant}_validation/solution_${variant}.txt
         cp ${vcf} dna_${variant}_validation/
