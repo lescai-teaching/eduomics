@@ -66,8 +66,10 @@ workflow FASTQ_VARIANT_TO_VALIDATION {
     ch_versions = ch_versions.mix(INDEX_MD.out.versions)
 
     bam_for_recal = GATK4_MARKDUPLICATES.out.bam
-                        .combine(INDEX_MD.out.bai, by: 0)
-                        .combine(empty_intervals_ch)
+        // pair each BAM with its index using join to avoid cartesian products
+        .join(INDEX_MD.out.bai)
+        .map { meta, bam, bai -> [meta, bam, bai] }
+        .combine(empty_intervals_ch)
     bam_for_recal.dump(tag: 'bam for recal')
 
     known_sites_all = dbsnp.mix(mills).collect()
@@ -84,8 +86,10 @@ workflow FASTQ_VARIANT_TO_VALIDATION {
     ch_versions = ch_versions.mix(GATK4_BASERECALIBRATOR.out.versions)
 
     bam_for_applybqsr = GATK4_MARKDUPLICATES.out.bam
-        .combine(INDEX_MD.out.bai, by: 0)
-        .combine(GATK4_BASERECALIBRATOR.out.table, by: 0)
+        // match BAM, index and recalibration table by sample
+        .join(INDEX_MD.out.bai)
+        .join(GATK4_BASERECALIBRATOR.out.table)
+        .map { meta, bam, bai, table -> [meta, bam, bai, table] }
         .combine(capture)
 
     GATK4_APPLYBQSR(
