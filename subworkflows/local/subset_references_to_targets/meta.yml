@@ -16,7 +16,7 @@ components:
 input:
   - - meta:
         type: map
-        description: [ id:'test', chromosome:'chr22', type: 'dnaseq']
+        description: [id:'test', chromosome:'chr22', type: "dnaseq"]
     - fasta:
         type: file
         description: Reference fasta file

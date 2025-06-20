@@ -6,209 +6,344 @@
 
 ## Introduction
 
-<!-- TODO nf-core: Add documentation about anything specific to running your pipeline. For general topics, please point to (and add to) the main nf-core website. -->
+The eduomics pipeline is designed to create realistic, educational genomic datasets for teaching bioinformatics analysis. This guide will walk you through setting up and running simulations for both DNA variant calling and RNA differential expression scenarios.
 
-## Samplesheet input
+## Quick Start Tutorial
 
-You will need to create a samplesheet with information about the samples you would like to analyse before running the pipeline. Use this parameter to specify its location. It has to be a comma-separated file with 3 columns, and a header row as shown in the examples below.
+### Prerequisites
+
+Before running the pipeline, ensure you have:
+
+1. **Nextflow installed** (version ≥24.04.2)
+2. **Container system** (Docker, Singularity, or Conda)
+3. **Reference genome configured** (we recommend using `GATK.GRCh38`)
+
+### Step 1: Understanding the Input Samplesheet
+
+The pipeline uses a CSV samplesheet to define simulation parameters. Here's the structure:
+
+```csv
+id,type,chromosome,coverage,capture,reps,groups,simthreshold
+```
+
+**Column Descriptions:**
+
+- `id`: Unique identifier for your simulation
+- `type`: Either `dna` for variant calling simulations or `rna` for differential expression simulations
+- `chromosome`: Target chromosome (e.g., `chr22`, `chr1`)
+- `coverage`: Sequencing depth (e.g., `30` for RNA-seq, `100` for DNA)
+- `capture`: BED file URL for DNA capture regions (leave empty for RNA simulations)
+- `reps`: Number of biological replicates per group
+- `groups`: Number of experimental groups (typically 2 for case/control)
+- `simthreshold`: Simulation threshold for gene selection (0.1-0.5 recommended)
+
+### Step 2: DNA Variant Simulation Tutorial
+
+#### Creating a DNA Simulation
+
+1. **Prepare your samplesheet** (`dna_samplesheet.csv`):
+
+```csv
+id,type,chromosome,coverage,capture,reps,groups,simthreshold
+my_dna_sim,dna,chr22,100,https://raw.githubusercontent.com/lescai-teaching/eduomics_testdata/refs/heads/main/dna/whole_chr22/Twist_exome_2.0_covered_chr22_500pad.bed,1,2,0.3
+```
+
+**Parameter Explanation:**
+
+- `my_dna_sim`: Your simulation name
+- `dna`: DNA simulation mode
+- `chr22`: Focus on chromosome 22 (computationally efficient for teaching)
+- `100`: 100x coverage (typical for exome sequencing)
+- `capture`: URL to exome capture BED file defining target regions
+- `1,2`: 1 replicate per group, 2 groups (normal vs. disease)
+- `0.3`: 30% of genes will be considered for variant injection
+
+2. **Run the DNA simulation**:
 
 ```bash
---input '[path to samplesheet file]'
+nextflow run nf-core/eduomics \
+    -profile docker \
+    --input dna_samplesheet.csv \
+    --genome GATK.GRCh38 \
+    --outdir dna_results
 ```
 
-### Multiple runs of the same sample
+#### What the DNA Simulation Does
 
-The `sample` identifiers have to be the same when you have re-sequenced the same sample more than once e.g. to increase sequencing depth. The pipeline will concatenate the raw reads before performing any downstream analysis. Below is an example for the same sample sequenced across 3 lanes:
+1. **Reference Preparation**: Subsets the reference genome and annotation to your target chromosome and capture regions
+2. **Variant Selection**: Extracts pathogenic variants from ClinVar database within your target regions
+3. **Profile Generation**: Creates a sequencing profile from existing BAM files to ensure realistic read characteristics
+4. **Read Simulation**: Uses SimuSCoP to generate paired-end FASTQ files containing the injected variants
+5. **Validation**: Performs variant calling to verify that injected variants can be detected
+6. **Scenario Generation**: Creates AI-powered educational scenarios explaining the biological context
 
-```csv title="samplesheet.csv"
-sample,fastq_1,fastq_2
-CONTROL_REP1,AEG588A1_S1_L002_R1_001.fastq.gz,AEG588A1_S1_L002_R2_001.fastq.gz
-CONTROL_REP1,AEG588A1_S1_L003_R1_001.fastq.gz,AEG588A1_S1_L003_R2_001.fastq.gz
-CONTROL_REP1,AEG588A1_S1_L004_R1_001.fastq.gz,AEG588A1_S1_L004_R2_001.fastq.gz
+#### Expected DNA Output Structure
+
+```
+dna_results/
+├── dna_simulations/
+│   └── my_dna_sim/
+│       ├── chr22-12345-A-T/          # Variant-specific folder
+│       │   ├── normal_1.fq.gz        # Normal sample reads
+│       │   ├── normal_2.fq.gz
+│       │   ├── disease_1.fq.gz       # Disease sample reads
+│       │   ├── disease_2.fq.gz
+│       │   ├── simulated_validated.vcf # Validation VCF
+│       │   ├── solution_chr22-12345-A-T.txt # Answer key
+│       │   └── my_dna_sim_scenario.txt # Educational scenario
+│       └── references/               # Reference bundle
+│           ├── reference.fa
+│           ├── capture_regions.bed
+│           ├── known_variants.vcf
+│           └── bwa_index/
 ```
 
-### Full samplesheet
+### Step 3: RNA Differential Expression Simulation Tutorial
 
-The pipeline will auto-detect whether a sample is single- or paired-end using the information provided in the samplesheet. The samplesheet can have as many columns as you desire, however, there is a strict requirement for the first 3 columns to match those defined in the table below.
+#### Creating an RNA Simulation
 
-A final samplesheet file consisting of both single- and paired-end data may look something like the one below. This is for 6 samples, where `TREATMENT_REP3` has been sequenced twice.
+1. **Prepare your samplesheet** (`rna_samplesheet.csv`):
 
-```csv title="samplesheet.csv"
-sample,fastq_1,fastq_2
-CONTROL_REP1,AEG588A1_S1_L002_R1_001.fastq.gz,AEG588A1_S1_L002_R2_001.fastq.gz
-CONTROL_REP2,AEG588A2_S2_L002_R1_001.fastq.gz,AEG588A2_S2_L002_R2_001.fastq.gz
-CONTROL_REP3,AEG588A3_S3_L002_R1_001.fastq.gz,AEG588A3_S3_L002_R2_001.fastq.gz
-TREATMENT_REP1,AEG588A4_S4_L003_R1_001.fastq.gz,
-TREATMENT_REP2,AEG588A5_S5_L003_R1_001.fastq.gz,
-TREATMENT_REP3,AEG588A6_S6_L003_R1_001.fastq.gz,
-TREATMENT_REP3,AEG588A6_S6_L004_R1_001.fastq.gz,
+```csv
+id,type,chromosome,coverage,reps,groups,simthreshold
+my_rna_sim,rna,chr22,30,,3,2,0.3
 ```
 
-| Column    | Description                                                                                                                                                                            |
-| --------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `sample`  | Custom sample name. This entry will be identical for multiple sequencing libraries/runs from the same sample. Spaces in sample names are automatically converted to underscores (`_`). |
-| `fastq_1` | Full path to FastQ file for Illumina short reads 1. File has to be gzipped and have the extension ".fastq.gz" or ".fq.gz".                                                             |
-| `fastq_2` | Full path to FastQ file for Illumina short reads 2. File has to be gzipped and have the extension ".fastq.gz" or ".fq.gz".                                                             |
+**Parameter Explanation:**
 
-An [example samplesheet](../assets/samplesheet.csv) has been provided with the pipeline.
+- `my_rna_sim`: Your simulation name
+- `rna`: RNA simulation mode
+- `chr22`: Focus on chromosome 22
+- `30`: 30x coverage (typical for RNA-seq)
+- Empty capture field (not needed for RNA)
+- `3,2`: 3 replicates per group, 2 groups
+- `0.3`: 30% of genes will show differential expression
 
-## Running the pipeline
-
-The typical command for running the pipeline is as follows:
+2. **Run the RNA simulation**:
 
 ```bash
-nextflow run nf-core/eduomics --input ./samplesheet.csv --outdir ./results --genome GRCh37 -profile docker
+nextflow run nf-core/eduomics \
+    -profile docker \
+    --input rna_samplesheet.csv \
+    --genome GATK.GRCh38 \
+    --outdir rna_results
 ```
 
-This will launch the pipeline with the `docker` configuration profile. See below for more information about profiles.
+#### What the RNA Simulation Does
 
-Note that the pipeline will create the following files in your working directory:
+1. **Transcriptome Preparation**: Subsets transcriptome references to your target chromosome
+2. **Gene Selection**: Identifies genes suitable for differential expression based on functional annotations
+3. **Count Matrix Generation**: Creates realistic count matrices with known differential expression patterns
+4. **Read Simulation**: Uses Polyester to generate RNA-seq FASTQ files matching the count matrices
+5. **Expression Quantification**: Runs Salmon to quantify transcript expression
+6. **Differential Analysis**: Performs DESeq2 analysis to identify differentially expressed genes
+7. **Functional Enrichment**: Conducts GO enrichment analysis on differentially expressed genes
+8. **Validation**: Ensures the simulation produces detectable differential expression
+9. **Scenario Generation**: Creates educational scenarios explaining the biological context
+
+#### Expected RNA Output Structure
+
+```
+rna_results/
+├── rna_simulations/
+│   └── my_rna_sim/
+│       ├── GENE1_GENE2_GENE3_GENE4_GENE5/  # Top 5 DE genes folder
+│       │   ├── validated_reads/
+│       │   │   ├── sample_01_1.fasta.gz    # Group 1 replicates
+│       │   │   ├── sample_01_2.fasta.gz
+│       │   │   ├── sample_02_1.fasta.gz
+│       │   │   ├── sample_02_2.fasta.gz
+│       │   │   └── ...
+│       │   ├── deseq2_results.tsv          # DE analysis results
+│       │   ├── deseq2_de_genes.txt         # List of DE genes
+│       │   ├── deseq2_ma_plot.pdf          # MA plot
+│       │   ├── deseq2_pca_plot.pdf         # PCA plot
+│       │   ├── enrichment_results.rds      # GO enrichment
+│       │   ├── dotplot_BP.png              # Enrichment plots
+│       │   ├── validation_result.txt       # Validation status
+│       │   └── my_rna_sim_scenario.txt     # Educational scenario
+│       └── references/                     # Reference bundle
+│           ├── transcripts.fa
+│           ├── annotation.gff3
+│           └── salmon_index/
+```
+
+### Step 4: Advanced Configuration
+
+#### Multiple Simulations
+
+You can run multiple simulations in a single samplesheet:
+
+```csv
+id,type,chromosome,coverage,capture,reps,groups,simthreshold
+dna_easy,dna,chr22,100,https://example.com/capture.bed,1,2,0.1
+dna_hard,dna,chr22,50,https://example.com/capture.bed,2,3,0.5
+rna_basic,rna,chr22,30,,3,2,0.2
+rna_complex,rna,chr1,50,,5,3,0.4
+```
+
+#### Adjusting Simulation Complexity
+
+**For Beginners:**
+
+- Use `chr22` (smaller chromosome)
+- Lower coverage (30-50x)
+- Fewer replicates (2-3)
+- Lower simthreshold (0.1-0.2)
+
+**For Advanced Users:**
+
+- Use larger chromosomes (`chr1`, `chr2`)
+- Higher coverage (100x+)
+- More replicates (5+)
+- Higher simthreshold (0.4-0.5)
+
+#### Custom Capture Regions
+
+For DNA simulations, you can provide your own capture BED file:
+
+```csv
+id,type,chromosome,coverage,capture,reps,groups,simthreshold
+custom_panel,dna,chr17,150,/path/to/my_panel.bed,2,2,0.3
+```
+
+### Step 5: Using the Simulated Data for Teaching
+
+#### For DNA Simulations
+
+The generated data can be used to teach:
+
+1. **Quality Control**: FastQC analysis of the FASTQ files
+2. **Read Alignment**: BWA-MEM alignment to reference genome
+3. **Variant Calling**: GATK HaplotypeCaller workflow
+4. **Variant Annotation**: Using tools like VEP or ANNOVAR
+5. **Clinical Interpretation**: Analyzing the pathogenicity of detected variants
+
+**Teaching Workflow:**
 
 ```bash
-work                # Directory containing the nextflow working files
-<OUTDIR>            # Finished results in specified location (defined with --outdir)
-.nextflow_log       # Log file from Nextflow
-# Other nextflow hidden files, eg. history of pipeline runs and old logs.
+# Students can practice this workflow:
+# 1. Quality control
+fastqc *.fq.gz
+
+# 2. Alignment
+bwa mem reference.fa sample_1.fq.gz sample_2.fq.gz | samtools sort > sample.bam
+
+# 3. Variant calling
+gatk HaplotypeCaller -R reference.fa -I sample.bam -O sample.vcf
+
+# 4. Compare with solution
+diff sample.vcf solution_chr22-12345-A-T.txt
 ```
 
-If you wish to repeatedly use the same parameters for multiple runs, rather than specifying each flag in the command, you can specify these in a params file.
+#### For RNA Simulations
 
-Pipeline settings can be provided in a `yaml` or `json` file via `-params-file <file>`.
+The generated data can be used to teach:
 
-> [!WARNING]
-> Do not use `-c <file>` to specify parameters as this will result in errors. Custom config files specified with `-c` must only be used for [tuning process resource specifications](https://nf-co.re/docs/usage/configuration#tuning-workflow-resources), other infrastructural tweaks (such as output directories), or module arguments (args).
+1. **Quality Control**: FastQC and MultiQC analysis
+2. **Quantification**: Salmon or Kallisto transcript quantification
+3. **Differential Expression**: DESeq2 or edgeR analysis
+4. **Functional Analysis**: GO enrichment and pathway analysis
+5. **Visualization**: Creating plots and heatmaps
 
-The above pipeline run specified with a params file in yaml format:
+**Teaching Workflow:**
 
 ```bash
-nextflow run nf-core/eduomics -profile docker -params-file params.yaml
+# Students can practice this workflow:
+# 1. Quantification
+salmon quant -i salmon_index -l A -1 sample_1.fasta.gz -2 sample_2.fasta.gz -o sample_quant
+
+# 2. Import to R and run DESeq2
+# (R code for differential expression analysis)
+
+# 3. Compare results with provided solution
+# Compare detected DE genes with deseq2_de_genes.txt
 ```
 
-with:
+### Step 6: Troubleshooting
 
-```yaml title="params.yaml"
-input: './samplesheet.csv'
-outdir: './results/'
-genome: 'GRCh37'
-<...>
-```
+#### Common Issues
 
-You can also generate such `YAML`/`JSON` files via [nf-core/launch](https://nf-co.re/launch).
-
-### Updating the pipeline
-
-When you run the above command, Nextflow automatically pulls the pipeline code from GitHub and stores it as a cached version. When running the pipeline after this, it will always use the cached version if available - even if the pipeline has been updated since. To make sure that you're running the latest version of the pipeline, make sure that you regularly update the cached version of the pipeline:
+**Memory Requirements:**
 
 ```bash
-nextflow pull nf-core/eduomics
+# If you encounter memory issues, add:
+export NXF_OPTS='-Xms1g -Xmx4g'
 ```
 
-### Reproducibility
-
-It is a good idea to specify the pipeline version when running the pipeline on your data. This ensures that a specific version of the pipeline code and software are used when you run your pipeline. If you keep using the same tag, you'll be running the same version of the pipeline, even if there have been changes to the code since.
-
-First, go to the [nf-core/eduomics releases page](https://github.com/nf-core/eduomics/releases) and find the latest pipeline version - numeric only (eg. `1.3.1`). Then specify this when running the pipeline with `-r` (one hyphen) - eg. `-r 1.3.1`. Of course, you can switch to another version by changing the number after the `-r` flag.
-
-This version number will be logged in reports when you run the pipeline, so that you'll know what you used when you look back in the future.
-
-To further assist in reproducibility, you can use share and reuse [parameter files](#running-the-pipeline) to repeat pipeline runs with the same settings without having to write out a command with every single parameter.
-
-> [!TIP]
-> If you wish to share such profile (such as upload as supplementary material for academic publications), make sure to NOT include cluster specific paths to files, nor institutional specific profiles.
-
-## Core Nextflow arguments
-
-> [!NOTE]
-> These options are part of Nextflow and use a _single_ hyphen (pipeline parameters use a double-hyphen)
-
-### `-profile`
-
-Use this parameter to choose a configuration profile. Profiles can give configuration presets for different compute environments.
-
-Several generic profiles are bundled with the pipeline which instruct the pipeline to use software packaged using different methods (Docker, Singularity, Podman, Shifter, Charliecloud, Apptainer, Conda) - see below.
-
-> [!IMPORTANT]
-> We highly recommend the use of Docker or Singularity containers for full pipeline reproducibility, however when this is not possible, Conda is also supported.
-
-The pipeline also dynamically loads configurations from [https://github.com/nf-core/configs](https://github.com/nf-core/configs) when it runs, making multiple config profiles for various institutional clusters available at run time. For more information and to check if your system is supported, please see the [nf-core/configs documentation](https://github.com/nf-core/configs#documentation).
-
-Note that multiple profiles can be loaded, for example: `-profile test,docker` - the order of arguments is important!
-They are loaded in sequence, so later profiles can overwrite earlier profiles.
-
-If `-profile` is not specified, the pipeline will run locally and expect all software to be installed and available on the `PATH`. This is _not_ recommended, since it can lead to different results on different machines dependent on the computer environment.
-
-- `test`
-  - A profile with a complete configuration for automated testing
-  - Includes links to test data so needs no other parameters
-- `docker`
-  - A generic configuration profile to be used with [Docker](https://docker.com/)
-- `singularity`
-  - A generic configuration profile to be used with [Singularity](https://sylabs.io/docs/)
-- `podman`
-  - A generic configuration profile to be used with [Podman](https://podman.io/)
-- `shifter`
-  - A generic configuration profile to be used with [Shifter](https://nersc.gitlab.io/development/shifter/how-to-use/)
-- `charliecloud`
-  - A generic configuration profile to be used with [Charliecloud](https://hpc.github.io/charliecloud/)
-- `apptainer`
-  - A generic configuration profile to be used with [Apptainer](https://apptainer.org/)
-- `wave`
-  - A generic configuration profile to enable [Wave](https://seqera.io/wave/) containers. Use together with one of the above (requires Nextflow ` 24.03.0-edge` or later).
-- `conda`
-  - A generic configuration profile to be used with [Conda](https://conda.io/docs/). Please only use Conda as a last resort i.e. when it's not possible to run the pipeline with Docker, Singularity, Podman, Shifter, Charliecloud, or Apptainer.
-
-### `-resume`
-
-Specify this when restarting a pipeline. Nextflow will use cached results from any pipeline steps where the inputs are the same, continuing from where it got to previously. For input to be considered the same, not only the names must be identical but the files' contents as well. For more info about this parameter, see [this blog post](https://www.nextflow.io/blog/2019/demystifying-nextflow-resume.html).
-
-You can also supply a run name to resume a specific run: `-resume [run-name]`. Use the `nextflow log` command to show previous run names.
-
-### `-c`
-
-Specify the path to a specific config file (this is a core Nextflow command). See the [nf-core website documentation](https://nf-co.re/usage/configuration) for more information.
-
-## Custom configuration
-
-### Resource requests
-
-Whilst the default requirements set within the pipeline will hopefully work for most people and with most input data, you may find that you want to customise the compute resources that the pipeline requests. Each step in the pipeline has a default set of requirements for number of CPUs, memory and time. For most of the pipeline steps, if the job exits with any of the error codes specified [here](https://github.com/nf-core/rnaseq/blob/4c27ef5610c87db00c3c5a3eed10b1d161abf575/conf/base.config#L18) it will automatically be resubmitted with higher resources request (2 x original, then 3 x original). If it still fails after the third attempt then the pipeline execution is stopped.
-
-To change the resource requests, please see the [max resources](https://nf-co.re/docs/usage/configuration#max-resources) and [tuning workflow resources](https://nf-co.re/docs/usage/configuration#tuning-workflow-resources) section of the nf-core website.
-
-### Custom Containers
-
-In some cases, you may wish to change the container or conda environment used by a pipeline steps for a particular tool. By default, nf-core pipelines use containers and software from the [biocontainers](https://biocontainers.pro/) or [bioconda](https://bioconda.github.io/) projects. However, in some cases the pipeline specified version maybe out of date.
-
-To use a different container from the default container or conda environment specified in a pipeline, please see the [updating tool versions](https://nf-co.re/docs/usage/configuration#updating-tool-versions) section of the nf-core website.
-
-### Custom Tool Arguments
-
-A pipeline might not always support every possible argument or option of a particular tool used in pipeline. Fortunately, nf-core pipelines provide some freedom to users to insert additional parameters that the pipeline does not include by default.
-
-To learn how to provide additional arguments to a particular tool of the pipeline, please see the [customising tool arguments](https://nf-co.re/docs/usage/configuration#customising-tool-arguments) section of the nf-core website.
-
-### nf-core/configs
-
-In most cases, you will only need to create a custom config as a one-off but if you and others within your organisation are likely to be running nf-core pipelines regularly and need to use the same settings regularly it may be a good idea to request that your custom config file is uploaded to the `nf-core/configs` git repository. Before you do this please can you test that the config file works with your pipeline of choice using the `-c` parameter. You can then create a pull request to the `nf-core/configs` repository with the addition of your config file, associated documentation file (see examples in [`nf-core/configs/docs`](https://github.com/nf-core/configs/tree/master/docs)), and amending [`nfcore_custom.config`](https://github.com/nf-core/configs/blob/master/nfcore_custom.config) to include your custom profile.
-
-See the main [Nextflow documentation](https://www.nextflow.io/docs/latest/config.html) for more information about creating your own configuration files.
-
-If you have any questions or issues please send us a message on [Slack](https://nf-co.re/join/slack) on the [`#configs` channel](https://nfcore.slack.com/channels/configs).
-
-## Running in the background
-
-Nextflow handles job submissions and supervises the running jobs. The Nextflow process must run until the pipeline is finished.
-
-The Nextflow `-bg` flag launches Nextflow in the background, detached from your terminal so that the workflow does not stop if you log out of your session. The logs are saved to a file.
-
-Alternatively, you can use `screen` / `tmux` or similar tool to create a detached session which you can log back into at a later time.
-Some HPC setups also allow you to run nextflow within a cluster job submitted your job scheduler (from where it submits more jobs).
-
-## Nextflow memory requirements
-
-In some cases, the Nextflow Java virtual machines can start to request a large amount of memory.
-We recommend adding the following line to your environment to limit this (typically in `~/.bashrc` or `~./bash_profile`):
+**Container Issues:**
 
 ```bash
-NXF_OPTS='-Xms1g -Xmx4g'
+# For Singularity users:
+nextflow run nf-core/eduomics -profile singularity --singularity_pull_docker_container
+
+# For Conda users:
+nextflow run nf-core/eduomics -profile conda
 ```
+
+**Test Run:**
+
+```bash
+# Always test with the provided test dataset first:
+nextflow run nf-core/eduomics -profile test,docker --outdir test_results
+```
+
+#### Validation Failures
+
+If simulations fail validation:
+
+1. **Check coverage**: Ensure sufficient coverage for variant detection (DNA) or expression quantification (RNA)
+2. **Verify capture regions**: Ensure BED file format is correct and contains target regions
+3. **Adjust thresholds**: Lower simthreshold values for more conservative simulations
+
+### Step 7: Educational Scenarios
+
+Each simulation generates an AI-powered educational scenario that provides:
+
+- **Biological context** for the simulated variants or expression changes
+- **Clinical relevance** of the findings
+- **Learning objectives** for the dataset
+- **Expected outcomes** students should achieve
+
+These scenarios help instructors frame the computational exercise within a meaningful biological context.
+
+## Resource Requirements
+
+### Minimum Requirements
+
+- **CPU**: 4 cores
+- **Memory**: 8 GB RAM
+- **Storage**: 50 GB free space
+- **Time**: 1-4 hours depending on simulation complexity
+
+### Recommended Requirements
+
+- **CPU**: 8+ cores
+- **Memory**: 16+ GB RAM
+- **Storage**: 100+ GB free space
+- **Time**: 30 minutes - 2 hours
+
+## Best Practices
+
+1. **Start Small**: Begin with chr22 simulations before moving to larger chromosomes
+2. **Test First**: Always run the test profile before your custom simulations
+3. **Plan Storage**: Simulations can generate several GB of data per sample
+4. **Document Parameters**: Keep track of simulation parameters for reproducibility
+5. **Validate Results**: Check that simulations meet your educational objectives
+
+## Getting Help
+
+- **Pipeline Issues**: Open an issue on the [GitHub repository](https://github.com/nf-core/eduomics/issues)
+- **Usage Questions**: Join the [nf-core Slack](https://nf-co.re/join/slack) #eduomics channel
+- **Educational Applications**: Contact the development team for teaching-specific guidance
+
+## Next Steps
+
+After running your simulations:
+
+1. **Review the output structure** (see [output documentation](output.md))
+2. **Design your teaching workflow** using the generated data
+3. **Create assessment materials** based on the known ground truth
+4. **Share your educational scenarios** with the community
+
+The eduomics pipeline provides a foundation for evidence-based bioinformatics education where students can validate their analytical skills against known biological truth.
