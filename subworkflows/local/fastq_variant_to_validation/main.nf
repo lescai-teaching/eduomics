@@ -92,6 +92,8 @@ workflow FASTQ_VARIANT_TO_VALIDATION {
         .map { meta, bam, bai, table -> [meta, bam, bai, table] }
         .combine(capture)
 
+    bam_for_applybqsr.dump(tag: 'bam for applybqsr')
+
     GATK4_APPLYBQSR(
         bam_for_applybqsr,
         fasta.map{ meta, it -> [ it ] },
