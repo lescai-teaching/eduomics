@@ -107,7 +107,7 @@ workflow FASTQ_VARIANT_TO_VALIDATION {
     empty_models_ch = Channel.value([[]])
 
     bam_for_calling = GATK4_APPLYBQSR.out.bam
-        .combine(INDEX_RECAL.out.bai, by: 0)
+        .join(INDEX_RECAL.out.bai)
         .combine(capture)
         .combine(empty_models_ch)
 
