@@ -43,9 +43,9 @@ process PYCONVERTOSIM {
     do
         counter=\$((counter+1))
         variant=\$(echo -e \"\$line\" | awk -F'\\t' '{print \$3 "-" \$4 "-" \$5 "-" \$6}')
-        cp ${prefix}_base_variation.txt ${prefix}_simvar_\${variant}_\${counter}_unsorted.txt
-        echo "\$line" >> ${prefix}_simvar_\${variant}_\${counter}_unsorted.txt
-        sort -k4 -n ${prefix}_simvar_\${variant}_\${counter}_unsorted.txt > ${prefix}_simvar_\${variant}_\${counter}.txt
+        cp ${prefix}_base_variation.txt ${prefix}_simvar_\${variant}_\${counter}_unsorted.tmp
+        echo "\$line" >> ${prefix}_simvar_\${variant}_\${counter}_unsorted.tmp
+        sort -k4 -n ${prefix}_simvar_\${variant}_\${counter}_unsorted.tmp > ${prefix}_simvar_\${variant}_\${counter}.txt
     done < ${prefix}_patho_variation.txt
 
     cat <<-END_VERSIONS > versions.yml
