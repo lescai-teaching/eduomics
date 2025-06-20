@@ -21,8 +21,11 @@ workflow PROFILE_SIMULATE_VARS_FASTQ {
                                                 files.collect { file ->
                                                 def var = file.getName().split('_')[2]
                                                 def newmeta = m + [simulatedvar: "${var}"]
-                                                return [newmeta, file]
+                                                return [var, newmeta, file]
                                                 } }
+                                                .groupTuple(by: 0) // keep only one file per variant across all batches
+                                                .map { var, meta_list, file_list -> [meta_list[0], file_list[0]] }
+
     ch_variants_to_inject = params.istest
         ? variants_to_inject.take(params.test_limit)
         : variants_to_inject
