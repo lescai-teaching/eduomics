@@ -176,18 +176,21 @@ output {
 
     softwareversions {
         path "${params.outdir}/pipeline_info"
+        mode 'copy'
     }
 
     dnasimulation {
         path { meta, files ->
             "${params.outdir}/dna_simulations/${meta.id}/${meta.simulatedvar}"
         }
+        mode 'copy'
     }
 
     dnabundle {
         path { meta, files ->
             "${params.outdir}/dna_simulations/${meta.id}/references"
         }
+        mode 'copy'
     }
 
     rnasimulation {
@@ -195,12 +198,14 @@ output {
             def simfolder = meta.genes.split(',').take(5).join('_')
             "${params.outdir}/rna_simulations/${meta.id}/${simfolder}"
         }
+        mode 'copy'
     }
 
     rnabundle {
         path { meta, files ->
             "${params.outdir}/rna_simulations/${meta.id}/references"
         }
+        mode 'copy'
     }
 
 
@@ -214,6 +219,7 @@ output {
                 "${params.outdir}/rna_simulations/${meta.id}/${simfolder}"
             }
         }
+        mode 'copy'
     }
 
 
