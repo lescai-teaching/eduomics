@@ -108,6 +108,7 @@ workflow FASTQ_VARIANT_TO_VALIDATION {
 
     bam_for_calling = GATK4_APPLYBQSR.out.bam
         .join(INDEX_RECAL.out.bai)
+        .map { meta,bam,bai -> [meta, bam, bai] }
         .combine(capture)
         .combine(empty_models_ch)
 

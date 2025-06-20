@@ -52,7 +52,7 @@ def parse_variant_info(string):
 def main():
 	args = get_arguments()
 	filein = open(args.input)
-	fileout = open(args.output, "a")
+	fileout = open(args.output, "w")
 	for line in filein:
 		line = line.strip()
 		if line.startswith("#"):
