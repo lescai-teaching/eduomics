@@ -27,11 +27,11 @@ process DNAVALIDATION {
 
     # check whether the variant position is present in the VCF
     if gzip -cd ${vcf} | grep -v '^#' | grep -q "\${variantpos}"; then
-        mkdir -p "${result_dir}"
-        echo "${variant}" > "${result_dir}/solution_${variant}.txt"
-        cp ${vcf} "${result_dir}/"
+        mkdir -p "\${result_dir}"
+        echo "${variant}" > "\${result_dir}/solution_${variant}.txt"
+        cp ${vcf} "\${result_dir}/"
         for read in ${reads}; do
-            cp "\$read" "${result_dir}/"
+            cp "\$read" "\${result_dir}/"
         done
     fi
 
