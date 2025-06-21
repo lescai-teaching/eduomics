@@ -132,8 +132,8 @@ workflow EDUOMICS {
     ch_versions = ch_versions.mix(FASTQ_VARIANT_TO_VALIDATION.out.versions)
 
     ch_dna_scenario = FASTQ_VARIANT_TO_VALIDATION.out.scenario
-        .map { m, var ->
-            return [m, m.var, false]
+        .map { m, simulatedvar ->
+            return [m, simulatedvar, false]
         }
     ch_scenarios = ch_scenarios.mix(ch_dna_scenario)
 
