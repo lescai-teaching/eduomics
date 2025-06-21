@@ -46,7 +46,7 @@ process DNAVALIDATION {
     """
     mkdir -p dna_${variant}_validation
     touch dna_${variant}_validation/solution_${variant}.txt
-    touch dna_${variant}_validation/simulated_validated.vcf
+    touch dna_${variant}_validation/simulated_validated.vcf.gz
     for read in ${reads}; do
         touch dna_${variant}_validation/\$(basename \$read)
     done

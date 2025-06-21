@@ -30,7 +30,7 @@ nextflow_process {
             assert process.success
             def dir = new File(process.out.dna_validated_results[0][1])
             def files = dir.listFiles() as List
-            assert files.count { it.name.endsWith('.vcf') } == 1
+            assert files.count { it.name.endsWith('.vcf.gz') } == 1
             assert files.count { it.name.endsWith('.txt') } == 1
             assert files.count { it.name.endsWith('.fastq.gz') } == 4
             assert files.size() == 6  // 1 solution file, 1 VCF, 4 FASTQ.GZ
@@ -70,7 +70,7 @@ nextflow_process {
                 """
                 input[0] = [
                     [ id:'test_stub', simulatedvar:'chr22-1234-A-T' ],
-                    file("dummy.vcf"),
+                    file("dummy.vcf.gz"),
                     [
                         file("dummy_case_1.fastq.gz"),
                         file("dummy_case_2.fastq.gz"),
@@ -86,7 +86,7 @@ nextflow_process {
             assert process.success
             def dir = new File(process.out.dna_validated_results[0][1])
             def files = dir.listFiles() as List
-            assert files.count { it.name.endsWith('.vcf') } == 1
+            assert files.count { it.name.endsWith('.vcf.gz') } == 1
             assert files.count { it.name.endsWith('.txt') } == 1
             assert files.count { it.name.endsWith('.fastq.gz') } == 4
             assert files.size() == 6  // 1 solution file, 1 VCF, 4 FASTQ.GZ
