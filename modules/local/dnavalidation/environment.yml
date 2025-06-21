@@ -5,3 +5,5 @@ channels:
   - bioconda
 dependencies:
   - conda-forge::bash=5.2.21
+  - conda-forge::grep=3.11
+  - conda-forge::gzip=1.13

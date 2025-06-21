@@ -4,8 +4,8 @@ process DNAVALIDATION {
 
     conda "${moduleDir}/environment.yml"
     container "${ workflow.containerEngine == 'singularity' && !task.ext.singularity_pull_docker_container ?
-    'oras://community.wave.seqera.io/library/bash:5.2.21--67f53ad0451dfdce' :
-    'community.wave.seqera.io/library/bash:5.2.21--5bc877f5b6cf0654' }"
+    'oras://community.wave.seqera.io/library/bash_grep_gzip:68663f683f82a964' :
+    'community.wave.seqera.io/library/bash_grep_gzip:9781f12aeda63f1e' }"
 
     input:
     tuple val(meta), path(vcf), path(reads)
@@ -22,13 +22,16 @@ process DNAVALIDATION {
     def prefix = task.ext.prefix ?: "${meta.id}"
     def variant = meta.simulatedvar ?: ''
     """
-    variantpos=\$(echo "${variant}" | cut -d"-" -f2)
-    if zcat ${vcf} | grep -v \"#\" | grep -q "\${variantpos}"; then
-        mkdir -p dna_${variant}_validation
-        echo "${variant}" > dna_${variant}_validation/solution_${variant}.txt
-        cp ${vcf} dna_${variant}_validation/
+    variantpos=\$(cut -d"-" -f2 <<<"${variant}")
+    result_dir="dna_${variant}_validation"
+
+    # check whether the variant position is present in the VCF
+    if gzip -cd ${vcf} | grep -v '^#' | grep -q "\${variantpos}"; then
+        mkdir -p "${result_dir}"
+        echo "${variant}" > "${result_dir}/solution_${variant}.txt"
+        cp ${vcf} "${result_dir}/"
         for read in ${reads}; do
-            cp \$read dna_${variant}_validation/
+            cp "\$read" "${result_dir}/"
         done
     fi
 
