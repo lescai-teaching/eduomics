@@ -14,6 +14,12 @@ tools:
       documentation: "https://www.gnu.org/software/bash/manual/"
       licence: ["GPL-3.0-or-later"]
       version: "5.2.21"
+  - grep:
+      description: Search for patterns in text files
+      homepage: "https://www.gnu.org/software/grep/"
+      documentation: "https://www.gnu.org/software/grep/manual/"
+  - gzip:
+      description: GNU compression utilities used to uncompress the VCF
 
 input:
   - - meta:
