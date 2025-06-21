@@ -13,8 +13,8 @@ nextflow_process {
             process {
                 """
                 input[0] = [
-                    [ id:'test1', simulatedvar:'chr22-34449622-G-A' ],
-                    file("https://raw.githubusercontent.com/lescai-teaching/eduomics_testdata/refs/heads/main/dna/result_ann_test.vcf"),
+                    [ id:'test1', simulatedvar:'chr22-18078510-T-C' ],
+                    file("https://raw.githubusercontent.com/lescai-teaching/eduomics_testdata/refs/heads/main/dna/genotypeGVCFs/sim01.vcf.gz"),
                     [
                         file("https://raw.githubusercontent.com/lescai-teaching/eduomics_testdata/refs/heads/main/dna/test1_case_1.fastq.gz"),
                         file("https://raw.githubusercontent.com/lescai-teaching/eduomics_testdata/refs/heads/main/dna/test1_case_2.fastq.gz"),
@@ -44,7 +44,7 @@ nextflow_process {
                 """
                 input[0] = [
                     [ id:'test2', simulatedvar:'LOLLOLOLLO' ],
-                    file("https://raw.githubusercontent.com/lescai-teaching/eduomics_testdata/refs/heads/main/dna/result_ann_test.vcf"),
+                    file("https://raw.githubusercontent.com/lescai-teaching/eduomics_testdata/refs/heads/main/dna/genotypeGVCFs/sim01.vcf.gz"),
                     [
                         file("https://raw.githubusercontent.com/lescai-teaching/eduomics_testdata/refs/heads/main/dna/test1_case_1.fastq.gz"),
                         file("https://raw.githubusercontent.com/lescai-teaching/eduomics_testdata/refs/heads/main/dna/test1_case_2.fastq.gz"),
