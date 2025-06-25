@@ -6,7 +6,7 @@
 
 ## Introduction
 
-The eduomics pipeline is designed to create realistic, educational genomic datasets for teaching bioinformatics analysis. This guide will walk you through setting up and running simulations for both DNA variant calling and RNA differential expression scenarios.
+The eduomics pipeline is designed to create realistic, educational genomic datasets that support problem-based learning through structured storylines. Rather than generating random data, eduomics produces biologically plausible datasets tailored to guide students through complete bioinformatics workflows, from raw sequencing data to final results. This guide will walk you through setting up and running simulations for both DNA variant calling and RNA differential expression scenarios.
 
 ## Quick Start Tutorial
 
@@ -28,14 +28,14 @@ id,type,chromosome,coverage,capture,reps,groups,simthreshold
 
 **Column Descriptions:**
 
-- `id`: Unique identifier for your simulation
-- `type`: Either `dna` for variant calling simulations or `rna` for differential expression simulations
-- `chromosome`: Target chromosome (e.g., `chr22`, `chr1`)
-- `coverage`: Sequencing depth (e.g., `30` for RNA-seq, `100` for DNA)
-- `capture`: BED file URL for DNA capture regions (leave empty for RNA simulations)
-- `reps`: Number of biological replicates per group
-- `groups`: Number of experimental groups (typically 2 for case/control)
-- `simthreshold`: Simulation threshold for gene selection (0.1-0.5 recommended)
+- `id`: Unique identifier for your simulation (e.g. `simulation1`)
+- `type`: Either `dna` for variant calling simulations or `rna` for differential expression simulations.
+- `chromosome`: Target chromosome (e.g., `chr22`, `chr1`).
+- `coverage`: Sequencing depth. Default is `30` for RNA-seq and `100` for DNA.
+- `capture`: BED file URL for DNA capture regions (leave empty for RNA simulations).
+- `reps`: Number of biological replicates per group.
+- `groups`: Number of experimental groups (typically 2 for case/control).
+- `simthreshold`: Simulation threshold for gene selection (leave empty for DNA simulations). Default is `0.3`.
 
 ### Step 2: DNA Variant Simulation Tutorial
 
@@ -45,18 +45,19 @@ id,type,chromosome,coverage,capture,reps,groups,simthreshold
 
 ```csv
 id,type,chromosome,coverage,capture,reps,groups,simthreshold
-my_dna_sim,dna,chr22,100,https://raw.githubusercontent.com/lescai-teaching/eduomics_testdata/refs/heads/main/dna/whole_chr22/Twist_exome_2.0_covered_chr22_500pad.bed,1,2,0.3
+my_dna_sim,dna,chr22,100,path/to/capture.bed,1,2,,
 ```
 
 **Parameter Explanation:**
 
-- `my_dna_sim`: Your simulation name
-- `dna`: DNA simulation mode
-- `chr22`: Focus on chromosome 22 (computationally efficient for teaching)
-- `100`: 100x coverage (typical for exome sequencing)
-- `capture`: URL to exome capture BED file defining target regions
-- `1,2`: 1 replicate per group, 2 groups (normal vs. disease)
-- `0.3`: 30% of genes will be considered for variant injection
+- `my_dna_sim`: Your simulation name.
+- `dna`: DNA simulation mode.
+- `chr22`: Focus on chromosome 22 (computationally efficient for teaching).
+- `100`: 100x coverage (typical for exome sequencing).
+- `capture`: path to exome capture BED file defining target regions.
+- `1`: 1 replicate per group.
+- `2`: 2 groups (e.g. normal vs. disease).
+- Empty simthreshold field (not needed for DNA).
 
 2. **Run the DNA simulation**:
 
@@ -70,12 +71,12 @@ nextflow run nf-core/eduomics \
 
 #### What the DNA Simulation Does
 
-1. **Reference Preparation**: Subsets the reference genome and annotation to your target chromosome and capture regions
-2. **Variant Selection**: Extracts pathogenic variants from ClinVar database within your target regions
-3. **Profile Generation**: Creates a sequencing profile from existing BAM files to ensure realistic read characteristics
-4. **Read Simulation**: Uses SimuSCoP to generate paired-end FASTQ files containing the injected variants
-5. **Validation**: Performs variant calling to verify that injected variants can be detected
-6. **Scenario Generation**: Creates AI-powered educational scenarios explaining the biological context
+1. **Reference Preparation**: Subsets the reference genome and annotation to your target chromosome and capture regions.
+2. **Variant Selection**: Extracts pathogenic variants from ClinVar database within your target regions.
+3. **Profile Generation**: Creates a sequencing profile from existing BAM files to ensure realistic read simulations.
+4. **Read Simulation**: Uses SimuSCoP to generate paired-end FASTQ files containing the injected variants.
+5. **Validation**: Performs variant calling to verify that injected variants can be detected.
+6. **Scenario Generation**: Creates AI-powered educational scenarios explaining the biological context.
 
 #### Expected DNA Output Structure
 
@@ -83,15 +84,15 @@ nextflow run nf-core/eduomics \
 dna_results/
 ├── dna_simulations/
 │   └── my_dna_sim/
-│       ├── chr22-12345-A-T/          # Variant-specific folder
-│       │   ├── normal_1.fq.gz        # Normal sample reads
+│       ├── chr22-12345-A-T/                 # Variant-specific folder
+│       │   ├── normal_1.fq.gz               # Normal sample reads
 │       │   ├── normal_2.fq.gz
-│       │   ├── disease_1.fq.gz       # Disease sample reads
+│       │   ├── disease_1.fq.gz              # Disease sample reads
 │       │   ├── disease_2.fq.gz
-│       │   ├── simulated_validated.vcf # Validation VCF
-│       │   ├── solution_chr22-12345-A-T.txt # Answer key
-│       │   └── my_dna_sim_scenario.txt # Educational scenario
-│       └── references/               # Reference bundle
+│       │   ├── simulated_validated.vcf      # Validated VCF
+│       │   ├── solution_chr22-12345-A-T.txt # Variant-specific solution
+│       │   └── my_dna_sim_scenario.txt      # Educational scenario
+│       └── references/                      # Reference bundle
 │           ├── reference.fa
 │           ├── capture_regions.bed
 │           ├── known_variants.vcf
@@ -105,19 +106,20 @@ dna_results/
 1. **Prepare your samplesheet** (`rna_samplesheet.csv`):
 
 ```csv
-id,type,chromosome,coverage,reps,groups,simthreshold
+id,type,chromosome,coverage,capture,reps,groups,simthreshold
 my_rna_sim,rna,chr22,30,,3,2,0.3
 ```
 
 **Parameter Explanation:**
 
-- `my_rna_sim`: Your simulation name
-- `rna`: RNA simulation mode
-- `chr22`: Focus on chromosome 22
-- `30`: 30x coverage (typical for RNA-seq)
-- Empty capture field (not needed for RNA)
-- `3,2`: 3 replicates per group, 2 groups
-- `0.3`: 30% of genes will show differential expression
+- `my_rna_sim`: Your simulation name.
+- `rna`: RNA simulation mode.
+- `chr22`: Focus on chromosome 22 (computationally efficient for teaching).
+- `30`: 30x coverage (typical for RNA-seq).
+- Empty capture field (not needed for RNA).
+- `3`: 3 replicates per group.
+- `2`: 2 groups (e.g. normal vs. disease).
+- `0.3`: Jaccard index threshold used to construct a similarity network from Gene Ontology (GO) annotations.
 
 2. **Run the RNA simulation**:
 
@@ -131,15 +133,15 @@ nextflow run nf-core/eduomics \
 
 #### What the RNA Simulation Does
 
-1. **Transcriptome Preparation**: Subsets transcriptome references to your target chromosome
-2. **Gene Selection**: Identifies genes suitable for differential expression based on functional annotations
-3. **Count Matrix Generation**: Creates realistic count matrices with known differential expression patterns
-4. **Read Simulation**: Uses Polyester to generate RNA-seq FASTQ files matching the count matrices
-5. **Expression Quantification**: Runs Salmon to quantify transcript expression
-6. **Differential Analysis**: Performs DESeq2 analysis to identify differentially expressed genes
-7. **Functional Enrichment**: Conducts GO enrichment analysis on differentially expressed genes
-8. **Validation**: Ensures the simulation produces detectable differential expression
-9. **Scenario Generation**: Creates educational scenarios explaining the biological context
+1. **Reference Preparation**: Subsets the reference genome and annotation to your target chromosome.
+2. **Gene Selection**: Identifies genes suitable for differential expression based on Gene Ontology (GO) annotation.
+3. **Count Matrix Generation**: Creates realistic count matrices with known differential expression patterns.
+4. **Read Simulation**: Uses Polyester to generate FASTQ files matching the count matrices.
+5. **Expression Quantification**: Runs Salmon to quantify transcript expression.
+6. **Differential Analysis**: Performs DESeq2 analysis to identify differentially expressed (DE) genes.
+7. **Functional Enrichment**: Conducts GO enrichment analysis on DE genes.
+8. **Validation**: Ensures the simulation produces detectable differential expression and realistic enriched pathways.
+9. **Scenario Generation**: Creates AI-powered educational scenarios explaining the biological context.
 
 #### Expected RNA Output Structure
 
@@ -149,17 +151,22 @@ rna_results/
 │   └── my_rna_sim/
 │       ├── GENE1_GENE2_GENE3_GENE4_GENE5/  # Top 5 DE genes folder
 │       │   ├── validated_reads/
-│       │   │   ├── sample_01_1.fasta.gz    # Group 1 replicates
+│       │   │   ├── sample_01_1.fasta.gz
 │       │   │   ├── sample_01_2.fasta.gz
 │       │   │   ├── sample_02_1.fasta.gz
 │       │   │   ├── sample_02_2.fasta.gz
 │       │   │   └── ...
 │       │   ├── deseq2_results.tsv          # DE analysis results
+|       |   |── deseq2_tx2gene.tsv          # Association between genes_id and transcripts_id
 │       │   ├── deseq2_de_genes.txt         # List of DE genes
 │       │   ├── deseq2_ma_plot.pdf          # MA plot
+│       │   ├── deseq2_dispersion_plot.pdf  # Dispersion plot
+│       │   ├── deseq2_count_plot.pdf       # Count plot
+│       │   ├── deseq2_heatmap_plot.pdf     # Heatmap
 │       │   ├── deseq2_pca_plot.pdf         # PCA plot
 │       │   ├── enrichment_results.rds      # GO enrichment
-│       │   ├── dotplot_BP.png              # Enrichment plots
+│       │   ├── dotplot_*.png               # Dotplot for BP, MF and CC
+|       |   |__ cnetplot_*.png              # Cnetplot for BP, MF and CC
 │       │   ├── validation_result.txt       # Validation status
 │       │   └── my_rna_sim_scenario.txt     # Educational scenario
 │       └── references/                     # Reference bundle
@@ -176,11 +183,16 @@ You can run multiple simulations in a single samplesheet:
 
 ```csv
 id,type,chromosome,coverage,capture,reps,groups,simthreshold
-dna_easy,dna,chr22,100,https://example.com/capture.bed,1,2,0.1
-dna_hard,dna,chr22,50,https://example.com/capture.bed,2,3,0.5
+dna_easy,dna,chr22,100,path/to/capture.bed,1,2,0.1,,
+dna_hard,dna,chr22,50,path/to/capture.bed,2,3,0.5,,
 rna_basic,rna,chr22,30,,3,2,0.2
 rna_complex,rna,chr1,50,,5,3,0.4
 ```
+
+> ⚠️ **Current limitation:**
+>
+> Defining multiple chromosomes per simulation type in the same CSV is **not currently supported** and will cause the workflow to fail.
+> This feature will be implemented in a future release.
 
 #### Adjusting Simulation Complexity
 
@@ -189,23 +201,12 @@ rna_complex,rna,chr1,50,,5,3,0.4
 - Use `chr22` (smaller chromosome)
 - Lower coverage (30-50x)
 - Fewer replicates (2-3)
-- Lower simthreshold (0.1-0.2)
 
 **For Advanced Users:**
 
 - Use larger chromosomes (`chr1`, `chr2`)
 - Higher coverage (100x+)
 - More replicates (5+)
-- Higher simthreshold (0.4-0.5)
-
-#### Custom Capture Regions
-
-For DNA simulations, you can provide your own capture BED file:
-
-```csv
-id,type,chromosome,coverage,capture,reps,groups,simthreshold
-custom_panel,dna,chr17,150,/path/to/my_panel.bed,2,2,0.3
-```
 
 ### Step 5: Using the Simulated Data for Teaching
 
@@ -213,11 +214,11 @@ custom_panel,dna,chr17,150,/path/to/my_panel.bed,2,2,0.3
 
 The generated data can be used to teach:
 
-1. **Quality Control**: FastQC analysis of the FASTQ files
-2. **Read Alignment**: BWA-MEM alignment to reference genome
-3. **Variant Calling**: GATK HaplotypeCaller workflow
-4. **Variant Annotation**: Using tools like VEP or ANNOVAR
-5. **Clinical Interpretation**: Analyzing the pathogenicity of detected variants
+1. **Quality Control**: FastQC analysis of the FASTQ files.
+2. **Read Alignment**: BWA-MEM alignment to reference genome.
+3. **Variant Calling**: GATK HaplotypeCaller workflow.
+4. **Variant Annotation**: Using tools like VEP or ANNOVAR.
+5. **Clinical Interpretation**: Analysing the pathogenicity of detected variants.
 
 **Teaching Workflow:**
 
@@ -240,24 +241,26 @@ diff sample.vcf solution_chr22-12345-A-T.txt
 
 The generated data can be used to teach:
 
-1. **Quality Control**: FastQC and MultiQC analysis
-2. **Quantification**: Salmon or Kallisto transcript quantification
-3. **Differential Expression**: DESeq2 or edgeR analysis
-4. **Functional Analysis**: GO enrichment and pathway analysis
-5. **Visualization**: Creating plots and heatmaps
+1. **Quality Control**: FastQC and MultiQC analysis.
+2. **Quantification**: Salmon or Kallisto transcript quantification.
+3. **Differential Expression and results visualisation**: DESeq2 analysis.
+4. **Functional Analysis**: GO enrichment and pathway analysis.
 
 **Teaching Workflow:**
 
 ```bash
 # Students can practice this workflow:
-# 1. Quantification
+# 1. Quality control
+fastqc *.fq.gz
+
+# 2. Quantification
 salmon quant -i salmon_index -l A -1 sample_1.fasta.gz -2 sample_2.fasta.gz -o sample_quant
 
-# 2. Import to R and run DESeq2
-# (R code for differential expression analysis)
+# 3. Import in R and run DESeq2
+# Explore the code to run a DE analysis and visualise the results through informative plots
 
-# 3. Compare results with provided solution
-# Compare detected DE genes with deseq2_de_genes.txt
+# 4. Perform enrichment analyses
+# Analyse the biological pathways involving the DE genes
 ```
 
 ### Step 6: Troubleshooting
@@ -292,20 +295,20 @@ nextflow run nf-core/eduomics -profile test,docker --outdir test_results
 
 If simulations fail validation:
 
-1. **Check coverage**: Ensure sufficient coverage for variant detection (DNA) or expression quantification (RNA)
-2. **Verify capture regions**: Ensure BED file format is correct and contains target regions
-3. **Adjust thresholds**: Lower simthreshold values for more conservative simulations
+1. **Check the coverage**: Ensure sufficient coverage for variant detection (DNA) or expression quantification (RNA).
+2. **Verify the capture region**: Ensure BED file format is correct and contains target regions.
+3. **Adjust the similarity threshold**: Lower simthreshold values for more conservative simulations.
 
 ### Step 7: Educational Scenarios
 
 Each simulation generates an AI-powered educational scenario that provides:
 
-- **Biological context** for the simulated variants or expression changes
-- **Clinical relevance** of the findings
-- **Learning objectives** for the dataset
-- **Expected outcomes** students should achieve
+- **Biological context** for the simulated variants or expression changes.
+- **Clinical relevance** of the findings.
+- **Learning objectives** for the dataset.
+- **Expected outcomes** students should achieve.
 
-These scenarios help instructors frame the computational exercise within a meaningful biological context.
+These scenarios help instructors in contextualising the computational exercise within a biologically relevant context.
 
 ## Resource Requirements
 
@@ -325,25 +328,25 @@ These scenarios help instructors frame the computational exercise within a meani
 
 ## Best Practices
 
-1. **Start Small**: Begin with chr22 simulations before moving to larger chromosomes
-2. **Test First**: Always run the test profile before your custom simulations
-3. **Plan Storage**: Simulations can generate several GB of data per sample
-4. **Document Parameters**: Keep track of simulation parameters for reproducibility
-5. **Validate Results**: Check that simulations meet your educational objectives
+1. **Start Small**: Begin with small chromosomes (e.g. chr22) before moving to larger chromosomes.
+2. **Test First**: Always run the test profile before your custom simulations.
+3. **Plan Storage**: Simulations can generate several GB of data per sample.
+4. **Document Parameters**: Keep track of simulation parameters for reproducibility.
+5. **Validate Results**: Check that simulations meet your educational objectives.
 
 ## Getting Help
 
-- **Pipeline Issues**: Open an issue on the [GitHub repository](https://github.com/nf-core/eduomics/issues)
-- **Usage Questions**: Join the [nf-core Slack](https://nf-co.re/join/slack) #eduomics channel
-- **Educational Applications**: Contact the development team for teaching-specific guidance
+- **Pipeline Issues**: Open an issue on the [GitHub repository](https://github.com/nf-core/eduomics/issues).
+- **Usage Questions**: Join the [nf-core Slack](https://nf-co.re/join/slack) #eduomics channel.
+- **Educational Applications**: Contact the development team for teaching-specific guidance.
 
 ## Next Steps
 
 After running your simulations:
 
-1. **Review the output structure** (see [output documentation](output.md))
-2. **Design your teaching workflow** using the generated data
-3. **Create assessment materials** based on the known ground truth
-4. **Share your educational scenarios** with the community
+1. **Review the output structure** (see [output documentation](output.md)).
+2. **Design your teaching workflow** using the generated data.
+3. **Create assessment materials** based on the known ground truth.
+4. **Share your educational scenarios** with the community.
 
-The eduomics pipeline provides a foundation for evidence-based bioinformatics education where students can validate their analytical skills against known biological truth.
+The eduomics pipeline provides a foundation for problem-based learning where students can validate their analytical skills against known biological truth.
