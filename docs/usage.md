@@ -18,7 +18,7 @@ Before running the pipeline, ensure you have:
 2. **Container system** (Docker, Singularity, or Conda)
 3. **Reference genome configured** (we recommend using `GATK.GRCh38`)
 
-### Step 1: Understanding the Input Samplesheet
+### Understanding the Input Samplesheet
 
 The pipeline uses a CSV samplesheet to define simulation parameters. Here's the structure:
 
@@ -37,9 +37,9 @@ id,type,chromosome,coverage,capture,reps,groups,simthreshold
 - `groups`: Number of experimental groups (typically 2 for case/control).
 - `simthreshold`: Simulation threshold for gene selection (leave empty for DNA simulations). Default is `0.3`.
 
-### Step 2: DNA Variant Simulation Tutorial
+## DNA Variant Simulation Tutorial
 
-#### Creating a DNA Simulation
+### Creating a DNA Simulation
 
 1. **Prepare your samplesheet** (`dna_samplesheet.csv`):
 
@@ -69,7 +69,7 @@ nextflow run nf-core/eduomics \
     --outdir dna_results
 ```
 
-#### What the DNA Simulation Does
+### Overview of the DNA Simulation Workflow
 
 1. **Reference Preparation**: Subsets the reference genome and annotation to your target chromosome and capture regions.
 2. **Variant Selection**: Extracts pathogenic variants from ClinVar database within your target regions.
@@ -78,7 +78,7 @@ nextflow run nf-core/eduomics \
 5. **Validation**: Performs variant calling to verify that injected variants can be detected.
 6. **Scenario Generation**: Creates AI-powered educational scenarios explaining the biological context.
 
-#### Expected DNA Output Structure
+### Expected DNA Output Structure
 
 ```
 dna_results/
@@ -99,9 +99,9 @@ dna_results/
 │           └── bwa_index/
 ```
 
-### Step 3: RNA Differential Expression Simulation Tutorial
+## RNAseq and Differential Expression Analysis Simulation Tutorial
 
-#### Creating an RNA Simulation
+### Creating an RNA Simulation
 
 1. **Prepare your samplesheet** (`rna_samplesheet.csv`):
 
@@ -131,7 +131,7 @@ nextflow run nf-core/eduomics \
     --outdir rna_results
 ```
 
-#### What the RNA Simulation Does
+### Overview of the RNA Simulation Workflow
 
 1. **Reference Preparation**: Subsets the reference genome and annotation to your target chromosome.
 2. **Gene Selection**: Identifies genes suitable for differential expression based on Gene Ontology (GO) annotation.
@@ -143,7 +143,7 @@ nextflow run nf-core/eduomics \
 8. **Validation**: Ensures the simulation produces detectable differential expression and realistic enriched pathways.
 9. **Scenario Generation**: Creates AI-powered educational scenarios explaining the biological context.
 
-#### Expected RNA Output Structure
+### Expected RNA Output Structure
 
 ```
 rna_results/
@@ -175,9 +175,40 @@ rna_results/
 │           └── salmon_index/
 ```
 
-### Step 4: Advanced Configuration
+## Using the Simulated Data for Teaching
 
-#### Multiple Simulations
+### DNA Simulations
+
+The generated data can be used to teach:
+
+1. **Quality Control**: FastQC analysis of the FASTQ files.
+2. **Read Alignment**: BWA-MEM alignment to reference genome.
+3. **Variant Calling**: GATK HaplotypeCaller workflow.
+4. **Variant Annotation**: Using tools like SnpEff.
+5. **Clinical Interpretation**: Analysis of the pathogenicity of detected variants.
+
+### RNA Simulations
+
+The generated data can be used to teach:
+
+1. **Quality Control**: FastQC and MultiQC analysis.
+2. **Quantification**: Salmon transcript quantification.
+3. **Differential Expression and results visualisation**: DESeq2 analysis and results interpretation.
+4. **Functional Analysis**: GO enrichment and pathway analysis.
+
+## AI-powered Educational Scenarios
+
+The Gemini Flash API is used to generate plausible clinical descriptions that offer biological context and realistic use cases for students to analyse the data. Each simulation provides:
+
+- **Biological and clinical context** derived from variant and gene expression patterns.
+- **Real-world clinical relevance** of the findings.
+- **Engaging learning objectives** for students to analyse omics data within a structured problem-solving approach and connect molecular alterations with phenotypic outcomes.
+
+These scenarios help in contextualising the simulations within a biologically and clinically relevant framework.
+
+## Advanced Configuration
+
+### Multiple Simulations
 
 You can run multiple simulations in a single samplesheet:
 
@@ -194,7 +225,7 @@ rna_complex,rna,chr1,50,,5,3,0.4
 > Defining multiple chromosomes per simulation type in the same CSV is **not currently supported** and will cause the workflow to fail.
 > This feature will be implemented in a future release.
 
-#### Adjusting Simulation Complexity
+### Adjusting Simulation Complexity
 
 **For Beginners:**
 
@@ -208,81 +239,7 @@ rna_complex,rna,chr1,50,,5,3,0.4
 - Higher coverage (100x+)
 - More replicates (5+)
 
-### Step 5: Using the Simulated Data for Teaching
-
-#### For DNA Simulations
-
-The generated data can be used to teach:
-
-1. **Quality Control**: FastQC analysis of the FASTQ files.
-2. **Read Alignment**: BWA-MEM alignment to reference genome.
-3. **Variant Calling**: GATK HaplotypeCaller workflow.
-4. **Variant Annotation**: Using tools like VEP or ANNOVAR.
-5. **Clinical Interpretation**: Analysing the pathogenicity of detected variants.
-
-**Teaching Workflow:**
-
-```bash
-# Students can practice this workflow:
-# 1. Quality control
-fastqc *.fq.gz
-
-# 2. Alignment
-bwa mem reference.fa sample_1.fq.gz sample_2.fq.gz | samtools sort > sample.bam
-
-# 3. Variant calling
-gatk HaplotypeCaller -R reference.fa -I sample.bam -O sample.vcf
-
-# 4. Compare with solution
-diff sample.vcf solution_chr22-12345-A-T.txt
-```
-
-#### For RNA Simulations
-
-The generated data can be used to teach:
-
-1. **Quality Control**: FastQC and MultiQC analysis.
-2. **Quantification**: Salmon or Kallisto transcript quantification.
-3. **Differential Expression and results visualisation**: DESeq2 analysis.
-4. **Functional Analysis**: GO enrichment and pathway analysis.
-
-**Teaching Workflow:**
-
-```bash
-# Students can practice this workflow:
-# 1. Quality control
-fastqc *.fq.gz
-
-# 2. Quantification
-salmon quant -i salmon_index -l A -1 sample_1.fasta.gz -2 sample_2.fasta.gz -o sample_quant
-
-# 3. Import in R and run DESeq2
-# Explore the code to run a DE analysis and visualise the results through informative plots
-
-# 4. Perform enrichment analyses
-# Analyse the biological pathways involving the DE genes
-```
-
-### Step 6: Troubleshooting
-
-#### Common Issues
-
-**Memory Requirements:**
-
-```bash
-# If you encounter memory issues, add:
-export NXF_OPTS='-Xms1g -Xmx4g'
-```
-
-**Container Issues:**
-
-```bash
-# For Singularity users:
-nextflow run nf-core/eduomics -profile singularity --singularity_pull_docker_container
-
-# For Conda users:
-nextflow run nf-core/eduomics -profile conda
-```
+## Test Run & Debug
 
 **Test Run:**
 
@@ -291,40 +248,13 @@ nextflow run nf-core/eduomics -profile conda
 nextflow run nf-core/eduomics -profile test,docker --outdir test_results
 ```
 
-#### Validation Failures
+### Validation Failures
 
 If simulations fail validation:
 
 1. **Check the coverage**: Ensure sufficient coverage for variant detection (DNA) or expression quantification (RNA).
 2. **Verify the capture region**: Ensure BED file format is correct and contains target regions.
-3. **Adjust the similarity threshold**: Lower simthreshold values for more conservative simulations.
-
-### Step 7: Educational Scenarios
-
-Each simulation generates an AI-powered educational scenario that provides:
-
-- **Biological context** for the simulated variants or expression changes.
-- **Clinical relevance** of the findings.
-- **Learning objectives** for the dataset.
-- **Expected outcomes** students should achieve.
-
-These scenarios help instructors in contextualising the computational exercise within a biologically relevant context.
-
-## Resource Requirements
-
-### Minimum Requirements
-
-- **CPU**: 4 cores
-- **Memory**: 8 GB RAM
-- **Storage**: 50 GB free space
-- **Time**: 1-4 hours depending on simulation complexity
-
-### Recommended Requirements
-
-- **CPU**: 8+ cores
-- **Memory**: 16+ GB RAM
-- **Storage**: 100+ GB free space
-- **Time**: 30 minutes - 2 hours
+3. **Adjust the similarity threshold**: Modify the `simthreshold` value to make similarity criteria more or less stringent.
 
 ## Best Practices
 
