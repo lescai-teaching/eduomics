@@ -214,8 +214,8 @@ You can run multiple simulations in a single samplesheet:
 
 ```csv
 id,type,chromosome,coverage,capture,reps,groups,simthreshold
-dna_easy,dna,chr22,100,path/to/capture.bed,1,2,0.1,,
-dna_hard,dna,chr22,50,path/to/capture.bed,2,3,0.5,,
+dna_easy,dna,chr22,100,path/to/capture.bed,1,2,0.1,
+dna_hard,dna,chr22,50,path/to/capture.bed,2,3,0.5,
 rna_basic,rna,chr22,30,,3,2,0.2
 rna_complex,rna,chr1,50,,5,3,0.4
 ```
