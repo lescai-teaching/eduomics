@@ -14,7 +14,7 @@ The eduomics pipeline is designed to create realistic, educational genomic datas
 
 Before running the pipeline, ensure you have:
 
-1. **Nextflow installed** (version ≥24.04.2)
+1. **Nextflow installed** (version ≥25.04.4)
 2. **Container system** (Docker, Singularity, or Conda)
 3. **Reference genome configured** (we recommend using `GATK.GRCh38`)
 
