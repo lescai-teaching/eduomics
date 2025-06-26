@@ -21,6 +21,14 @@
 
 **nf-core/eduomics** is a bioinformatics pipeline designed for educational purposes that simulates realistic genomic and transcriptomic datasets. The pipeline creates controlled, validated datasets that can be used to teach bioinformatics analysis workflows, variant calling, and differential gene expression analysis.
 
+The pipeline is built using [Nextflow](https://www.nextflow.io), a workflow tool to run tasks across multiple compute infrastructures in a very portable manner. It uses Docker/Singularity containers making installation trivial and results highly reproducible. The [Nextflow DSL2](https://www.nextflow.io/docs/latest/index.html) implementation of this pipeline uses one container per process which makes it much easier to maintain and update software dependencies. Where possible, these processes have been submitted to and installed from [nf-core/modules](https://github.com/nf-core/modules) in order to make them available to all nf-core pipelines, and to everyone within the Nextflow community!
+
+On release, automated continuous integration tests run the pipeline on a full-sized dataset on the AWS cloud infrastructure. This ensures that the pipeline runs on AWS, has sensible resource allocation defaults set to run on real-world datasets, and permits the persistent storage of results to benchmark between pipeline releases and other analysis sources. The results obtained from the full-sized test can be viewed on the [nf-core website](https://nf-co.re/eduomics/results).
+
+## Functionality Overview
+
+A graphical view of the pipeline can be seen below.
+
 <h1>
   <picture>
     <source media="(prefers-color-scheme: dark)" srcset="docs/images/eduomics_metromap_dark.svg">
@@ -58,19 +66,7 @@ The pipeline operates on two main simulation modes:
 4. **Human Reference**: The pipeline is designed for human genomic data using standard reference genomes
 5. **Educational Context**: All simulations include AI-generated educational scenarios to provide biological context
 
-## Quick Start
-
-```bash
-# Prepare your samplesheet (see usage documentation for details)
-# Run the pipeline
-nextflow run nf-core/eduomics \
-   -profile <docker/singularity/.../institute> \
-   --input samplesheet.csv \
-   --genome GATK.GRCh38 \
-   --outdir results
-```
-
-## Pipeline Workflow Overview
+## Schematic Pipeline Workflow Overview
 
 ```mermaid
 graph TD
@@ -121,8 +117,8 @@ First, prepare a samplesheet with your simulation parameters that looks as follo
 
 ```csv
 id,type,chromosome,coverage,capture,reps,groups,simthreshold
-dna_sim1,dna,chr22,100,https://example.com/capture.bed,1,2,0.3
-rna_sim1,rna,chr22,30,,3,2,0.3
+dna_simulation_1,dna,chr22,100,https://example.com/capture.bed,1,2,0.3
+rna_simulation_1,rna,chr22,30,,3,2,0.3
 ```
 
 Each row represents a simulation to be performed. See the [usage documentation](docs/usage.md) for detailed parameter explanations.
@@ -151,7 +147,7 @@ The pipeline generates organized educational datasets with the following structu
 - **Reference Bundles**: All necessary reference files for downstream analysis
 - **Educational Materials**: AI-generated scenarios and validation results
 
-For detailed information about the output files and reports, please refer to the [output documentation](https://nf-co.re/eduomics/output).
+For detailed information about the output files and reports, please refer to the [output documentation](docs/output.md).
 
 ## Educational Use Cases
 
