@@ -1,12 +1,14 @@
 <h1>
   <picture>
-    <source media="(prefers-color-scheme: dark)" srcset="docs/images/nf-core-eduomics_logo_dark.png">
-    <img alt="nf-core/eduomics" src="docs/images/nf-core-eduomics_logo_light.png">
+    <source media="(prefers-color-scheme: dark)" srcset="docs/images/eduomics_logo_dark.png">
+    <img alt="nf-core/eduomics" src="docs/images/eduomics_logo_light.png">
   </picture>
 </h1>
 
 [![GitHub Actions CI Status](https://github.com/nf-core/eduomics/actions/workflows/ci.yml/badge.svg)](https://github.com/nf-core/eduomics/actions/workflows/ci.yml)
-[![GitHub Actions Linting Status](https://github.com/nf-core/eduomics/actions/workflows/linting.yml/badge.svg)](https://github.com/nf-core/eduomics/actions/workflows/linting.yml)[![AWS CI](https://img.shields.io/badge/CI%20tests-full%20size-FF9900?labelColor=000000&logo=Amazon%20AWS)](https://nf-co.re/eduomics/results)[![Cite with Zenodo](http://img.shields.io/badge/DOI-10.5281/zenodo.XXXXXXX-1073c8?labelColor=000000)](https://doi.org/10.5281/zenodo.XXXXXXX)
+[![GitHub Actions Linting Status](https://github.com/nf-core/eduomics/actions/workflows/linting.yml/badge.svg)](https://github.com/nf-core/eduomics/actions/workflows/linting.yml)
+[![AWS CI](https://img.shields.io/badge/CI%20tests-full%20size-FF9900?labelColor=000000&logo=Amazon%20AWS)](https://nf-co.re/eduomics/results)
+[![Cite with Zenodo](http://img.shields.io/badge/DOI-10.5281/zenodo.XXXXXXX-1073c8?labelColor=000000)](https://doi.org/10.5281/zenodo.XXXXXXX)
 [![nf-test](https://img.shields.io/badge/unit_tests-nf--test-337ab7.svg)](https://www.nf-test.com)
 
 [![Nextflow](https://img.shields.io/badge/nextflow%20DSL2-%E2%89%A524.04.2-23aa62.svg)](https://www.nextflow.io/)
@@ -19,11 +21,9 @@
 
 ## Introduction
 
-**nf-core/eduomics** is a bioinformatics pipeline designed for educational purposes that simulates realistic genomic and transcriptomic datasets. The pipeline creates controlled, validated datasets that can be used to teach bioinformatics analysis workflows, variant calling, and differential gene expression analysis.
+**Eduomics** is a bioinformatics pipeline designed for educational purposes that simulates realistic genomic and transcriptomic datasets. The pipeline creates controlled, validated datasets that can be used to teach bioinformatics analysis workflows, variant calling, and differential gene expression analysis.
 
 The pipeline is built using [Nextflow](https://www.nextflow.io), a workflow tool to run tasks across multiple compute infrastructures in a very portable manner. It uses Docker/Singularity containers making installation trivial and results highly reproducible. The [Nextflow DSL2](https://www.nextflow.io/docs/latest/index.html) implementation of this pipeline uses one container per process which makes it much easier to maintain and update software dependencies. Where possible, these processes have been submitted to and installed from [nf-core/modules](https://github.com/nf-core/modules) in order to make them available to all nf-core pipelines, and to everyone within the Nextflow community!
-
-On release, automated continuous integration tests run the pipeline on a full-sized dataset on the AWS cloud infrastructure. This ensures that the pipeline runs on AWS, has sensible resource allocation defaults set to run on real-world datasets, and permits the persistent storage of results to benchmark between pipeline releases and other analysis sources. The results obtained from the full-sized test can be viewed on the [nf-core website](https://nf-co.re/eduomics/results).
 
 ## Functionality Overview
 
@@ -104,7 +104,7 @@ graph TD
 
 ## Documentation
 
-The nf-core/eduomics pipeline comes with documentation about the pipeline [usage](https://nf-co.re/eduomics/usage), [parameters](https://nf-co.re/eduomics/parameters) and [output](https://nf-co.re/eduomics/output).
+The eduomics pipeline comes with documentation about the pipeline [usage](docs/usage.mdusage) and [output](docs/output.md).
 
 ## Usage
 
@@ -136,9 +136,9 @@ nextflow run nf-core/eduomics \
 > [!WARNING]
 > Please provide pipeline parameters via the CLI or Nextflow `-params-file` option. Custom config files including those provided by the `-c` Nextflow option can be used to provide any configuration _**except for parameters**_; see [docs](https://nf-co.re/docs/usage/getting_started/configuration#custom-configuration-files).
 
-For more details and further functionality, please refer to the [usage documentation](https://nf-co.re/eduomics/usage) and the [parameter documentation](https://nf-co.re/eduomics/parameters).
+For more details and further functionality, please refer to the [usage documentation](https://nf-co.re/eduomics/usage).
 
-## Pipeline output
+## Pipeline outputs
 
 The pipeline generates organized educational datasets with the following structure:
 
@@ -173,11 +173,7 @@ For detailed information about the output files and reports, please refer to the
 
 ## Credits
 
-nf-core/eduomics was originally written by Mariangela Santorsola, Lorenzo Sola, Davide Bagordo, Simone Carpanzano, Francesco Lescai.
-
-We thank the following people for their extensive assistance in the development of this pipeline:
-
-<!-- TODO nf-core: If applicable, make list of people who have also contributed -->
+Eduomics was originally written by Mariangela Santorsola, Lorenzo Sola, Davide Bagordo, Simone Carpanzano, Francesco Lescai.
 
 ## Contributions and Support
 
@@ -191,11 +187,3 @@ For further information or help, don't hesitate to get in touch on the [Slack `#
 <!-- If you use nf-core/eduomics for your analysis, please cite it using the following doi: [10.5281/zenodo.XXXXXX](https://doi.org/10.5281/zenodo.XXXXXX) -->
 
 An extensive list of references for the tools used by the pipeline can be found in the [`CITATIONS.md`](CITATIONS.md) file.
-
-You can cite the `nf-core` publication as follows:
-
-> **The nf-core framework for community-curated bioinformatics pipelines.**
->
-> Philip Ewels, Alexander Peltzer, Sven Fillinger, Harshil Patel, Johannes Alneberg, Andreas Wilm, Maxime Ulysse Garcia, Paolo Di Tommaso & Sven Nahnsen.
->
-> _Nat Biotechnol._ 2020 Feb 13. doi: [10.1038/s41587-020-0439-x](https://dx.doi.org/10.1038/s41587-020-0439-x).
