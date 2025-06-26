@@ -102,7 +102,7 @@ graph TD
 
 ## Documentation
 
-The eduomics pipeline comes with documentation about the pipeline [usage](docs/usage.mdusage) and [output](docs/output.md).
+The eduomics pipeline comes with documentation about the pipeline [usage](docs/usage.md) and [output](docs/output.md).
 
 ## Usage
 
