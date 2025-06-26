@@ -21,6 +21,13 @@
 
 **nf-core/eduomics** is a bioinformatics pipeline designed for educational purposes that simulates realistic genomic and transcriptomic datasets. The pipeline creates controlled, validated datasets that can be used to teach bioinformatics analysis workflows, variant calling, and differential gene expression analysis.
 
+<h1>
+  <picture>
+    <source media="(prefers-color-scheme: dark)" srcset="docs/images/eduomics_metromap_dark.svg">
+    <img alt="nf-core/eduomics" src="docs/images/eduomics_metromap_light.svg">
+  </picture>
+</h1>
+
 ## Pipeline Logic and Assumptions
 
 ### Core Educational Philosophy
