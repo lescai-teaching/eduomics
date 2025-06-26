@@ -30,7 +30,7 @@ A graphical view of the pipeline can be seen below.
 <h1>
   <picture>
     <source media="(prefers-color-scheme: dark)" srcset="docs/images/eduomics_metromap_dark.svg">
-    <img alt="nf-core/eduomics" src="docs/images/eduomics_metromap_light.svg">
+    <img alt="eduomics pipeline overview" src="docs/images/eduomics_metromap_light.svg">
   </picture>
 </h1>
 
