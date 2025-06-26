@@ -1,4 +1,4 @@
-# nf-core/eduomics: Usage
+# eduomics: Usage
 
 ## :warning: Please read this documentation on the nf-core website: [https://nf-co.re/eduomics/usage](https://nf-co.re/eduomics/usage)
 
@@ -267,7 +267,6 @@ If simulations fail validation:
 ## Getting Help
 
 - **Pipeline Issues**: Open an issue on the [GitHub repository](https://github.com/nf-core/eduomics/issues).
-- **Usage Questions**: Join the [nf-core Slack](https://nf-co.re/join/slack) #eduomics channel.
 - **Educational Applications**: Contact the development team for teaching-specific guidance.
 
 ## Next Steps

@@ -1,4 +1,4 @@
-# nf-core/eduomics: Output
+# eduomics: Output
 
 ## Introduction
 
