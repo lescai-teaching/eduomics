@@ -115,8 +115,6 @@ Each RNA simulation creates a directory named after the first 5 differentially e
 
 Contains all reference files needed to analyze the simulated RNA-seq data:
 
-#### RNA References
-
 - **`gencode_transcripts_novers_[chromosome].fasta`**: Subset transcriptome FASTA file
 - **`filtered_annotation.gff3`**: Subset gene annotation file for the target chromosome
 - **`[chromosome].fa`**: Subset genome FASTA file
