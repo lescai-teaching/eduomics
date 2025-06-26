@@ -17,8 +17,6 @@
 [![run with singularity](https://img.shields.io/badge/run%20with-singularity-1d355c.svg?labelColor=000000)](https://sylabs.io/docs/)
 [![Launch on Seqera Platform](https://img.shields.io/badge/Launch%20%F0%9F%9A%80-Seqera%20Platform-%234256e7)](https://cloud.seqera.io/launch?pipeline=https://github.com/nf-core/eduomics)
 
-[![Get help on Slack](http://img.shields.io/badge/slack-nf--core%20%23eduomics-4A154B?labelColor=000000&logo=slack)](https://nfcore.slack.com/channels/eduomics)[![Follow on Twitter](http://img.shields.io/badge/twitter-%40nf__core-1DA1F2?labelColor=000000&logo=twitter)](https://twitter.com/nf_core)[![Follow on Mastodon](https://img.shields.io/badge/mastodon-nf__core-6364ff?labelColor=FFFFFF&logo=mastodon)](https://mstdn.science/@nf_core)[![Watch on YouTube](http://img.shields.io/badge/youtube-nf--core-FF0000?labelColor=000000&logo=youtube)](https://www.youtube.com/c/nf-core)
-
 ## Introduction
 
 **Eduomics** is a bioinformatics pipeline designed for educational purposes that simulates realistic genomic and transcriptomic datasets. The pipeline creates controlled, validated datasets that can be used to teach bioinformatics analysis workflows, variant calling, and differential gene expression analysis.
@@ -179,7 +177,7 @@ Eduomics was originally written by Mariangela Santorsola, Lorenzo Sola, Davide B
 
 If you would like to contribute to this pipeline, please see the [contributing guidelines](.github/CONTRIBUTING.md).
 
-For further information or help, don't hesitate to get in touch on the [Slack `#eduomics` channel](https://nfcore.slack.com/channels/eduomics) (you can join with [this invite](https://nf-co.re/join/slack)).
+For further information or help, don't hesitate to get in touch with the development team.
 
 ## Citations
 
