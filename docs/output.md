@@ -35,7 +35,7 @@ Each DNA simulation creates a directory named after the simulated pathogenic var
 #### Validation and Solution Files
 
 - **`solution_[variant_name].txt`**: Contains the exact variant that was simulated (the "answer key")
-- **`simulated_validated.vcf`**: VCF file containing the validated simulated variant
+- **`simulated_validated.vcf.gz`**: VCF file containing the validated simulated variant
 - **`[simulation_id]_scenario.txt`**: AI-generated educational scenario providing biological context for the simulation
 
 ### DNA Reference Bundle: `dna_simulations/[simulation_id]/references/`
@@ -115,16 +115,10 @@ Each RNA simulation creates a directory named after the first 5 differentially e
 
 Contains all reference files needed to analyze the simulated RNA-seq data:
 
-#### Transcriptome References
-
 - **`gencode_transcripts_novers_[chromosome].fasta`**: Subset transcriptome FASTA file
 - **`filtered_annotation.gff3`**: Subset gene annotation file for the target chromosome
 - **`[chromosome].fa`**: Subset genome FASTA file
-
-#### Quantification Index
-
 - **`salmon/`**: Directory containing Salmon index files for transcript quantification
-  - Various binary index files required by Salmon
 
 ## Pipeline Information: `pipeline_info/`
 
@@ -134,7 +128,7 @@ Contains technical information about the pipeline execution:
 - **`execution_report_[timestamp].html`**: Detailed execution report
 - **`execution_trace_[timestamp].txt`**: Trace of all executed processes
 - **`pipeline_dag_[timestamp].html`**: Directed acyclic graph of the pipeline
-- **`software_versions.yml`**: Versions of all software tools used
+- **`nf_core_eduomics_software_versions.yml`**: Versions of all software tools used
 
 ## Understanding the Output Structure
 
@@ -144,16 +138,16 @@ The DNA simulation outputs are designed for teaching variant calling workflows:
 
 1. **Students receive**: Simulated FASTQ files and reference bundle
 2. **Students perform**: Read alignment, variant calling, and annotation
-3. **Students validate**: Results against the provided solution files
+3. **Validation**: Checks that the simulated pathogenic variant is indeed present in the reads of the "disease" sample and absent from the "normal" sample, ensuring that the simulation is suitable for teaching variant calling workflows.
 4. **Educational context**: Provided through AI-generated scenarios
 
 ### RNA Simulation Use Case
 
-The RNA simulation outputs are designed for teaching differential expression analysis:
+The RNA simulation outputs are designed for teaching differential expression and enrichment analysis:
 
 1. **Students receive**: Simulated RNA-seq FASTQ files and reference bundle
 2. **Students perform**: Read quantification, differential expression analysis, and functional enrichment
-3. **Students validate**: Results against the provided analysis files
+3. **Validation**: Verifies that the simulated data produce a statistically significant and coherent differential expression pattern, with detectable and biologically plausible functional enrichment.
 4. **Educational context**: Provided through AI-generated scenarios and visualization
 
 ### File Naming Conventions
