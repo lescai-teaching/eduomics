@@ -124,7 +124,7 @@ Each row represents a simulation to be performed. See the [usage documentation](
 Now, you can run the pipeline using:
 
 ```bash
-nextflow run nf-core/eduomics \
+nextflow run eduomics \
    -profile <docker/singularity/.../institute> \
    --input samplesheet.csv \
    --genome GATK.GRCh38 \
