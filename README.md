@@ -1,7 +1,7 @@
 <h1>
   <picture>
     <source media="(prefers-color-scheme: dark)" srcset="docs/images/eduomics_logo_dark.png">
-    <img alt="Eduomics logo" src="docs/images/eduomics_logo_light.png">
+    <img alt="eduomics logo" src="docs/images/eduomics_logo_light.png">
   </picture>
 </h1>
 
