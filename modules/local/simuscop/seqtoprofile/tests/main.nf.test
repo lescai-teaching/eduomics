@@ -9,7 +9,7 @@ nextflow_process {
     tag "simuscop"
     tag "simuscop/seqtoprofile"
 
-    // TODO nf-core: Change the test name preferably indicating the test-data and file-format used
+    // nf-core: Change the test name preferably indicating the test-data and file-format used
     test("create profile from small ref") {
 
         config "./small_ref.config"
