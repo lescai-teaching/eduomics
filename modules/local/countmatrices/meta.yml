@@ -1,0 +1,83 @@
+name: "countmatrices"
+description: Count matrices generation for simulation of RNA-seq data
+keywords:
+  - count
+  - matrix
+  - simulation
+  - rna-seq
+tools:
+  - tidyverse:
+      description: "A collection of R packages designed for data science"
+      homepage: "https://www.tidyverse.org/"
+      documentation: "https://www.tidyverse.org/packages/"
+      tool_dev_url: "https://github.com/tidyverse"
+      doi: "10.21105/joss.01686"
+      licence: ["MIT"]
+      identifier: "r-tidyverse"
+  - bioconductor-biostrings:
+      description: "Efficient manipulation of biological strings in R, including DNA, RNA, and amino acid sequences"
+      homepage: "https://bioconductor.org/packages/release/bioc/html/Biostrings.html"
+      documentation: "https://bioconductor.org/packages/release/bioc/vignettes/Biostrings/inst/doc/Biostrings2Classes.pdf"
+      tool_dev_url: "https://github.com/Bioconductor/Biostrings"
+      doi: "10.18129/B9.bioc.Biostrings"
+      licence: ["Artistic-2.0"]
+      identifier: "biotools:biostrings"
+input:
+  - - meta:
+        type: map
+        description: |
+          Groovy Map containing sample information
+          e.g. `[ id:'test', chromosome: 'chr22', coverage: 30, reps: 3, groups: 2, simthreshold: 0.3 ]`
+    - filtered_txfasta:
+        type: file
+        description: filtered FASTA file with the transcripts from the simulated chromosome
+        pattern: "gencode_transcripts_noversion.fasta"
+  - - meta2:
+        type: map
+        description: |
+          Groovy Map containing sample information
+          e.g. `[ id:'test', chromosome: 'chr22', coverage: 30, reps: 3, groups: 2, simthreshold: 0.3 ]`
+    - filtered_transcriptData:
+        type: file
+        description: RDS file containing filtered transcript data from the simulated chromosome
+        pattern: "filtered_transcriptData.rds"
+  - - meta3:
+        type: map
+        description: |
+          Groovy Map containing sample information
+          e.g. `[ id:'test', chromosome: 'chr22', coverage: 30, reps: 3, groups: 2, simthreshold: 0.3 ]`
+    - geneLists:
+      type: file
+      description: RDS file containing valid gene lists
+      pattern: "valid_gene_lists.rds"
+output:
+  - simcountMatrix:
+      - meta:
+          type: map
+          description: |
+            Groovy Map containing sample information
+            e.g. `[ id:'test', chromosome: 'chr22', coverage: 30, reps: 3, groups: 2, simthreshold: 0.3 ]`
+      - "countMatrix_*.rds":
+          type: file
+          description: RDS file containing the count matrices
+          pattern: "countMatrix_*.rds"
+  - simAnnords:
+      - meta:
+          type: map
+          description: |
+            Groovy Map containing sample information
+            e.g. `[ id:'test', chromosome: 'chr22', coverage: 30, reps: 3, groups: 2, simthreshold: 0.3 ]`
+      - "expected_*.rds":
+          type: file
+          description: RDS file containing the expected log2 fold change
+          pattern: "expected_*.rds"
+  - versions:
+      type: file
+      description: File containing software versions
+      pattern: "versions.yml"
+authors:
+  - "LorenzoS96"
+  - "carpanz"
+maintainers:
+  - "LorenzoS96"
+  - "carpanz"

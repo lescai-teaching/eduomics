@@ -1,0 +1,77 @@
+nextflow_process {
+
+    name "Test Process SIMUSCOP_SEQTOPROFILE"
+    script "../main.nf"
+    process "SIMUSCOP_SEQTOPROFILE"
+
+    tag "modules"
+    tag "modules_"
+    tag "simuscop"
+    tag "simuscop/seqtoprofile"
+
+    // nf-core: Change the test name preferably indicating the test-data and file-format used
+    test("create profile from small ref") {
+
+        config "./small_ref.config"
+
+        when {
+            process {
+                """
+                input[0] = [
+                    [ id:'simulation_test', reps: 3, groups: 2 ], // meta map
+                    file('https://raw.githubusercontent.com/lescai-teaching/eduomics_testdata/refs/heads/main/dna/align_wgsim/wgsim_chr22q11-21_recal.bam', checkIfExists: true),
+                ]
+                input[1] = [
+                    [ id:'simulation_test', reps: 3, groups: 2 ], // meta map
+                    file('https://raw.githubusercontent.com/lescai-teaching/eduomics_testdata/refs/heads/main/dna/align_wgsim/wgsim_chr22q11-21.g.vcf.gz', checkIfExists: true),
+                ]
+                input[2] = [
+                    file('https://raw.githubusercontent.com/lescai-teaching/eduomics_testdata/refs/heads/main/dna/chr22_q11-21_GRCh38.fasta', checkIfExists: true),
+                ]
+                """
+            }
+        }
+
+        then {
+            assertAll(
+                { assert process.success },
+                { assert process.out.profile.get(0).get(1).endsWith('.profile') },
+                { assert process.out.versions }
+            )
+        }
+
+    }
+
+    test("create profile from small ref - stub") {
+
+        options "-stub"
+
+        when {
+            process {
+                """
+                input[0] = [
+                    [ id:'simulation_test', reps: 3, groups: 2 ], // meta map
+                    file('https://raw.githubusercontent.com/lescai-teaching/eduomics_testdata/refs/heads/main/dna/align_wgsim/wgsim_chr22q11-21_recal.bam', checkIfExists: true),
+                ]
+                input[1] = [
+                    [ id:'simulation_test', reps: 3, groups: 2 ], // meta map
+                    file('https://raw.githubusercontent.com/lescai-teaching/eduomics_testdata/refs/heads/main/dna/align_wgsim/wgsim_chr22q11-21.g.vcf.gz', checkIfExists: true),
+                ]
+                input[2] = [
+                    file('https://raw.githubusercontent.com/lescai-teaching/eduomics_testdata/refs/heads/main/dna/chr22_q11-21_GRCh38.fasta', checkIfExists: true),
+                ]
+                """
+            }
+        }
+
+        then {
+            assertAll(
+                { assert process.success },
+                { assert process.out.profile.get(0).get(1).endsWith('.profile') },
+                { assert process.out.versions }
+            )
+        }
+
+    }
+
+}

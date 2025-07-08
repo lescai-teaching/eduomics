@@ -1,0 +1,64 @@
+---
+# yaml-language-server: $schema=https://raw.githubusercontent.com/nf-core/modules/master/modules/meta-schema.json
+name: "pyconvertosim"
+description: Converts VCF files to variation files for simulation
+keywords:
+  - vcf
+  - variation
+  - simulation
+  - conversion
+tools:
+  - python:
+      description: Python programming language
+      homepage: https://www.python.org/
+      documentation: https://docs.python.org/
+input:
+  - - meta:
+        type: map
+        description: Metadata map
+    - vcf_benign:
+        type: file
+        description: Input VCF file with benign variants
+        pattern: "*.vcf"
+  - - meta:
+        type: map
+        description: Metadata map
+    - vcf_pathogenic:
+        type: file
+        description: Input VCF file with pathogenic variants
+        pattern: "*.vcf"
+output:
+  - base_variation:
+      - meta:
+          type: map
+          description: Metadata map
+      - "*_base_variation.txt":
+          type: file
+          description: Output file containing base variations
+          pattern: "*_base_variation.txt"
+  - patho_variation:
+      - meta:
+          type: map
+          description: Metadata map
+      - "*_patho_variation.txt":
+          type: file
+          description: Output file containing pathogenic variations
+          pattern: "*_patho_variation.txt"
+  - combined_variations:
+      - meta:
+          type: map
+          description: Metadata map
+      - "*_simvar_*.txt":
+          type: file
+          description: Output files containing combined variations
+          pattern: "*_simvar_*.txt"
+  - versions:
+      - "versions.yml":
+          type: file
+          description: File containing software versions
+          pattern: "versions.yml"
+
+authors:
+  - "@DavideBag"
+maintainers:
+  - "@DavideBag"

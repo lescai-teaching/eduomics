@@ -1,0 +1,9 @@
+name: nf-core_3.2.0
+channels:
+  - conda-forge
+  - bioconda
+  - defaults
+dependencies:
+  - bioconda::nf-core=3.2.0
+  - bioconda::nextflow=24.10.5
+  - bioconda::nf-test=0.9.2

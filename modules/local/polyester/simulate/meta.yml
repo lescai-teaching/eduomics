@@ -1,0 +1,87 @@
+---
+# yaml-language-server: $schema=https://raw.githubusercontent.com/nf-core/modules/master/modules/meta-schema.json
+name: "polyester_simulate"
+description: Polyester is an R package designed to simulate RNA sequencing experiments with differential transcript expression.
+keywords:
+  - rnaseq
+  - simulate
+  - polyester
+tools:
+  - "polyester":
+      description: "Polyester is an R package designed to simulate RNA sequencing experiments with differential transcript expression."
+      homepage: "https://github.com/alyssafrazee/polyester"
+      documentation: "https://bioconductor.org/packages/3.18/bioc/vignettes/polyester/inst/doc/polyester.html"
+      tool_dev_url: "https://github.com/alyssafrazee/polyester"
+      doi: "10.18129/B9.bioc.polyester"
+      licence: ["Artistic-2.0"]
+      identifier: biotools:polyester
+  - bioconductor-biostrings:
+      description: Efficient manipulation of biological strings
+      homepage: https://bioconductor.org/packages/release/bioc/html/Biostrings.html
+      documentation: https://bioconductor.org/packages/release/bioc/vignettes/Biostrings/inst/doc/BiostringsQuickOverview.pdf
+      tool_dev_url: "https://github.com/tidyverse/tidyverse"
+      doi: "10.18129/B9.bioc.Biostrings"
+      licence: ["Artistic-2.0"]
+      identifier: "biotools:biostrings"
+input:
+  # Only when we have meta
+  - - meta:
+        type: map
+        description: |
+          Groovy Map containing sample information
+          e.g. `[ id:'test', chromosome: 'chr22', coverage: 30, reps: 3, groups: 2, simthreshold: 0.3 ]`
+    - countmatrix:
+        type: file
+        description: RDS file containing transcripts counts to be simulated
+        pattern: "*.rds"
+        ontologies:
+          - edam: "http://edamontology.org/format_25722"
+          - edam: "http://edamontology.org/format_2573"
+          - edam: "http://edamontology.org/format_3462"
+  - - meta2:
+        type: map
+        description: |
+          Groovy Map containing sample information
+          e.g. `[ id:'test', chromosome: 'chr22', coverage: 30, reps: 3, groups: 2, simthreshold: 0.3 ]`
+    - foldchange:
+        type: file
+        description: RDS file containing fold changes to be simulated for different transcripts
+        pattern: "*.rds"
+        ontologies:
+          - edam: "http://edamontology.org/format_25722"
+          - edam: "http://edamontology.org/format_2573"
+          - edam: "http://edamontology.org/format_3462"
+  - - meta3:
+        type: map
+        description: |
+          Groovy Map containing sample information
+          e.g. `[ id:'test', chromosome: 'chr22', coverage: 30, reps: 3, groups: 2, simthreshold: 0.3 ]`
+    - filtered_txfasta:
+        type: file
+        description: Subset FASTA file containing transcripts from the specified chromosome
+        pattern: "*.fasta"
+output:
+  - reads:
+      #Only when we have meta
+      - meta:
+          type: map
+          description: |
+            Groovy Map containing sample information
+            e.g. `[ id:'simulation_id', reps:3, groups:2 ]`
+      - "*.fasta.gz":
+          type: file
+          description: simulated reads in FASTA format
+          pattern: "*.fasta.gz"
+          ontologies:
+            - edam: "http://edamontology.org/format_25722"
+            - edam: "http://edamontology.org/format_2573"
+            - edam: "http://edamontology.org/format_3462"
+  - versions:
+      - "versions.yml":
+          type: file
+          description: File containing software versions
+          pattern: "versions.yml"
+authors:
+  - "@lescai"
+maintainers:
+  - "@lescai"

@@ -1,0 +1,110 @@
+nextflow_workflow {
+
+    name "Test Subworkflow FASTQ_VARIANT_TO_VALIDATION"
+    script "../main.nf"
+    workflow "FASTQ_VARIANT_TO_VALIDATION"
+
+    config "./test.config"
+    options "-dump-channels"
+
+    tag "subworkflows"
+    tag "subworkflows_"
+    tag "subworkflows/fastq_variant_to_validation"
+
+    tag "samtools"
+    tag "samtools/faidx"
+    tag "samtools/index"
+    tag "samtools/sort"
+    tag "bwa/index"
+    tag "bwa/mem"
+    tag "gatk4"
+    tag "gatk4/markduplicates"
+    tag "gatk4/baserecalibrator"
+    tag "gatk4/createsequencedictionary"
+    tag "gatk4/applybqsr"
+    tag "gatk4/haplotypecaller"
+
+    // nf-core: Change the test name preferably indicating the test-data and file-format used
+    test("single sample - variant present") {
+
+        when {
+            workflow {
+                """
+                // channel: [mandatory] [ val(meta), [ reads ] ] <- NB: this channel contains 4 reads 2 * case + 2 * control / modified in sub-workflow
+                input[0] = Channel.of([
+                    [ id: 'sim01', type: 'dnaseq', chromosome: 'chr22', reps: 'none', groups: 2, coverage: 50, simulatedvar: 'chr22-18078510-T-C' ], // meta map
+                    [
+                        file('https://raw.githubusercontent.com/lescai-teaching/eduomics_testdata/refs/heads/main/dna/simureads/chr22-18078510-T-C/normal_0.000+disease_1.000_1.fq.gz', checkIfExists: true),
+                        file('https://raw.githubusercontent.com/lescai-teaching/eduomics_testdata/refs/heads/main/dna/simureads/chr22-18078510-T-C/normal_0.000+disease_1.000_2.fq.gz', checkIfExists: true),
+                        file('https://raw.githubusercontent.com/lescai-teaching/eduomics_testdata/refs/heads/main/dna/simureads/chr22-18078510-T-C/normal_1.000+disease_0.000_1.fq.gz', checkIfExists: true),
+                        file('https://raw.githubusercontent.com/lescai-teaching/eduomics_testdata/refs/heads/main/dna/simureads/chr22-18078510-T-C/normal_1.000+disease_0.000_2.fq.gz', checkIfExists: true)
+                    ]
+                ])
+
+                // channel: [mandatory] [ val(meta), [ fasta ] ]
+                input[1] = Channel.value([
+                    [ id:'test', coverage:50 ], // meta map
+                    file('https://raw.githubusercontent.com/lescai-teaching/eduomics_testdata/refs/heads/main/dna/whole_chr22/Homo_sapiens.GRCh38.dna.chromosome.22.fa', checkIfExists: true),
+                ])
+
+                // channel: [mandatory] [ val(meta), [fai] ]
+                input[2] = Channel.value([
+                    [ id:'test', coverage:50 ], // meta map
+                    file('https://raw.githubusercontent.com/lescai-teaching/eduomics_testdata/refs/heads/main/dna/whole_chr22/Homo_sapiens.GRCh38.dna.chromosome.22.fa.fai', checkIfExists: true),
+                ])
+
+                // channel: [mandatory] [ val(meta), [dict] ]
+                input[3] = Channel.value([
+                    [ id:'test', coverage:50 ], // meta map
+                    file('https://raw.githubusercontent.com/lescai-teaching/eduomics_testdata/refs/heads/main/dna/whole_chr22/Homo_sapiens.GRCh38.dna.chromosome.22.dict', checkIfExists: true),
+                ])
+
+                // channel: [mandatory] [ val(meta), [bwa_index] ]
+                input[4] = Channel.value([
+                    [ id:'test', coverage:50 ], // meta map
+                    [
+                    file('https://raw.githubusercontent.com/lescai-teaching/eduomics_testdata/refs/heads/main/dna/whole_chr22/whole_22_bwa_index/Homo_sapiens.GRCh38.dna.chromosome.22.fa.amb', checkIfExists: true),
+                    file('https://raw.githubusercontent.com/lescai-teaching/eduomics_testdata/refs/heads/main/dna/whole_chr22/whole_22_bwa_index/Homo_sapiens.GRCh38.dna.chromosome.22.fa.ann', checkIfExists: true),
+                    file('https://raw.githubusercontent.com/lescai-teaching/eduomics_testdata/refs/heads/main/dna/whole_chr22/whole_22_bwa_index/Homo_sapiens.GRCh38.dna.chromosome.22.fa.bwt', checkIfExists: true),
+                    file('https://raw.githubusercontent.com/lescai-teaching/eduomics_testdata/refs/heads/main/dna/whole_chr22/whole_22_bwa_index/Homo_sapiens.GRCh38.dna.chromosome.22.fa.fai', checkIfExists: true),
+                    file('https://raw.githubusercontent.com/lescai-teaching/eduomics_testdata/refs/heads/main/dna/whole_chr22/whole_22_bwa_index/Homo_sapiens.GRCh38.dna.chromosome.22.fa.pac', checkIfExists: true),
+                    file('https://raw.githubusercontent.com/lescai-teaching/eduomics_testdata/refs/heads/main/dna/whole_chr22/whole_22_bwa_index/Homo_sapiens.GRCh38.dna.chromosome.22.fa.sa', checkIfExists: true),
+                    ]
+                ])
+
+                // channel: [mandatory] [ [dbsnp] ]
+                input[5] = Channel.value([
+                    file('https://raw.githubusercontent.com/lescai-teaching/eduomics_testdata/refs/heads/main/dna/whole_chr22/dbsnp_146.hg38_chr22.vcf.gz', checkIfExists: true),
+                ])
+
+                // channel: [mandatory] [ [dbsnp_tbi] ]
+                input[6] = Channel.value([
+                    file('https://raw.githubusercontent.com/lescai-teaching/eduomics_testdata/refs/heads/main/dna/whole_chr22/dbsnp_146.hg38_chr22.vcf.gz.tbi', checkIfExists: true),
+                ])
+
+                // channel: [mandatory] [ [mills] ]
+                input[7] = Channel.value([
+                    file('https://raw.githubusercontent.com/lescai-teaching/eduomics_testdata/refs/heads/main/dna/whole_chr22/Mills_and_1000G_gold_standard.indels.hg38_chr22.vcf.gz', checkIfExists: true),
+                ])
+
+                // channel: [mandatory] [ [mills_tbi] ]
+                input[8] = Channel.value([
+                    file('https://raw.githubusercontent.com/lescai-teaching/eduomics_testdata/refs/heads/main/dna/whole_chr22/Mills_and_1000G_gold_standard.indels.hg38_chr22.vcf.gz.tbi', checkIfExists: true),
+                ])
+
+                // channel: [mandatory] [ [capture] ]
+                input[9] = Channel.value([
+                    file('https://raw.githubusercontent.com/lescai-teaching/eduomics_testdata/refs/heads/main/dna/whole_chr22/Twist_exome_2.0_covered_chr22_500pad.bed', checkIfExists: true),
+                ])
+                """
+            }
+        }
+
+        then {
+            assertAll(
+                { assert workflow.success},
+                { assert snapshot(workflow.out).match()}
+            )
+        }
+    }
+}

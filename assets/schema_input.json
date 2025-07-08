@@ -7,27 +7,70 @@
     "items": {
         "type": "object",
         "properties": {
-            "sample": {
+            "id": {
                 "type": "string",
                 "pattern": "^\\S+$",
-                "errorMessage": "Sample name must be provided and cannot contain spaces",
+                "errorMessage": "Simulation name name must be provided and cannot contain spaces",
                 "meta": ["id"]
             },
-            "fastq_1": {
+            "type": {
                 "type": "string",
-                "format": "file-path",
-                "exists": true,
-                "pattern": "^\\S+\\.f(ast)?q\\.gz$",
-                "errorMessage": "FastQ file for reads 1 must be provided, cannot contain spaces and must have extension '.fq.gz' or '.fastq.gz'"
+                "enum": ["dna", "rna"],
+                "errorMessage": "Simulation type can only be either dna or rna",
+                "meta": ["type"]
             },
-            "fastq_2": {
+            "chromosome": {
+                "type": "string",
+                "pattern": "^chr.+$",
+                "errorMessage": "The chromosome must be indicated in the form chr + number or letter",
+                "meta": ["chromosome"]
+            },
+            "coverage": {
+                "type": "integer",
+                "errorMessage": "A coverage should be indicated or defaults to 30 for RNAseq and 50 for DNA",
+                "meta": ["coverage"]
+            },
+            "reps": {
+                "type": "integer",
+                "errorMessage": "Indicates the number of replicas per group (in DNA case control defaults to 1)",
+                "meta": ["reps"]
+            },
+            "groups": {
+                "type": "integer",
+                "errorMessage": "indicates the number of groups (defaults to 2)",
+                "meta": ["groups"]
+            },
+            "simthreshold": {
+                "type": "number",
+                "errorMessage": "indicates the similarity threshold to be used for calculating gene groups",
+                "meta": ["simthreshold"]
+            },
+            "capture": {
                 "type": "string",
                 "format": "file-path",
                 "exists": true,
-                "pattern": "^\\S+\\.f(ast)?q\\.gz$",
-                "errorMessage": "FastQ file for reads 2 cannot contain spaces and must have extension '.fq.gz' or '.fastq.gz'"
+                "pattern": "^\\S+\\.bed$",
+                "errorMessage": "Must be a bed file with extension '.bed'"
             }
         },
-        "required": ["sample", "fastq_1"]
+        "required": ["id", "type", "chromosome"],
+        "allOf": [
+            {
+                "if": {
+                    "properties": { "type": { "const": "dna" } }
+                },
+                "then": {
+                    "required": ["capture"]
+                }
+            },
+            {
+                "if": {
+                    "properties": { "type": { "const": "rna" } }
+                },
+                "then": {
+                    "required": ["simthreshold"]
+                }
+            }
+        ]
     }
 }

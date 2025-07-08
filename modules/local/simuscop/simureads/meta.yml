@@ -1,0 +1,67 @@
+---
+# yaml-language-server: $schema=https://raw.githubusercontent.com/nf-core/modules/master/modules/meta-schema.json
+name: "simuscop_simureads"
+description: write your description here
+keywords:
+  - fastq
+  - reads
+  - simulation
+tools:
+  - "simuscop":
+      description: "Tool to Simulate Illumina Sequencing data based on position and Context dependent Profiles with the ability to inject specific variants into the simulated reads"
+      homepage: "https://github.com/qasimyu/simuscop"
+      documentation: "https://github.com/qasimyu/simuscop/blob/master/docs/SimuSCoP_User_Guide.pdf"
+      tool_dev_url: "https://github.com/qasimyu/simuscop"
+      doi: "no DOI available"
+      licence: ["GNU GPL v3"]
+      identifier: biotools:simuscop
+input:
+  - - meta:
+        type: map
+        description: |
+          Groovy Map containing sample information
+          e.g. `[ id:'sample1', single_end:false ]`
+    - profile:
+        type: file
+        description: "simuscop reads sequencing profile"
+  - - fasta:
+        type: file
+        description: "reference reads should be simulated on"
+        pattern: "*.fasta"
+    - fai:
+        type: file
+        description: "index of the reference"
+        pattern: "*.fai"
+  - - meta2:
+        type: map
+        description: |
+          Groovy Map containing sample information
+          e.g. `[ id:'sample1', single_end:false ]`
+    - variantstoinject:
+        type: file
+        description: "list of variants to be injected in simulated reads according to simuscop format"
+  - - capture:
+        type: file
+        description: "bed files of regions reads should be simulated on"
+        pattern: "*.bed"
+output:
+  - reads:
+      - meta:
+          type: map
+          description: |
+            Groovy Map containing sample information
+            e.g. `[ id:'sample1', single_end:false ]`
+      - "simulated_reads/*.fq.gz":
+          type: file
+          description: fastq simulated reads
+          pattern: "*.fq.gz"
+  - versions:
+      - "versions.yml":
+          type: file
+          description: File containing software versions
+          pattern: "versions.yml"
+
+authors:
+  - "@lescai"
+maintainers:
+  - "@lescai"

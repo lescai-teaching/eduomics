@@ -1,0 +1,6 @@
+channels:
+  - conda-forge
+  - bioconda
+  - lescailab
+dependencies:
+  - lescailab::simuscop=1.1.2

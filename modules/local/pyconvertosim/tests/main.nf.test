@@ -1,0 +1,64 @@
+nextflow_process {
+
+    name "Test Process PYCONVERTOSIM"
+    script "../main.nf"
+    process "PYCONVERTOSIM"
+    tag "modules"
+    tag "modules_"
+    tag "pyconvertosim"
+
+    test("homo_sapiens - vcf") {
+
+        when {
+            process {
+                """
+                input[0] = [
+                    [ id:'test_sample' ], // meta map
+                    file('https://raw.githubusercontent.com/lescai-teaching/eduomics_testdata/main/dna/clinvar_data/clinvar_20250317_chr22q11-21_benign.vcf', checkIfExists: true),
+                ]
+                input[1] = [
+                    [ id:'test_sample' ], // meta map
+                    file('https://raw.githubusercontent.com/lescai-teaching/eduomics_testdata/main/dna/clinvar_data/clinvar_20250317_chr22q11-21_nonsense-pathogenic.vcf', checkIfExists: true),
+                ]
+                """
+            }
+        }
+
+        then {
+            assertAll(
+                { assert process.success },
+                { assert snapshot(process.out).match() }
+            )
+        }
+
+    }
+
+    test("homo sapiens - stub") {
+
+        options "-stub"
+
+        when {
+            process {
+                """
+                input[0] = [
+                    [ id:'test_sample' ], // meta map
+                    file('https://raw.githubusercontent.com/lescai-teaching/eduomics_testdata/main/dna/clinvar_data/clinvar_20250317_chr22q11-21_benign.vcf', checkIfExists: true),
+                ]
+                input[1] = [
+                    [ id:'test_sample' ], // meta map
+                    file('https://raw.githubusercontent.com/lescai-teaching/eduomics_testdata/main/dna/clinvar_data/clinvar_20250317_chr22q11-21_nonsense-pathogenic.vcf', checkIfExists: true),
+                ]
+                """
+            }
+        }
+
+        then {
+            assertAll(
+                { assert process.success },
+                { assert snapshot(process.out).match() }
+            )
+        }
+
+    }
+
+}

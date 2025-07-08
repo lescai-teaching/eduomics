@@ -1,0 +1,109 @@
+{
+    "subset capture - bed": {
+        "content": [
+            {
+                "0": [
+                    [
+                        {
+                            "id": "test",
+                            "single_end": false
+                        },
+                        "test.capture.bed.gz:md5,1bfb2a02b6882800dfc86f1dcd116dea"
+                    ]
+                ],
+                "1": [
+                    [
+                        {
+                            "id": "test",
+                            "single_end": false
+                        },
+                        "test.capture.bed.gz.tbi:md5,cca8582edb548b04e057329d3c8de585"
+                    ]
+                ],
+                "2": [
+                    [
+                        {
+                            "id": "test",
+                            "single_end": false
+                        },
+                        "test_chr22_target.bed:md5,1bfb2a02b6882800dfc86f1dcd116dea"
+                    ]
+                ],
+                "3": [
+                    [
+                        {
+                            "id": "test",
+                            "single_end": false
+                        },
+                        "test_chr22_target.pad50.bed:md5,ac358cce78980c94f6ff5be56cbdede9"
+                    ]
+                ],
+                "4": [
+                    [
+                        {
+                            "id": "test",
+                            "single_end": false
+                        },
+                        "test_chr22_target.pad500.bed:md5,4188712633feb7137bc5d29a3940aa6a"
+                    ]
+                ],
+                "5": [
+                    "versions.yml:md5,0c17fbe27ea47a2c8684f688df68768c"
+                ],
+                "capture_bed_gz": [
+                    [
+                        {
+                            "id": "test",
+                            "single_end": false
+                        },
+                        "test.capture.bed.gz:md5,1bfb2a02b6882800dfc86f1dcd116dea"
+                    ]
+                ],
+                "capture_bed_index": [
+                    [
+                        {
+                            "id": "test",
+                            "single_end": false
+                        },
+                        "test.capture.bed.gz.tbi:md5,cca8582edb548b04e057329d3c8de585"
+                    ]
+                ],
+                "target_bed": [
+                    [
+                        {
+                            "id": "test",
+                            "single_end": false
+                        },
+                        "test_chr22_target.bed:md5,1bfb2a02b6882800dfc86f1dcd116dea"
+                    ]
+                ],
+                "target_bed_pad50": [
+                    [
+                        {
+                            "id": "test",
+                            "single_end": false
+                        },
+                        "test_chr22_target.pad50.bed:md5,ac358cce78980c94f6ff5be56cbdede9"
+                    ]
+                ],
+                "target_bed_pad500": [
+                    [
+                        {
+                            "id": "test",
+                            "single_end": false
+                        },
+                        "test_chr22_target.pad500.bed:md5,4188712633feb7137bc5d29a3940aa6a"
+                    ]
+                ],
+                "versions": [
+                    "versions.yml:md5,0c17fbe27ea47a2c8684f688df68768c"
+                ]
+            }
+        ],
+        "meta": {
+            "nf-test": "0.9.2",
+            "nextflow": "24.10.4"
+        },
+        "timestamp": "2025-03-26T11:08:56.792659394"
+    }
+}

@@ -1,0 +1,76 @@
+---
+# yaml-language-server: $schema=https://raw.githubusercontent.com/nf-core/modules/master/modules/meta-schema.json
+name: "subvar"
+description: Module that separates benign and pathogenic variants from clinvar VCF file.
+keywords:
+  - variant
+  - vcf
+  - filtering
+  - clinvar
+tools:
+  - "subvar":
+      description: "Module that separates benign and pathogenic variants from clinvar VCF file."
+      homepage: "https://github.com/lescai-teaching/eduomics"
+      documentation: "https://github.com/lescai-teaching/eduomics"
+      tool_dev_url: "https://github.com/lescai-teaching/eduomics"
+      doi: ""
+      licence: ["MIT"]
+      identifier:
+
+input:
+  - - meta:
+        type: map
+        description: |
+          Groovy Map containing sample information
+          e.g. `[ id:'sample1', single_end:false ]`
+
+    - vcf:
+        type: file
+        description: Input VCF file containing variants
+        pattern: "*.{vcf,vcf.gz}"
+    - bed:
+        type: file
+        description: BED file containing regions of interest
+        pattern: "*.bed"
+
+output:
+  - benign_vcf:
+      - meta:
+          type: map
+          description: |
+            Groovy Map containing sample information
+            e.g. [ id:'test_sample' ]
+      - benign.vcf:
+          type: file
+          description: VCF file containing benign variants
+          pattern: "*.{vcf,vcf.gz}"
+  - pathogenic_vcf:
+      - meta:
+          type: map
+          description: |
+            Groovy Map containing sample information
+            e.g. [ id:'test_sample' ]
+      - pathogenic.vcf:
+          type: file
+          description: VCF file containing pathogenic variants
+          pattern: "*.{vcf,vcf.gz}"
+  - selected_vcf:
+      - meta:
+          type: map
+          description: |
+            Groovy Map containing sample information
+            e.g. [ id:'test_sample' ]
+      - selected.vcf:
+          type: file
+          description: VCF file containing high quality pathogenic variants
+          pattern: "*.{vcf,vcf.gz}"
+  - versions:
+      - versions.yml:
+          type: file
+          description: File containing software versions
+          pattern: "versions.yml"
+
+authors:
+  - "@DavideBag"
+maintainers:
+  - "@DavideBag"

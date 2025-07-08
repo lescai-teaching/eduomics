@@ -1,0 +1,68 @@
+nextflow_process {
+
+    name "Test Process ENRICHMENT"
+    script "../main.nf"
+    process "ENRICHMENT"
+
+    tag "modules"
+    tag "modules_"
+    tag "enrichment"
+
+    test("enrichment - run") {
+
+        when {
+            process {
+                """
+                input[0] = [
+                    [id: 'simtest', chromosome: 'chr22', genes: 'A,B,C', reps: 3, groups: 2], // meta map
+                    file('https://raw.githubusercontent.com/lescai-teaching/eduomics_testdata/refs/heads/main/rnaseq/enrichment/resdata.tsv', checkIfExists: true)
+                ]
+                input[1] = [
+                    [id: 'simtest', chromosome: 'chr22', genes: 'A,B,C', reps: 3, groups: 2], // meta map
+                    file('https://raw.githubusercontent.com/lescai-teaching/eduomics_testdata/refs/heads/main/rnaseq/enrichment/tx2gene.tsv', checkIfExists: true)
+                ]
+                """
+            }
+        }
+
+        then {
+            assertAll(
+                { assert process.success },
+                { assert process.out.enrichment_results },
+                { assert process.out.enrichment_results[0][1].toString().endsWith("enrichment_results.rds") },
+                { assert process.out.enrichment_results[0][2].every { it.toString().endsWith(".png") } },
+                { assert process.out.versions }
+            )
+        }
+    }
+
+    test("enrichment - stub") {
+
+        options "-stub"
+
+        when {
+            process {
+                """
+                input[0] = [
+                    [id: 'simtest', chromosome: 'chr22', genes: 'A,B,C', reps: 3, groups: 2], // meta map
+                    file('https://raw.githubusercontent.com/lescai-teaching/eduomics_testdata/refs/heads/main/rnaseq/enrichment/resdata.tsv', checkIfExists: true)
+                ]
+                input[1] = [
+                    [id: 'simtest', chromosome: 'chr22', genes: 'A,B,C', reps: 3, groups: 2], // meta map
+                    file('https://raw.githubusercontent.com/lescai-teaching/eduomics_testdata/refs/heads/main/rnaseq/enrichment/tx2gene.tsv', checkIfExists: true)
+                ]
+                """
+            }
+        }
+
+        then {
+            assertAll(
+                { assert process.success },
+                { assert process.out.enrichment_results },
+                { assert process.out.enrichment_results[0][1].toString().endsWith("enrichment_results.rds") },
+                { assert process.out.enrichment_results[0][2].every { it.toString().endsWith(".png") } },
+                { assert process.out.versions }
+            )
+        }
+    }
+}

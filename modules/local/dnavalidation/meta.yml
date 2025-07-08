@@ -1,0 +1,63 @@
+---
+# yaml-language-server: $schema=https://raw.githubusercontent.com/nf-core/modules/master/modules/meta-schema.json
+name: "dnavalidation"
+description: This module validates DNA sequences by checking if a simulated variant is present in the VCF file and copies the relevant files to a validation directory.
+keywords:
+  - dna
+  - validation
+  - vcf
+  - fastq
+tools:
+  - bash:
+      description: "GNU Bash is the shell, or command language interpreter, used for validating DNA sequences by checking if a simulated variant is present in the VCF file and copying the relevant files to a validation directory."
+      homepage: "https://www.gnu.org/software/bash/"
+      documentation: "https://www.gnu.org/software/bash/manual/"
+      licence: ["GPL-3.0-or-later"]
+      version: "5.2.21"
+  - grep:
+      description: Search for patterns in text files
+      homepage: "https://www.gnu.org/software/grep/"
+      documentation: "https://www.gnu.org/software/grep/manual/"
+  - gzip:
+      description: GNU compression utilities used to uncompress the VCF
+
+input:
+  - - meta:
+        type: map
+        description: |
+          Groovy Map containing sample information
+          e.g. `[ id:'sample1', simulatedvar:'chr22-18078561-G-A' ]`
+    - vcf:
+        type: file
+        description: VCF file containing variant information
+        pattern: "*.vcf"
+    - reads:
+        type: file
+        description: FASTQ files containing sequencing reads
+        pattern: "*.fastq.gz"
+
+output:
+  - dna_validated_results:
+      - meta:
+          type: map
+          description: |
+            Groovy Map containing sample information
+            e.g. `[ id:'sample1', simulatedvar:'chr22-18078561-G-A' ]`
+      - "dna_*_validation":
+          type: directory
+          description: Directory containing validated DNA files
+          pattern: "dna_*_validation"
+      - "dna_*_validation/*.vcf":
+          type: file
+          description: Validated VCF file
+          pattern: "dna_*_validation/*.vcf"
+  - versions:
+      - "versions.yml":
+          type: file
+          description: File containing software versions
+          pattern: "versions.yml"
+
+authors:
+  - "@DavideBag"
+maintainers:
+  - "@DavideBag"

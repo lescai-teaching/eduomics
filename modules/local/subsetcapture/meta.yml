@@ -1,0 +1,71 @@
+name: "subcapture"
+description: Subset the capture BED by chromosome
+keywords:
+  - bed
+  - capture
+  - chromosome
+tools:
+  - grep:
+      description: Search for patterns in text files
+      homepage: https://www.gnu.org/software/grep/
+      documentation: https://www.gnu.org/software/grep/manual/
+  - bgzip:
+      description: Compress or expand files
+  - bedtools:
+      description: A powerful toolset for genome arithmetic
+      homepage: https://bedtools.readthedocs.io/
+      documentation: https://bedtools.readthedocs.io/
+  - tabix:
+      description: Index tab-delimited genome position files
+      homepage: http://www.htslib.org/doc/tabix.html
+      documentation: http://www.htslib.org/doc/tabix.html
+
+input:
+  - - meta:
+        type: map
+        description: |
+          Groovy Map containing sample information
+          e.g. `[ id:'sample1', single_end:false ]`
+  - chromosome:
+      type: string
+      description: Chromosome to subset
+  - target_chrom_size:
+      type: file
+      description: Chromosome sizes file
+      pattern: "*.{txt,tsv}"
+  - capture_bed:
+      type: file
+      description: Capture regions in BED format
+      pattern: "*.{bed,bed.gz}"
+
+output:
+  - capture_bed_gz:
+      type: file
+      description: Compressed origin capture BED
+      pattern: "*.capture.bed.gz"
+  - capture_bed_index:
+      type: file
+      description: Index of compressed origin capture BED
+      pattern: "*.capture.bed.gz.tbi"
+  - target_bed:
+      type: file
+      description: Capture BED subset by target chromosome
+      pattern: "*_target.bed"
+  - target_bed_pad50:
+      type: file
+      description: Padded target capture BED by 500 positions
+      pattern: "_target.pad50.bed"
+  - target_bed_pad500:
+      type: file
+      description: Padded target capture BED by 50 positions
+      pattern: "*_target.pad500.bed"
+  - versions:
+      - "versions.yml":
+          type: file
+          description: File containing software versions
+          pattern: "versions.yml"
+
+authors:
+  - "@msantorsola"
+maintainers:
+  - "@msantorsola"

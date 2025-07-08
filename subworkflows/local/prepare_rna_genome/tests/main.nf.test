@@ -1,0 +1,52 @@
+nextflow_workflow {
+
+    name "Test Subworkflow PREPARE_RNA_GENOME"
+    script "../main.nf"
+    workflow "PREPARE_RNA_GENOME"
+
+    options "-dump-channels"
+
+    tag "subworkflows"
+    tag "subworkflows_"
+    tag "subworkflows/prepare_rna_genome"
+    tag "subsetfastatx"
+    tag "subsetgff"
+    tag "samtools/faidx"
+    tag "salmon"
+    tag "salmon/index"
+
+
+    test("prepare_rna_genome - test") {
+
+        when {
+
+            workflow {
+                """
+                input[0] = Channel.of([ id:'simtest', chromosome: 'chr22', coverage: 30, reps: 3, groups: 2, simthreshold: 0.3 ])
+                input[1] = Channel.value(file('https://raw.githubusercontent.com/lescai-teaching/eduomics_testdata/refs/heads/main/rnaseq/subsetfastatx/gencode_chr21_chr22_v47.gff3', checkIfExists: true))
+                input[2] = Channel.value(file('https://raw.githubusercontent.com/lescai-teaching/eduomics_testdata/refs/heads/main/rnaseq/subsetfastatx/gencode_transcripts_noversion_chr21_chr22.fasta', checkIfExists: true))
+                input[3] = Channel.value(file('https://raw.githubusercontent.com/lescai-teaching/eduomics_testdata/refs/heads/main/dna/chr22_q11-21_GRCh38.fasta', checkIfExists: true))
+                """
+            }
+        }
+
+        then {
+            assertAll(
+                { assert workflow.success },
+                { assert workflow.out.filtered_annotation.get(0).get(1).endsWith('.gff3') },
+                { assert workflow.out.gene_lists.get(0).get(1).endsWith('.rds') },
+                { assert workflow.out.gene_list_association.get(0).get(1).endsWith('.tsv') },
+                { assert workflow.out.filtered_transcript_data.get(0).get(1).endsWith('.rds') },
+                { assert workflow.out.filtered_txfasta.get(0).get(1).endsWith('.fasta') },
+                { assert workflow.out.filtered_genomefasta.get(0).get(1).endsWith('.fasta') },
+                {
+                    def salmonIndexPath = workflow.out.txfasta_index[0][0]
+                    def salmonIndexFile = path(salmonIndexPath).toFile()
+                    assert salmonIndexFile.exists()
+                    assert salmonIndexFile.isDirectory()
+                },
+                { assert workflow.out.log_files.collect { it[1] }.every { it.endsWith('.txt') } }
+            )
+        }
+    }
+}

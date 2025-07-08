@@ -1,16 +1,22 @@
-# nf-core/eduomics: Changelog
+# eduomics: Changelog
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/)
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## v1.0.0dev - [date]
+## 1.0.0 - Running Franklin
 
-Initial release of nf-core/eduomics, created with the [nf-core](https://nf-co.re/) template.
+First release of eduomics, created with the [nf-core](https://nf-co.re/) template.
 
-### `Added`
+### Credits
 
-### `Fixed`
+Special thanks to the following for their contributions to the release:
 
-### `Dependencies`
+- [Francesco Lescai](https://github.com/lescai)
+- [Mariangela Santorsola](https://github.com/msantorsola)
+- [Lorenzo Sola](https://github.com/LorenzoS96)
+- [Davide Bagordo](https://github.com/DavideBag)
+- [Simone Carpanzano](https://github.com/carpanz)
 
-### `Deprecated`
+## v1.0.0dev - [2025-03-16]
+
+Initial development of eduomics, created with the [nf-core](https://nf-co.re/) template.

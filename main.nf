@@ -15,10 +15,14 @@
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 */
 
-include { EDUOMICS  } from './workflows/eduomics'
-include { PIPELINE_INITIALISATION } from './subworkflows/local/utils_nfcore_eduomics_pipeline'
-include { PIPELINE_COMPLETION     } from './subworkflows/local/utils_nfcore_eduomics_pipeline'
-include { getGenomeAttribute      } from './subworkflows/local/utils_nfcore_eduomics_pipeline'
+nextflow.preview.output = true
+
+include { EDUOMICS                     } from './workflows/eduomics'
+include { SUBSET_REFERENCES_TO_TARGETS } from './subworkflows/local/subset_references_to_targets'
+include { PREPARE_RNA_GENOME           } from './subworkflows/local/prepare_rna_genome'
+include { PIPELINE_INITIALISATION      } from './subworkflows/local/utils_nfcore_eduomics_pipeline'
+include { PIPELINE_COMPLETION          } from './subworkflows/local/utils_nfcore_eduomics_pipeline'
+include { getGenomeAttribute           } from './subworkflows/local/utils_nfcore_eduomics_pipeline'
 
 /*
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -26,10 +30,22 @@ include { getGenomeAttribute      } from './subworkflows/local/utils_nfcore_eduo
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 */
 
-// TODO nf-core: Remove this line if you don't need a FASTA file
-//   This is an example of how to use getGenomeAttribute() to fetch parameters
-//   from igenomes.config using `--genome`
-params.fasta = getGenomeAttribute('fasta')
+// getting attributes for genome files
+params.fasta           = getGenomeAttribute('fasta')
+params.gnomad_vcf      = getGenomeAttribute('germline_resource')
+params.gnomad_tbi      = getGenomeAttribute('germline_resource_tbi')
+params.mills_vcf       = getGenomeAttribute('known_indels')
+params.mills_tbi       = getGenomeAttribute('known_indels_tbi')
+params.vcf1000g_vcf    = getGenomeAttribute('known_snps')
+params.vcf1000g_tbi    = getGenomeAttribute('known_snps_tbi')
+params.dbsnp_vcf       = getGenomeAttribute('dbsnp')
+params.dbsnp_tbi       = getGenomeAttribute('dbsnp_tbi')
+params.clinvar_vcf     = getGenomeAttribute('clinvar_vcf')
+params.clinvar_tbi     = getGenomeAttribute('clinvar_vcf')
+params.gff3            = getGenomeAttribute('gff3')
+params.txfasta         = getGenomeAttribute('txfasta')
+params.bwa_index       = getGenomeAttribute('bwa_index')
+
 
 /*
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -47,12 +63,61 @@ workflow NFCORE_EDUOMICS {
 
     main:
 
+    samplesheet
+    .branch { m, c ->
+        dna: m.type == "dna"
+        rna: m.type == "rna"
+    }
+    .set{ input_bytype_ch }
+
+    // handle samplesheet with one type only
+    input_ch_dna = input_bytype_ch.dna
+    input_ch_rna = input_bytype_ch.rna
+
+    // CREATING CHANNELS FROM REFERENCE FILES
+    ch_fasta          = Channel.fromPath(params.fasta).collect()
+    ch_txfasta        = Channel.fromPath(params.txfasta).collect()
+    ch_gff3           = Channel.fromPath(params.gff3).collect()
+    ch_capture_bed    = input_ch_dna.map { meta, capture -> capture }.collect()
+    ch_gnomad_vcf     = Channel.fromPath(params.gnomad_vcf).collect()
+    ch_gnomad_tbi     = Channel.fromPath(params.gnomad_tbi).collect()
+    ch_gnomad_vcf_tbi = ch_gnomad_vcf.combine(ch_gnomad_tbi)
+    ch_mills_vcf      = Channel.fromPath(params.mills_vcf).collect()
+    ch_mills_tbi      = Channel.fromPath(params.mills_tbi).collect()
+    ch_mills_vcf_tbi  = ch_mills_vcf.combine(ch_mills_tbi)
+    ch_1000g_vcf      = Channel.fromPath(params.vcf1000g_vcf).collect()
+    ch_1000g_tbi      = Channel.fromPath(params.vcf1000g_tbi).collect()
+    ch_1000g_vcf_tbi  = ch_1000g_vcf.combine(ch_1000g_tbi)
+    ch_dbsnp_vcf      = Channel.fromPath(params.dbsnp_vcf).collect()
+    ch_dbsnp_tbi      = Channel.fromPath(params.dbsnp_tbi).collect()
+    ch_dbsnp_vcf_tbi  = ch_dbsnp_vcf.combine(ch_dbsnp_tbi)
+    ch_clinvar_vcf    = Channel.fromPath(params.clinvar_vcf).collect()
+
     //
     // WORKFLOW: Run pipeline
     //
     EDUOMICS (
-        samplesheet
+        input_ch_dna,
+        input_ch_rna,
+        ch_fasta,
+        ch_txfasta,
+        ch_gff3,
+        ch_capture_bed,
+        ch_gnomad_vcf_tbi,
+        ch_mills_vcf_tbi,
+        ch_1000g_vcf_tbi,
+        ch_dbsnp_vcf_tbi,
+        ch_clinvar_vcf
     )
+
+    emit:
+    versions                 = EDUOMICS.out.versions                   // channel: [ path(versions.yml)                          ]
+    fastq_validated_variants = EDUOMICS.out.fastq_validated_variants   // channel: [ val(meta), path(validated_results_folder/*) ]
+    rnaseq_validated_reads   = EDUOMICS.out.rnaseq_validated_reads     // channel: [ val(meta), path(rnaseq_validation)          ]
+    dnabundle                = EDUOMICS.out.dnabundle                  // channel: [ val(meta), [all references bundle] ]
+    rnabundle                = EDUOMICS.out.rnabundle                  // channel: [ val(meta), [path(txfasta), path(gff3), path(salmonindex)] ]
+    scenario_description     = EDUOMICS.out.scenario_description       // channel: [ val(meta), path(scenario.txt)               ]
+
 }
 /*
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -92,6 +157,72 @@ workflow {
         params.monochrome_logs,
         params.hook_url,
     )
+
+    publish:
+    // software versions
+    softwareversions = NFCORE_EDUOMICS.out.versions
+    //simulation results
+    dnasimulation    = NFCORE_EDUOMICS.out.fastq_validated_variants.ifEmpty([[id:'none', simulatedvar: 'none'], []])
+    rnasimulation    = NFCORE_EDUOMICS.out.rnaseq_validated_reads.ifEmpty([[id:'none', genes: 'none'], []])
+    scenario         = NFCORE_EDUOMICS.out.scenario_description
+    // dna reference and bundle needed for the analysis of simulated DNA data
+    dnabundle        = NFCORE_EDUOMICS.out.dnabundle.ifEmpty([[id:'none', simulatedvar: 'none'], []])
+    // rna reference and bundle needed for the analysis of simulated RNA data
+    rnabundle        = NFCORE_EDUOMICS.out.rnabundle.ifEmpty([[id:'none', genes: 'none'], []])
+
+}
+
+output {
+
+    softwareversions {
+        path "${params.outdir}/pipeline_info"
+        mode 'copy'
+    }
+
+    dnasimulation {
+        path { meta, files ->
+            "${params.outdir}/dna_simulations/${meta.id}/${meta.simulatedvar}"
+        }
+        mode 'copy'
+    }
+
+    dnabundle {
+        path { meta, files ->
+            "${params.outdir}/dna_simulations/${meta.id}/references"
+        }
+        mode 'copy'
+    }
+
+    rnasimulation {
+        path { meta, files ->
+            def simfolder = meta.genes.split(',').take(5).join('_')
+            "${params.outdir}/rna_simulations/${meta.id}/${simfolder}"
+        }
+        mode 'copy'
+    }
+
+    rnabundle {
+        path { meta, files ->
+            "${params.outdir}/rna_simulations/${meta.id}/references"
+        }
+        mode 'copy'
+    }
+
+
+    scenario {
+        path { meta, text ->
+            if (meta.type == "dna"){
+                "${params.outdir}/dna_simulations/${meta.id}/${meta.simulatedvar}"
+            }
+            else {
+                def simfolder = meta.genes.split(',').take(5).join('_')
+                "${params.outdir}/rna_simulations/${meta.id}/${simfolder}"
+            }
+        }
+        mode 'copy'
+    }
+
+
 }
 
 /*
