@@ -24,7 +24,7 @@ nextflow_workflow {
     tag "gatk4/applybqsr"
     tag "gatk4/haplotypecaller"
 
-    // TODO nf-core: Change the test name preferably indicating the test-data and file-format used
+    // nf-core: Change the test name preferably indicating the test-data and file-format used
     test("single sample - variant present") {
 
         when {

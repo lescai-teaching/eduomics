@@ -1,4 +1,4 @@
-// TODO nf-core: Once you have added the required tests, please run the following command to build this file:
+// nf-core: Once you have added the required tests, please run the following command to build this file:
 // nf-core subworkflows test subset_references_to_targets
 nextflow_workflow {
 

@@ -27,8 +27,7 @@
                     "type": "string",
                     "format": "directory-path",
                     "description": "The output directory where the results will be saved. You have to use absolute paths to storage on Cloud infrastructure.",
-                    "fa_icon": "fas fa-folder-open",
-                    "default": "./results"
+                    "fa_icon": "fas fa-folder-open"
                 },
                 "email": {
                     "type": "string",
@@ -109,43 +108,53 @@
                 },
                 "gnomad_vcf": {
                     "type": "string",
-                    "hidden": true
+                    "hidden": true,
+                    "description": "Path to VCF file from GnomAD database"
                 },
                 "gnomad_tbi": {
                     "type": "string",
-                    "hidden": true
+                    "hidden": true,
+                    "description": "Path to VCF index file from GnomAD database"
                 },
                 "mills_vcf": {
                     "type": "string",
-                    "hidden": true
+                    "hidden": true,
+                    "description": "Path to VCF file from Mills and 1000G gold standard databases"
                 },
                 "mills_tbi": {
                     "type": "string",
-                    "hidden": true
+                    "hidden": true,
+                    "description": "Path to VCF index file from Mills and 1000G gold standard databases"
                 },
                 "vcf1000g_vcf": {
                     "type": "string",
-                    "hidden": true
+                    "hidden": true,
+                    "description": "Path to VCF file from 1000G database"
                 },
                 "vcf1000g_tbi": {
                     "type": "string",
-                    "hidden": true
+                    "hidden": true,
+                    "description": "Path to VCF index file from 1000G database"
                 },
                 "dbsnp_vcf": {
                     "type": "string",
-                    "hidden": true
+                    "hidden": true,
+                    "description": "Path to VCF file from dbsnp database"
                 },
                 "dbsnp_tbi": {
                     "type": "string",
-                    "hidden": true
+                    "hidden": true,
+                    "description": "Path to VCF index file from dbsnp database"
                 },
                 "clinvar_vcf": {
                     "type": "string",
-                    "hidden": true
+                    "hidden": true,
+                    "description": "Path to VCF file from ClinVar database"
                 },
                 "clinvar_tbi": {
                     "type": "string",
-                    "hidden": true
+                    "hidden": true,
+                    "description": "Path to VCF index file from ClinVar database"
                 }
             }
         },

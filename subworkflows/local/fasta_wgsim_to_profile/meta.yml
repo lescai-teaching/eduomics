@@ -1,17 +1,17 @@
 # yaml-language-server: $schema=https://raw.githubusercontent.com/nf-core/modules/master/subworkflows/yaml-schema.json
 name: "fasta_wgsim_to_profile"
-## TODO nf-core: Add a description of the subworkflow and list keywords
+## nf-core: Add a description of the subworkflow and list keywords
 description: Sort SAM/BAM/CRAM file
 keywords:
   - sort
   - bam
   - sam
   - cram
-## TODO nf-core: Add a list of the modules and/or subworkflows used in the subworkflow
+## nf-core: Add a list of the modules and/or subworkflows used in the subworkflow
 components:
   - samtools/sort
   - samtools/index
-## TODO nf-core: List all of the channels used as input with a description and their structure
+## nf-core: List all of the channels used as input with a description and their structure
 input:
   - ch_bam:
       type: file
@@ -19,7 +19,7 @@ input:
         The input channel containing the BAM/CRAM/SAM files
         Structure: [ val(meta), path(bam) ]
       pattern: "*.{bam/cram/sam}"
-## TODO nf-core: List all of the channels used as output with a descriptions and their structure
+## nf-core: List all of the channels used as output with a descriptions and their structure
 output:
   - bam:
       type: file
