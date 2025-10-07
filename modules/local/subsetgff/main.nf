@@ -52,7 +52,7 @@ process SUBSETGFF {
     touch filtered_annotation.gff3
     touch valid_gene_lists.rds
     touch list_gene_association.tsv
-    touch filtered_transcript_data.rds
+    touch transcript_data.rds
     touch subsetgff_parsing_log.txt
 
     cat <<-END_VERSIONS > versions.yml

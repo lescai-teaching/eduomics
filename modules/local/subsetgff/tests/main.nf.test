@@ -27,7 +27,7 @@ nextflow_process {
                 { assert process.out.filtered_annotation.get(0).get(1).endsWith('.gff3') },
                 { assert process.out.geneLists.get(0).get(1).endsWith('.rds') },
                 { assert process.out.genes_list_association.get(0).get(1).endsWith('.tsv') },
-                { assert process.out.filtered_transcript_data.get(0).get(1).endsWith('.rds') },
+                { assert process.out.transcript_data.get(0).get(1).endsWith('.rds') },
                 { assert process.out.subsetgff_parsing_log.get(0).get(1).endsWith('.txt') },
                 { assert process.out.versions }
             )
@@ -54,7 +54,7 @@ nextflow_process {
                 { assert process.out.filtered_annotation.get(0).get(1).endsWith('.gff3') },
                 { assert process.out.geneLists.get(0).get(1).endsWith('.rds') },
                 { assert process.out.genes_list_association.get(0).get(1).endsWith('.tsv') },
-                { assert process.out.filtered_transcript_data.get(0).get(1).endsWith('.rds') },
+                { assert process.out.transcript_data.get(0).get(1).endsWith('.rds') },
                 { assert process.out.subsetgff_parsing_log.get(0).get(1).endsWith('.txt') },
                 { assert process.out.versions }
             )

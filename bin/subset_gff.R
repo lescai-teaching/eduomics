@@ -38,8 +38,16 @@ filtered_gff3 <- gff_data[
 length(unique(filtered_gff3$transcript_id))
 
 # Clean transcript and gene IDs by removing version numbers
-mcols(filtered_gff3)$transcript_id <- gsub("\\.\\d+$", "", mcols(filtered_gff3)$transcript_id, perl = TRUE)
+# Filter each column to have the full control on what's going on
+mcols(filtered_gff3)$ID <- gsub("\\.\\d+$", "", mcols(filtered_gff3)$ID, perl = TRUE)
 mcols(filtered_gff3)$gene_id <- gsub("\\.\\d+$", "", mcols(filtered_gff3)$gene_id, perl = TRUE)
+mcols(filtered_gff3)$Parent <- gsub("\\.\\d+$", "", mcols(filtered_gff3)$Parent, perl = TRUE)
+mcols(filtered_gff3)$transcript_id <- gsub("\\.\\d+$", "", mcols(filtered_gff3)$transcript_id, perl = TRUE)
+mcols(filtered_gff3)$havana_transcript <- gsub("\\.\\d+$", "", mcols(filtered_gff3)$havana_transcript, perl = TRUE)
+mcols(filtered_gff3)$havana_gene <- gsub("\\.\\d+$", "", mcols(filtered_gff3)$havana_gene, perl = TRUE)
+mcols(filtered_gff3)$protein_id <- gsub("\\.\\d+$", "", mcols(filtered_gff3)$protein_id, perl = TRUE)
+mcols(filtered_gff3)$ccdsid <- gsub("\\.\\d+$", "", mcols(filtered_gff3)$ccdsid, perl = TRUE)
+
 
 # Save the filtered annotation files
 export(filtered_gff3, con = "filtered_annotation.gff3", format = "gff3")
