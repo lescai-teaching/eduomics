@@ -18,8 +18,20 @@ tools:
       description: Search for patterns in text files
       homepage: "https://www.gnu.org/software/grep/"
       documentation: "https://www.gnu.org/software/grep/manual/"
+      licence: ["GPL-3.0-or-later"]
+      version: "3.11"
   - gzip:
       description: GNU compression utilities used to uncompress the VCF
+      homepage: "https://www.gnu.org/software/gzip/"
+      documentation: "https://www.gnu.org/software/gzip/manual/"
+      licence: ["GPL-3.0-or-later"]
+      version: "1.12"
+  - cut:
+      description: "Extract sections from each line of files"
+      homepage: "https://www.gnu.org/software/coreutils/"
+      documentation: "https://www.gnu.org/software/coreutils/manual/"
+      licence: ["GPL-3.0-or-later"]
+      version: "9.4"
 
 input:
   - - meta:
@@ -30,7 +42,7 @@ input:
     - vcf:
         type: file
         description: VCF file containing variant information
-        pattern: "*.vcf"
+        pattern: "*.vcf.gz"
     - reads:
         type: file
         description: FASTQ files containing sequencing reads
@@ -47,10 +59,14 @@ output:
           type: directory
           description: Directory containing validated DNA files
           pattern: "dna_*_validation"
-      - "dna_*_validation/*.vcf":
+      - "dna_*_validation/*.vcf.gz":
           type: file
           description: Validated VCF file
-          pattern: "dna_*_validation/*.vcf"
+          pattern: "dna_*_validation/*.vcf.gz"
+      - "dna_*_validation/*.fastq.gz":
+          type: file
+          description: Validated FASTQ files
+          pattern: "dna_*_validation/*.fastq.gz"
   - versions:
       - "versions.yml":
           type: file
