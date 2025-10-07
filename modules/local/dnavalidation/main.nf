@@ -31,7 +31,7 @@ process DNAVALIDATION {
     # found.
     set +o pipefail
     # check whether the variant position is present in the VCF
-    if gzip -cd ${vcf} | grep -v '^#' | grep -q "\$variantpos"; then
+    if gzip -cd ${vcf} | grep -v '^#' | cut -f1,2 | grep -q "\$variantpos\$"; then
         mkdir -p "\$result_dir"
         echo "${variant}" > "\$result_dir/solution_${variant}.txt"
         cp ${vcf} "\$result_dir/"
