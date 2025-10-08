@@ -5,5 +5,5 @@ channels:
   - bioconda
 dependencies:
   - conda-forge::r-tidyverse=2.0.0
-  - bioconda::bioconductor-org.hs.eg.db=3.17.0
-  - bioconda::bioconductor-clusterprofiler=4.8.1
+  - bioconda::bioconductor-org.hs.eg.db=3.20.0
+  - bioconda::bioconductor-clusterprofiler=4.14.0

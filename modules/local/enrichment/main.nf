@@ -4,8 +4,8 @@ process ENRICHMENT {
 
     conda "${moduleDir}/environment.yml"
     container "${ workflow.containerEngine == 'singularity' && !task.ext.singularity_pull_docker_container ?
-        'oras://community.wave.seqera.io/library/bioconductor-clusterprofiler_bioconductor-org.hs.eg.db_r-tidyverse:d8812438cb8ebb59':
-        'community.wave.seqera.io/library/bioconductor-clusterprofiler_bioconductor-org.hs.eg.db_r-tidyverse:2a42661ad4d31ae0' }"
+        'oras://community.wave.seqera.io/library/bioconductor-clusterprofiler_bioconductor-org.hs.eg.db_r-tidyverse:7874040bf6eb56b5':
+        'community.wave.seqera.io/library/bioconductor-clusterprofiler_bioconductor-org.hs.eg.db_r-tidyverse:dad2b1c57b5305d6' }"
 
     input:
     tuple val(meta),  path(resdata)
