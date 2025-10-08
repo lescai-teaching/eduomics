@@ -4,8 +4,8 @@ process SUBSETGFF {
 
     conda "${moduleDir}/environment.yml"
     container "${ workflow.containerEngine == 'singularity' && !task.ext.singularity_pull_docker_container ?
-        'oras://ghcr.io/lescailab/gff-parsing:r-base-4.3.2_bioconductor-annotationdbi-1.62.2_bioconductor-org.hs.eg.db-3.17.0--d87518872d6a6346':
-        'ghcr.io/lescailab/gff-parsing:r-base-4.3.2_bioconductor-annotationdbi-1.62.2_bioconductor-org.hs.eg.db-3.17.0--2784b1cf02b4cfd3' }"
+        'oras://community.wave.seqera.io/library/bioconductor-annotationdbi_bioconductor-biostrings_bioconductor-clusterprofiler_bioconductor-org.hs.eg.db_pruned:35831cd366df77bf':
+        'community.wave.seqera.io/library/bioconductor-annotationdbi_bioconductor-biostrings_bioconductor-clusterprofiler_bioconductor-org.hs.eg.db_pruned:ced2353e22e6ba1f3' }"
 
     input:
     val(meta)
