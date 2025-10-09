@@ -86,9 +86,8 @@ Each RNA simulation creates a directory named after the first 5 differentially e
 
 - **`deseq2_results.tsv`**: Complete DESeq2 differential expression results table
 - **`deseq2_de_genes.txt`**: List of significantly differentially expressed genes
-- **`deseq2_tx2gene.tsv`**: Transcript-to-gene mapping file
 
-#### Visualization and Quality Control
+#### Visualisation and Quality Control
 
 - **`deseq2_ma_plot.pdf`**: MA plot showing log fold change vs. mean expression
 - **`deseq2_dispersion_plot.pdf`**: Dispersion estimates plot
@@ -115,8 +114,9 @@ Each RNA simulation creates a directory named after the first 5 differentially e
 
 Contains all reference files needed to analyze the simulated RNA-seq data:
 
-- **`gencode_transcripts_novers_[chromosome].fasta`**: Subset transcriptome FASTA file
-- **`filtered_annotation.gff3`**: Subset gene annotation file for the target chromosome
+- **`[simulation_id]_filtered_annotation_novers_[chromosome].gff3`**: Subset gene annotation file for the target chromosome
+- **`[simulation_id]_tx2gene_[chromosome].gff3`**: File mapping transcripts to genes for the target chromosome
+- **`[simulation_id]_filtered_transcripts_novers_[chromosome].fasta`**: Subset transcriptome FASTA file
 - **`[chromosome].fa`**: Subset genome FASTA file
 - **`salmon/`**: Directory containing Salmon index files for transcript quantification
 
@@ -148,7 +148,7 @@ The RNA simulation outputs are designed for teaching differential expression and
 1. **Students receive**: Simulated RNA-seq FASTQ files and reference bundle
 2. **Students perform**: Read quantification, differential expression analysis, and functional enrichment
 3. **Validation**: Verifies that the simulated data produce a statistically significant and coherent differential expression pattern, with detectable and biologically plausible functional enrichment.
-4. **Educational context**: Provided through AI-generated scenarios and visualization
+4. **Educational context**: Provided through AI-generated scenarios and visualisation
 
 ### File Naming Conventions
 
