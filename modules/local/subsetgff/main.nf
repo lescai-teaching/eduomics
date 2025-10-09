@@ -13,12 +13,12 @@ process SUBSETGFF {
 
     output:
     tuple val(meta), path("${meta.id}_filtered_annotation_novers_${meta.chromosome}.gff3"),    emit: filtered_annotation
-    tuple val(meta), path("valid_gene_lists.rds"),                                             emit: geneLists
-    tuple val(meta), path("list_gene_association.tsv"),                                        emit: genes_list_association
-    tuple val(meta), path("transcript_data.rds"),                                              emit: transcript_data
-    tuple val(meta), path("${meta.id}_tx2gene_${meta.chromosome}.tsv"),                        emit: tx2gene
-    tuple val(meta), path("subsetgff_parsing_log.txt"),                                        emit: subsetgff_parsing_log
-    path "versions.yml",                                                                       emit: versions
+    tuple val(meta), path("valid_gene_lists.rds")                                         ,    emit: geneLists
+    tuple val(meta), path("list_gene_association.tsv")                                    ,    emit: genes_list_association
+    tuple val(meta), path("transcript_data.rds")                                          ,    emit: transcript_data
+    tuple val(meta), path("${meta.id}_tx2gene_${meta.chromosome}.tsv")                    ,    emit: tx2gene
+    tuple val(meta), path("subsetgff_parsing_log.txt")                                    ,    emit: subsetgff_parsing_log
+    path "versions.yml"                                                                   ,    emit: versions
 
     when:
     task.ext.when == null || task.ext.when
