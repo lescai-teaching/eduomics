@@ -54,10 +54,6 @@ test("validation - positive simulation") {
                     file('https://raw.githubusercontent.com/lescai-teaching/eduomics_testdata/refs/heads/main/rnaseq/validation/enrichment/cnetplot_CC.png', checkIfExists: true)
                     ]
                 ]
-                input[3] = [
-                    [ id: 'simtest', chromosome: 'chr22', coverage: 30, reps: 3, groups: 2, simthreshold: 0.3, genes: 'A,B,C' ], // meta map
-                    file('https://raw.githubusercontent.com/lescai-teaching/eduomics_testdata/refs/heads/main/rnaseq/validation/deseq2/deseq2_tx2gene.tsv', checkIfExists: true)
-                ]
                 """
             }
         }
@@ -76,7 +72,7 @@ test("validation - positive simulation") {
                 {
                     def dir = new File(process.out.rnaseq_validated_results[0][1])
                     def files = dir.listFiles() as List
-                    assert files.count { it.name.endsWith('.tsv') } == 2
+                    assert files.count { it.name.endsWith('.tsv') } == 1
                     assert files.count { it.name.endsWith('.pdf') } == 5
                     assert files.count { it.name.endsWith('.png') } >= 3 // >= 3 because dotplots, also with no enrichment, will be always produced. Cnetplots, in case of no enrichment, are not produced
                     assert files.count { it.name.endsWith('.txt') } == 2
@@ -131,10 +127,6 @@ test("validation - positive simulation") {
                     file('https://raw.githubusercontent.com/lescai-teaching/eduomics_testdata/refs/heads/main/rnaseq/validation/enrichment/cnetplot_MF.png', checkIfExists: true),
                     file('https://raw.githubusercontent.com/lescai-teaching/eduomics_testdata/refs/heads/main/rnaseq/validation/enrichment/cnetplot_CC.png', checkIfExists: true)
                     ]
-                ]
-                input[3] = [
-                    [ id: 'simtest', chromosome: 'chr22', coverage: 30, reps: 3, groups: 2, simthreshold: 0.3, genes: 'A,B,C' ], // meta map
-                    file('https://raw.githubusercontent.com/lescai-teaching/eduomics_testdata/refs/heads/main/rnaseq/validation/deseq2/deseq2_tx2gene.tsv', checkIfExists: true)
                 ]
                 """
             }
@@ -198,10 +190,6 @@ test("validation - positive simulation") {
                     file('https://raw.githubusercontent.com/lescai-teaching/eduomics_testdata/refs/heads/main/rnaseq/validation/enrichment/cnetplot_CC.png', checkIfExists: true)
                     ]
                 ]
-                input[3] = [
-                    [ id: 'simtest', chromosome: 'chr22', coverage: 30, reps: 3, groups: 2, simthreshold: 0.3, genes: 'A,B,C' ], // meta map
-                    file('https://raw.githubusercontent.com/lescai-teaching/eduomics_testdata/refs/heads/main/rnaseq/validation/deseq2/deseq2_tx2gene.tsv', checkIfExists: true)
-                ]
                 """
             }
         }
@@ -220,7 +208,7 @@ test("validation - positive simulation") {
                 {
                     def dir = new File(process.out.rnaseq_validated_results[0][1])
                     def files = dir.listFiles() as List
-                    assert files.count { it.name.endsWith('.tsv') } == 2
+                    assert files.count { it.name.endsWith('.tsv') } == 1
                     assert files.count { it.name.endsWith('.pdf') } == 5
                     assert files.count { it.name.endsWith('.png') } == 6
                     assert files.count { it.name.endsWith('.txt') } == 2

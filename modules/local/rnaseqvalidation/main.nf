@@ -11,7 +11,6 @@ process RNASEQVALIDATION {
     tuple val(meta),  path(reads)
     tuple val(meta2), path(deseq2_results_tsv), path(deseq2_de_genes_txt), path(deseq2_pdf)
     tuple val(meta3), path(enrichment_rds), path(enrichment_png)
-    tuple val(meta4), path(deseq2_tx2gene)
 
     output:
     tuple val(meta), path("rnaseq_validation")    , optional: true, emit: rnaseq_validated_results
@@ -47,8 +46,6 @@ process RNASEQVALIDATION {
             cp "\${png_file}" rnaseq_validation/
         done
 
-        cp "${deseq2_tx2gene}" rnaseq_validation/
-
         cp validation_result.txt rnaseq_validation/
 
     fi
@@ -80,7 +77,6 @@ process RNASEQVALIDATION {
         touch rnaseq_validation/cnetplot_\${ont}.png
     done
     touch rnaseq_validation/validation_result.txt
-    touch rnaseq_validation/deseq2_tx2gene.tsv
 
     cat <<-END_VERSIONS > versions.yml
     "${task.process}":
