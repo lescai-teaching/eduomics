@@ -49,10 +49,10 @@ output:
             description: |
               Groovy Map containing sample information
               e.g. `[ id:'simtest', chromosome: 'chr22', coverage: 30, reps: 3, groups: 2, simthreshold: 0.3 ]`
-        - filtered_annotation:
+        - "*_filtered_annotation_novers_*.gff3":
             type: file
-            description: filtered GFF3 file with the transcripts from the simulated chromosome
-            pattern: "filtered_annotation.gff3"
+            description: filtered annotation file (gff3) for the simulated chromosome
+            pattern: "*_filtered_annotation_novers_*.gff3"
   - gene_lists:
       description: |
         Channel containing gene lists that should give an enrichment
@@ -95,6 +95,20 @@ output:
             type: file
             description: RDS containing filtered transcript data from the simulated chromosome
             pattern: "transcript_data.rds"
+  - tx2gene:
+      description: |
+        Channel containing the transcripts-genes mapping from the simulated chromosome
+        Structure: [ val(meta), path(tx2gene) ]
+      structure:
+        - meta:
+            type: map
+            description: |
+              Groovy Map containing sample information
+              e.g. `[ id:'simtest', chromosome: 'chr22', coverage: 30, reps: 3, groups: 2, simthreshold: 0.3 ]`
+        - "*_tx2gene_*.tsv":
+            type: file
+            description: TSV mapping transcripts to genes from the simulated chromosome
+            pattern: "*_tx2gene_*.tsv"
   - filtered_txfasta:
       description: |
         Channel containing the filtered txfasta file with the transcripts from the simulated chromosome
@@ -105,10 +119,10 @@ output:
             description: |
               Groovy Map containing sample information
               e.g. `[ id:'simtest', chromosome: 'chr22', coverage: 30, reps: 3, groups: 2, simthreshold: 0.3 ]`
-        - filtered_txfasta:
+        - "*_filtered_transcripts_novers_*.fasta":
             type: file
             description: filtered FASTA file with the transcripts from the simulated chromosome
-            pattern: "gencode_transcripts_novers_simchr.fasta"
+            pattern: "*_filtered_transcripts_novers_*.fasta"
   - filtered_genomefasta:
       description: |
         Channel containing the filtered genome FASTA file with the simulated chromosome
