@@ -156,7 +156,7 @@ output:
         - rna_bundle:
             type: file
             description: references from the simulated chromosome
-            pattern: "*.fasta, *gff3, salmon"
+            pattern: "*.fasta, *.gff3, *.tsv, salmon"
   - log_files:
       description: |
         Channel containing log files from the modules subsetfastatx and subsetgff
