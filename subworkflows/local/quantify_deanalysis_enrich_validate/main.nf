@@ -13,7 +13,7 @@ workflow QUANTIFY_DEANALYSIS_ENRICH_VALIDATE {
     ch_filteredtxfasta            // channel: [ val(meta), path(filteredtxfasta)                   ]
     ch_alignment_mode             // value  : [ boolean                                            ]
     ch_libtype                    // value  : [ val(libtype)                                       ]
-    ch_transcriptData             // channel: [ val(meta), path(transcriptData)                    ]
+    ch_tx2gene                    // channel: [ val(meta), path(tx2gene)                           ]
 
     main:
 
@@ -67,7 +67,7 @@ workflow QUANTIFY_DEANALYSIS_ENRICH_VALIDATE {
     ch_deanalysis_input.dump(tag: 'quant dirs')
 
     // Run differential expression analysis
-    DEANALYSIS ( ch_deanalysis_input, ch_transcriptData )
+    DEANALYSIS ( ch_deanalysis_input, ch_tx2gene )
     ch_versions = ch_versions.mix(DEANALYSIS.out.versions)
 
     // Extract only deseq2_results.tsv for enrichment module
@@ -76,15 +76,14 @@ workflow QUANTIFY_DEANALYSIS_ENRICH_VALIDATE {
     }
 
     // Run enrichment analysis
-    ENRICHMENT ( ch_deseq2_results_tsv_only, DEANALYSIS.out.deseq2_tx2gene )
+    ENRICHMENT ( ch_deseq2_results_tsv_only, ch_tx2gene )
     ch_versions = ch_versions.mix(ENRICHMENT.out.versions)
 
     // Perform final validation of results
     RNASEQVALIDATION (
         ch_simreads,
         DEANALYSIS.out.deseq2_results,
-        ENRICHMENT.out.enrichment_results,
-        DEANALYSIS.out.deseq2_tx2gene
+        ENRICHMENT.out.enrichment_results
     )
     ch_versions = ch_versions.mix(RNASEQVALIDATION.out.versions)
 
@@ -96,7 +95,6 @@ workflow QUANTIFY_DEANALYSIS_ENRICH_VALIDATE {
 
     // DEANALYSIS outputs
     deseq2_results      = DEANALYSIS.out.deseq2_results                          // channel: [ val(meta), path(deseq2_results), path(deseq2_de_genes), path(*.pdf) ]
-    deseq2_tx2gene      = DEANALYSIS.out.deseq2_tx2gene                          // channel: [ val(meta), path(deseq2_tx2gene)                                     ]
 
     // ENRICHMENT outputs
     enrichment_results  = ENRICHMENT.out.enrichment_results                      // channel: [ val(meta), path(enrichment_results), path(*.png) ]
