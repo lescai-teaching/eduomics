@@ -81,7 +81,7 @@ workflow QUANTIFY_DEANALYSIS_ENRICH_VALIDATE {
 
     // Perform final validation of results
     RNASEQVALIDATION (
-        ch_simreads,
+        ch_simreads_modified,
         DEANALYSIS.out.deseq2_results,
         ENRICHMENT.out.enrichment_results
     )
