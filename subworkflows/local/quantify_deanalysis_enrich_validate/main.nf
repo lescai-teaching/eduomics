@@ -71,7 +71,7 @@ workflow QUANTIFY_DEANALYSIS_ENRICH_VALIDATE {
     ch_versions = ch_versions.mix(DEANALYSIS.out.versions)
 
     // Extract only deseq2_results.tsv for enrichment module
-    ch_deseq2_results_tsv_only = DEANALYSIS.out.deseq2_results.map { meta, tsv, file1, list1 ->
+    ch_deseq2_results_tsv_only = DEANALYSIS.out.deseq2_results.map { meta, tsv, txt, pdfs ->
         tuple(meta, tsv)
     }
 
