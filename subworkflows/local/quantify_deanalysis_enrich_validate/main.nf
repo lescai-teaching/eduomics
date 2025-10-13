@@ -79,29 +79,30 @@ workflow QUANTIFY_DEANALYSIS_ENRICH_VALIDATE {
     ENRICHMENT ( ch_deseq2_results_tsv_only, ch_tx2gene )
     ch_versions = ch_versions.mix(ENRICHMENT.out.versions)
 
+    // Join channels
+    ch_validation_input = ch_simreads
+    .join(DEANALYSIS.out.deseq2_results, by: 0)
+    .join(ENRICHMENT.out.enrichment_results, by: 0)
+
     // Perform final validation of results
-    RNASEQVALIDATION (
-        ch_simreads_modified,
-        DEANALYSIS.out.deseq2_results,
-        ENRICHMENT.out.enrichment_results
-    )
+    RNASEQVALIDATION ( ch_validation_input )
     ch_versions = ch_versions.mix(RNASEQVALIDATION.out.versions)
 
     emit:
     // SALMON_QUANT outputs
-    salmon_results      = SALMON_QUANT.out.results                               // channel: [ val(meta), path(quant_dir)         ]
-    salmon_json_info    = SALMON_QUANT.out.json_info                             // channel: [ val(meta), path(json_info)         ], optional
-    salmon_lib_format   = SALMON_QUANT.out.lib_format_counts                     // channel: [ val(meta), path(lib_format_counts) ], optional
+    salmon_results            = SALMON_QUANT.out.results                          // channel: [ val(meta), path(quant_dir)         ]
+    salmon_json_info          = SALMON_QUANT.out.json_info                        // channel: [ val(meta), path(json_info)         ], optional
+    salmon_lib_format         = SALMON_QUANT.out.lib_format_counts                // channel: [ val(meta), path(lib_format_counts) ], optional
 
     // DEANALYSIS outputs
-    deseq2_results      = DEANALYSIS.out.deseq2_results                          // channel: [ val(meta), path(deseq2_results), path(deseq2_de_genes), path(*.pdf) ]
+    deseq2_results            = DEANALYSIS.out.deseq2_results                     // channel: [ val(meta), path(deseq2_results), path(deseq2_de_genes), path(*.pdf) ]
 
     // ENRICHMENT outputs
-    enrichment_results  = ENRICHMENT.out.enrichment_results                      // channel: [ val(meta), path(enrichment_results), path(*.png) ]
+    enrichment_results        = ENRICHMENT.out.enrichment_results                 // channel: [ val(meta), path(enrichment_results), path(*.png) ]
 
     // RNASEQVALIDATION outputs
     rnaseq_validated_results  = RNASEQVALIDATION.out.rnaseq_validated_results    // channel: [ val(meta), path(rnaseq_validation) ], optional
 
-    versions            = ch_versions                                            // channel: [ versions.yml ]
+    versions                  = ch_versions                                      // channel: [ versions.yml ]
 }
 
