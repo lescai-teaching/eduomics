@@ -53,10 +53,11 @@ input:
         description: |
           Groovy Map containing sample information
           e.g. `[ id: 'simulation_id', chromosome: 'chr_number', genes: 'A,B,C', reps: 3, groups: 2 ]`
-    - transcriptData:
+    - tx2gene:
         type: file
-        description: RDS containing transcript data emitted by the subsetgff module
-        pattern: "transcript_data.rds"
+        description: TSV mapping transcripts to genes
+        pattern: "*_tx2gene_*.tsv"
+
 output:
   - deseq2_results:
       - meta:
@@ -92,16 +93,6 @@ output:
           type: file
           description: PCA plot
           pattern: "deseq2_pca_plot.pdf"
-  - deseq2_tx2gene:
-      - meta:
-          type: map
-          description: |
-            Groovy Map containing sample information
-            e.g. `[ id: 'simulation_id', chromosome: 'chr_number', genes: 'A,B,C', reps: 3, groups: 2 ]`
-      - "deseq2_tx2gene.tsv":
-          type: file
-          description: TSV mapping transcripts to genes
-          pattern: "deseq2_tx2gene.tsv"
   - versions:
       - versions.yml:
           type: file

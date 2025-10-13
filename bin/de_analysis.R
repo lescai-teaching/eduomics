@@ -12,7 +12,7 @@ argv <- commandArgs(trailingOnly = TRUE)
 
 replica <- as.numeric(argv[1])
 group <- as.numeric(argv[2])
-transcriptData <- argv[3]
+tx2gene <- argv[3]
 quant_dirs <- strsplit(argv[4], ",")[[1]]
 
 
@@ -23,10 +23,7 @@ dataset <- as_tibble(expand.grid(replica = 1:replica, group = 1:group) %>%
                 dplyr::select(sample, condition))
 
 
-tx2gene <- readRDS(transcriptData) %>%
-                dplyr::select(transcript_id, gene_id)
-
-write_tsv(tx2gene, "deseq2_tx2gene.tsv")
+tx2gene <- read_tsv(tx2gene)
 
 #### Load .quant files from Salmon  ####
 files <- sapply(dataset$sample, function(sample) {

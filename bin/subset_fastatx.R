@@ -9,9 +9,10 @@ library(Biostrings)
 
 argv <- commandArgs(trailingOnly = TRUE)
 
-chromosome_of_interest <- argv[1]
-fasta <- argv[2]
-transcript_data <- argv[3]
+id <- argv[1]
+chromosome_of_interest <- argv[2]
+fasta <- argv[3]
+transcript_data <- argv[4]
 log_file <- "subsetfastatx_parsing_log.txt"
 
 
@@ -58,4 +59,4 @@ cat("\n3) Number of transcripts in FASTA after filtering: ", length(fasta_annota
 
 
 #### Save the filtered FASTA sequences using the specified chromosome of interest ####
-writeXStringSet(fasta_annotated, paste0("gencode_transcripts_novers_",chromosome_of_interest,".fasta"), format = "fasta")
+writeXStringSet(fasta_annotated, paste0(id, "_filtered_transcripts_novers_", chromosome_of_interest, ".fasta"), format = "fasta")

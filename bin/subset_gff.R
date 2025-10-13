@@ -16,9 +16,10 @@ library(Matrix)
 
 argv <- commandArgs(trailingOnly = TRUE)
 
-chromosome_of_interest <- argv[1]
-simthreshold <- as.numeric(argv[2])
-gff3 <- argv[3]
+id <- argv[1]
+chromosome_of_interest <- argv[2]
+simthreshold <- as.numeric(argv[3])
+gff3 <- argv[4]
 log_file <- "subsetgff_parsing_log.txt"
 
 
@@ -50,7 +51,7 @@ mcols(filtered_gff3)$ccdsid <- gsub("\\.\\d+$", "", mcols(filtered_gff3)$ccdsid,
 
 
 # Save the filtered annotation files
-export(filtered_gff3, con = "filtered_annotation.gff3", format = "gff3")
+export(filtered_gff3, con = paste0(id, "_filtered_annotation_novers_", chromosome_of_interest, ".gff3"), format = "gff3")
 
 # Convert to tibble and filter for protein-coding transcripts; select relevant columns.
 transcript_data <- as_tibble(as.data.frame(filtered_gff3)) %>%
@@ -178,6 +179,18 @@ cat("\n4) Number of genes in the simulated chromosome\n",
 
 saveRDS(transcript_data, "transcript_data.rds")
 
+# emit also the tx2gene required for downstream analyses
+
+tx2gene <- transcript_data %>%
+    dplyr::select(transcript_id, gene_id)
+
+write_tsv(tx2gene, paste0(id, "_tx2gene_", chromosome_of_interest, ".tsv"))
+
+cat("\n5) Number of genes in the tx2gene of the simulated chromosome\n",
+    length(unique(tx2gene$gene_id)),
+    "genes extracted from", chromosome_of_interest, "\n",
+    file = log_file, append = TRUE)
+
 
 #### PHENOTYPE DATA FROM MONARCH ####
 
@@ -249,7 +262,7 @@ gene_lists <- transcript_data_filt %>%
         gene_list = paste0("list", row_number())
     )
 
-cat("\n5) Number of Gene Lists\nRetrieved", nrow(gene_lists),
+cat("\n6) Number of Gene Lists\nRetrieved", nrow(gene_lists),
     "gene lists from", paste0(chromosome_of_interest),
     "\n", file = log_file, append = TRUE)
 
@@ -272,7 +285,7 @@ executeGO <- function(sig_genes, universe, ontology) {
 # Initialise an empty list to store significant results (both positive and negative)
 significant_results <- list()
 
-write("\n6) GO enrichment", file = log_file, append = TRUE)
+write("\n7) GO enrichment", file = log_file, append = TRUE)
 for (i in 1:nrow(gene_lists)) {
     sig_genes <- gene_lists$unique_genes[[i]]  # Extract the unique genes for the group
     universe <- unique_genes                   # Define the universe
@@ -311,7 +324,7 @@ for (i in 1:nrow(gene_lists)) {
 # Initialise an empty list to store valid gene lists
 valid_gene_lists <- list()
 
-write("\n7) Valid gene sets", file = log_file, append = TRUE)
+write("\n8) Valid gene sets", file = log_file, append = TRUE)
 for (i in 1:length(significant_results)) {
     # Create a variable to store enriched categories for the current gene list
     enriched_categories <- c()
