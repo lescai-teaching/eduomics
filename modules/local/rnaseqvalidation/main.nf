@@ -8,9 +8,7 @@ process RNASEQVALIDATION {
         'community.wave.seqera.io/library/bioconductor-dose:4.0.0--57136ca31aaf6317' }"
 
     input:
-    tuple val(meta),  path(reads)
-    tuple val(meta2), path(deseq2_results_tsv), path(deseq2_de_genes_txt), path(deseq2_pdf)
-    tuple val(meta3), path(enrichment_rds), path(enrichment_png)
+    tuple val(meta),  path(reads), path(deseq2_results_tsv), path(deseq2_de_genes_txt), path(deseq2_pdf), path(enrichment_rds), path(enrichment_png)
 
     output:
     tuple val(meta), path("rnaseq_validation")    , optional: true, emit: rnaseq_validated_results
