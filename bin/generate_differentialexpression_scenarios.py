@@ -20,7 +20,7 @@ def generate_clinical_scenario(genes):
         "realistic scenario describing a hypothetical patient. The clinical narrative should include features, family history, "
         "and diagnostic clues that align with a molecular abnormality involving these genes. However, do not reveal or mention "
         "the actual gene names in your final output. The final narrative should imply an underlying gene expression abnormality without "
-        "disclosing the specific gene data."
+        "disclosing the specific gene data. Do not ouput any comment or response to this request and provide a structured text with the requested information."
     ).format(genes_data)
 
     api_key = os.getenv("GOOGLE_GENAI_API_KEY")
