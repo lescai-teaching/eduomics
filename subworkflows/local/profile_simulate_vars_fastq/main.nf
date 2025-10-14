@@ -20,7 +20,8 @@ workflow PROFILE_SIMULATE_VARS_FASTQ {
     variants_to_inject = PYCONVERTOSIM.out.combined_variations.flatMap { m, files ->
                                                 files.collect { file ->
                                                 def var = file.getName().split('_')[2]
-                                                def newmeta = m + [simulatedvar: "${var}"]
+                                                def gene = file.getName().split('_')[3]
+                                                def newmeta = m + [simulatedvar: "${var}", simulatedgene: "${gene}"]
                                                 return [var, newmeta, file]
                                                 } }
                                                 .groupTuple(by: 0) // keep only one file per variant across all batches
@@ -32,6 +33,8 @@ workflow PROFILE_SIMULATE_VARS_FASTQ {
 
     variants_to_inject.dump(tag: 'variants to inject')
     ch_variants_to_inject.dump(tag: 'variants selected for injection')
+
+    ch_variants_to_inject.view { "VARIANTS AND GENE META: ${it[0]}" }
 
     SIMUSCOP_SIMUREADS(
         simprofile,
