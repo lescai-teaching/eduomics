@@ -47,8 +47,6 @@ workflow SIMULATE_RNASEQ_READS {
         ? ch_matrices_with_genes.take(params.test_limit)
         : ch_matrices_with_genes
 
-    ch_matrices_with_genes.view { "genes: ${it[0]}" }
-
     // Simulate the reads
     POLYESTER_SIMULATE(ch_matrices_with_genes_limited, ch_fold_change, ch_filtered_txfasta)
     ch_versions = ch_versions.mix(POLYESTER_SIMULATE.out.versions)
