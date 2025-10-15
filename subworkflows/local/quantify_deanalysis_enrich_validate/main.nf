@@ -88,6 +88,11 @@ workflow QUANTIFY_DEANALYSIS_ENRICH_VALIDATE {
     RNASEQVALIDATION ( ch_validation_input )
     ch_versions = ch_versions.mix(RNASEQVALIDATION.out.versions)
 
+    ch_scenario = DEANALYSIS.out.deseq2_results
+        .map { m, tsv, txt, pdfs ->
+            return [m, false, m.genes]
+        }
+
     emit:
     // SALMON_QUANT outputs
     salmon_results            = SALMON_QUANT.out.results                          // channel: [ val(meta), path(quant_dir)         ]
@@ -102,6 +107,8 @@ workflow QUANTIFY_DEANALYSIS_ENRICH_VALIDATE {
 
     // RNASEQVALIDATION outputs
     rnaseq_validated_results  = RNASEQVALIDATION.out.rnaseq_validated_results    // channel: [ val(meta), path(rnaseq_validation) ], optional
+
+    scenario                  = ch_scenario                                      // channel: [ val(meta), false, val(genes) ]
 
     versions                  = ch_versions                                      // channel: [ versions.yml ]
 }
