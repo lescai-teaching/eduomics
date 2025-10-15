@@ -175,20 +175,20 @@ workflow {
 output {
 
     softwareversions {
-        path "${params.outdir}/pipeline_info"
+        path "pipeline_info"
         mode 'copy'
     }
 
     dnasimulation {
         path { meta, files ->
-            "${params.outdir}/dna_simulations/${meta.id}/${meta.simulatedvar}"
+            "dna_simulations/${meta.id}/${meta.simulatedvar}"
         }
         mode 'copy'
     }
 
     dnabundle {
         path { meta, files ->
-            "${params.outdir}/dna_simulations/${meta.id}/references"
+            "dna_simulations/${meta.id}/references"
         }
         mode 'copy'
     }
@@ -196,14 +196,14 @@ output {
     rnasimulation {
         path { meta, files ->
             def simfolder = meta.genes.split(',').take(5).join('_')
-            "${params.outdir}/rna_simulations/${meta.id}/${simfolder}"
+            "rna_simulations/${meta.id}/${simfolder}"
         }
         mode 'copy'
     }
 
     rnabundle {
         path { meta, files ->
-            "${params.outdir}/rna_simulations/${meta.id}/references"
+            "rna_simulations/${meta.id}/references"
         }
         mode 'copy'
     }
@@ -212,11 +212,11 @@ output {
     scenario {
         path { meta, text ->
             if (meta.type == "dna"){
-                "${params.outdir}/dna_simulations/${meta.id}/${meta.simulatedvar}"
+                "dna_simulations/${meta.id}/${meta.simulatedvar}"
             }
             else {
                 def simfolder = meta.genes.split(',').take(5).join('_')
-                "${params.outdir}/rna_simulations/${meta.id}/${simfolder}"
+                "rna_simulations/${meta.id}/${simfolder}"
             }
         }
         mode 'copy'

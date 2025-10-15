@@ -20,7 +20,7 @@ process AISCENARIOS {
     script:
     def args = task.ext.args ?: ''
     def prefix = task.ext.prefix ?: "${meta.id}"
-    def script_command = variant ? "generate_variant_scenarios.py --variant ${variant} --output ${prefix}_scenario.txt" : "generate_differentialexpression_scenarios.py --genes ${genes} --output ${prefix}_scenario.txt"
+    def script_command = variant ? "generate_variant_scenarios.py --variant ${variant} --gene ${genes} --output ${prefix}_scenario.txt" : "generate_differentialexpression_scenarios.py --genes ${genes} --output ${prefix}_scenario.txt"
 
     """
     $script_command

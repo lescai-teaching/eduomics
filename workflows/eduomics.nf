@@ -131,11 +131,7 @@ workflow EDUOMICS {
 
     ch_versions = ch_versions.mix(FASTQ_VARIANT_TO_VALIDATION.out.versions)
 
-    ch_dna_scenario = FASTQ_VARIANT_TO_VALIDATION.out.scenario
-        .map { m, simulatedvar ->
-            return [m, simulatedvar, false]
-        }
-    ch_scenarios = ch_scenarios.mix(ch_dna_scenario)
+    ch_scenarios = ch_scenarios.mix(FASTQ_VARIANT_TO_VALIDATION.out.scenario)
 
 /*
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -181,11 +177,7 @@ workflow EDUOMICS {
 
     ch_versions = ch_versions.mix(QUANTIFY_DEANALYSIS_ENRICH_VALIDATE.out.versions)
 
-    ch_rna_scenario = QUANTIFY_DEANALYSIS_ENRICH_VALIDATE.out.deseq2_results
-        .map { m, tsv, txt, pdfs ->
-            return [m, false, m.genes]
-        }
-    ch_scenarios = ch_scenarios.mix(ch_rna_scenario)
+    ch_scenarios = ch_scenarios.mix(QUANTIFY_DEANALYSIS_ENRICH_VALIDATE.out.scenario)
 
 /*
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
