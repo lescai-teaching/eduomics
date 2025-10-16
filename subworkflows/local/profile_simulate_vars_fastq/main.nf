@@ -34,8 +34,6 @@ workflow PROFILE_SIMULATE_VARS_FASTQ {
     variants_to_inject.dump(tag: 'variants to inject')
     ch_variants_to_inject.dump(tag: 'variants selected for injection')
 
-    ch_variants_to_inject.view { "VARIANTS AND GENE META: ${it[0]}" }
-
     SIMUSCOP_SIMUREADS(
         simprofile,
         fasta_fai,
@@ -44,6 +42,7 @@ workflow PROFILE_SIMULATE_VARS_FASTQ {
     )
     ch_versions = ch_versions.mix(SIMUSCOP_SIMUREADS.out.versions)
 
+    SIMUSCOP_SIMUREADS.out.reads.dump(tag: 'simuscop_simureads output')
 
     emit:
     simreads = SIMUSCOP_SIMUREADS.out.reads    // channel: [ val(meta), [ "control_1.fq.gz", "control_2.fq.gz", "case_1.fq.gz", "case_2.fq.gz" ] ]

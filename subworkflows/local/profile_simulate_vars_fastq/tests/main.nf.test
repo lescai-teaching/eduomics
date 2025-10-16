@@ -3,6 +3,7 @@ nextflow_workflow {
     name "Test Subworkflow PROFILE_SIMULATE_VARS_FASTQ"
     script "../main.nf"
     config "./simulate_reads.config"
+    options "-dump-channels"
     workflow "PROFILE_SIMULATE_VARS_FASTQ"
 
     tag "subworkflows"
