@@ -3,10 +3,42 @@
         "content": [
             {
                 "0": [
-                    
+                    [
+                        {
+                            "id": "sim01",
+                            "type": "dnaseq",
+                            "chromosome": "chr22",
+                            "reps": "none",
+                            "groups": 2,
+                            "coverage": 50,
+                            "simulatedvar": "chr22-17189980-G-A",
+                            "simulatedgene": "PEX26"
+                        },
+                        [
+                            "normal_0.000+disease_1.000_1.fq.gz:md5,ce8ead3f95047ff969993943a9005990",
+                            "normal_0.000+disease_1.000_2.fq.gz:md5,61bb3cf5b83c96a50436ba9c18b01e43",
+                            "normal_1.000+disease_0.000_1.fq.gz:md5,f19b215b54178f4acdf54c768145af1e",
+                            "normal_1.000+disease_0.000_2.fq.gz:md5,ef7d8d590a9942d7f056ebe163780ce2",
+                            "sim01.vcf.gz:md5,a9b1daa437435b031f45e32dfb4d6a0b",
+                            "solution_chr22-17189980-G-A.txt:md5,399d50e6e512fbb78a0ab6cf06125bb1"
+                        ]
+                    ]
                 ],
                 "1": [
-                    
+                    [
+                        {
+                            "id": "sim01",
+                            "type": "dnaseq",
+                            "chromosome": "chr22",
+                            "reps": "none",
+                            "groups": 2,
+                            "coverage": 50,
+                            "simulatedvar": "chr22-17189980-G-A",
+                            "simulatedgene": "PEX26"
+                        },
+                        "chr22-17189980-G-A",
+                        "PEX26"
+                    ]
                 ],
                 "2": [
                     "versions.yml:md5,2250f3ebc572a41c75435e2f607597c9",
@@ -26,10 +58,42 @@
                     "versions.yml:md5,f774466b3de5cf34f0523d6493f5d82a"
                 ],
                 "scenario": [
-                    
+                    [
+                        {
+                            "id": "sim01",
+                            "type": "dnaseq",
+                            "chromosome": "chr22",
+                            "reps": "none",
+                            "groups": 2,
+                            "coverage": 50,
+                            "simulatedvar": "chr22-17189980-G-A",
+                            "simulatedgene": "PEX26"
+                        },
+                        "chr22-17189980-G-A",
+                        "PEX26"
+                    ]
                 ],
                 "simulation": [
-                    
+                    [
+                        {
+                            "id": "sim01",
+                            "type": "dnaseq",
+                            "chromosome": "chr22",
+                            "reps": "none",
+                            "groups": 2,
+                            "coverage": 50,
+                            "simulatedvar": "chr22-17189980-G-A",
+                            "simulatedgene": "PEX26"
+                        },
+                        [
+                            "normal_0.000+disease_1.000_1.fq.gz:md5,ce8ead3f95047ff969993943a9005990",
+                            "normal_0.000+disease_1.000_2.fq.gz:md5,61bb3cf5b83c96a50436ba9c18b01e43",
+                            "normal_1.000+disease_0.000_1.fq.gz:md5,f19b215b54178f4acdf54c768145af1e",
+                            "normal_1.000+disease_0.000_2.fq.gz:md5,ef7d8d590a9942d7f056ebe163780ce2",
+                            "sim01.vcf.gz:md5,a9b1daa437435b031f45e32dfb4d6a0b",
+                            "solution_chr22-17189980-G-A.txt:md5,399d50e6e512fbb78a0ab6cf06125bb1"
+                        ]
+                    ]
                 ],
                 "versions": [
                     "versions.yml:md5,2250f3ebc572a41c75435e2f607597c9",
@@ -52,8 +116,8 @@
         ],
         "meta": {
             "nf-test": "0.9.2",
-            "nextflow": "25.04.8"
+            "nextflow": "25.04.6"
         },
-        "timestamp": "2025-10-15T08:48:50.179203762"
+        "timestamp": "2025-10-16T13:58:05.635116109"
     }
 }

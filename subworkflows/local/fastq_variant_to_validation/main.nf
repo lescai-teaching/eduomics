@@ -184,14 +184,14 @@ workflow FASTQ_VARIANT_TO_VALIDATION {
     DNAVALIDATION( validation_ch )
     ch_versions = ch_versions.mix(DNAVALIDATION.out.versions)
 
-    DNAVALIDATION.out.dna_validated_results.dump(tag: 'DNAVALIDATION OUTPUT')
+    DNAVALIDATION.out.dna_validated_results.dump(tag: 'dnavalidation output')
 
     scenarios_ch = DNAVALIDATION.out.dna_validated_results
         .map { meta, results ->
             return [meta, meta.simulatedvar, meta.simulatedgene]
         }
 
-    scenarios_ch.dump(tag: 'SCENARIO CH')
+    scenarios_ch.dump(tag: 'scenario CH')
 
     emit:
     // the following channels could be empty as a result of optional emission
