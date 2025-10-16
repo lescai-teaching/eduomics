@@ -21,6 +21,9 @@ nextflow_process {
                 input[1] = [
                      file('https://raw.githubusercontent.com/lescai-teaching/eduomics_testdata/main/dna/Twist_Exome_Target2_chr22q11-21_GRCh38_50pad.bed', checkIfExists: true),
                 ]
+                input[2] = [
+                     file('https://raw.githubusercontent.com/lescai-teaching/eduomics_testdata/main/dna/bwa/chr22_q11-21_GRCh38.fasta.fai', checkIfExists: true),
+                ]
                 """
             }
         }
@@ -49,6 +52,9 @@ nextflow_process {
                 ]
                 input[1] = [
                     file("https://raw.githubusercontent.com/lescai-teaching/eduomics_testdata/main/dna/Twist_Exome_Target2_chr22q11-21_GRCh38_50pad.bed", checkIfExists: true)
+                ]
+                input[2] = [
+                     file('https://raw.githubusercontent.com/lescai-teaching/eduomics_testdata/main/dna/bwa/chr22_q11-21_GRCh38.fasta.fai', checkIfExists: true),
                 ]
                 """
             }

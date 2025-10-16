@@ -9,6 +9,7 @@ process SUBVAR {
     input:
     tuple val(meta), path(vcf)
     path bed
+    path fai
 
     output:
     tuple val(meta), path('*_benign.vcf')        , optional: true, emit: benign_vcf
@@ -24,44 +25,55 @@ process SUBVAR {
     def prefix = task.ext.prefix ?: "${meta.id}"
 
     """
-    # Check if VCF uses 'chr' prefix in chromosome names (more robust approach)Add commentMore actions
-    if zcat ${vcf} | grep -v "^#" | head -1 | cut -f1 | grep -q "^chr"; then
-        vcf_has_chr="yes"
+    # Check if FASTA uses 'chr' prefix in chromosome names
+    if head -1 ${fai} | cut -f1 | grep -q "^chr"; then
+        fasta_has_chr="yes"
     else
-        vcf_has_chr="no"
+        fasta_has_chr="no"
     fi
 
-    # Check if BED uses 'chr' prefix in chromosome names
-    if head -1 ${bed} | cut -f1 | grep -q "^chr"; then
-        bed_has_chr="yes"
-    else
-        bed_has_chr="no"
-    fi
+    echo "DEBUG: FASTA has chr prefix: \$fasta_has_chr"
 
-    echo "DEBUG: VCF has chr prefix: \$vcf_has_chr"
-    echo "DEBUG: BED has chr prefix: \$bed_has_chr"
+    # Adjust both BED and VCF files according to FASTA convention
+    if [[ "\$fasta_has_chr" == "yes" ]]; then
+        # Ensure BED has chr prefix
+        if head -1 ${bed} | cut -f1 | grep -vq "^chr"; then
+            echo "DEBUG: Adding chr prefix to BED file"
+            awk 'BEGIN{OFS="\\t"} {if(\$1 !~ /^chr/) \$1="chr"\$1; print}' ${bed} > adjusted_${bed}
+            bed_file="adjusted_${bed}"
+        else
+            bed_file="${bed}"
+        fi
 
-    # Create adjusted BED file if needed
-    if [[ "\$vcf_has_chr" == "yes" && "\$bed_has_chr" == "no" ]]; then
-        echo "DEBUG: Adding chr prefix to BED file"
-        awk 'BEGIN{OFS="\\t"} {if(\$1 !~ /^chr/) \$1="chr"\$1; print}' ${bed} > adjusted_${bed}
-        bed_file="adjusted_${bed}"
-    elif [[ "\$vcf_has_chr" == "no" && "\$bed_has_chr" == "yes" ]]; then
-        echo "DEBUG: Removing chr prefix from BED file"
-        awk 'BEGIN{OFS="\\t"} {gsub(/^chr/, "", \$1); print}' ${bed} > adjusted_${bed}
-        bed_file="adjusted_${bed}"
+        # Ensure VCF has chr prefix
+        echo "DEBUG: Ensuring VCF has chr prefix"
+        zcat ${vcf} | awk 'BEGIN{OFS="\\t"} /^#/ {print; next} {if(\$1 !~ /^chr/) \$1="chr"\$1; print}' | bgzip -c > adjusted_${vcf}
+        vcf_file="adjusted_${vcf}"
+
     else
-        echo "DEBUG: No BED file adjustment needed"
-        bed_file="${bed}"
+        # Ensure BED has no chr prefix
+        if head -1 ${bed} | cut -f1 | grep -q "^chr"; then
+            echo "DEBUG: Removing chr prefix from BED file"
+            awk 'BEGIN{OFS="\\t"} {gsub(/^chr/, "", \$1); print}' ${bed} > adjusted_${bed}
+            bed_file="adjusted_${bed}"
+        else
+            bed_file="${bed}"
+        fi
+
+        # Ensure VCF has no chr prefix
+        echo "DEBUG: Ensuring VCF has no chr prefix"
+        zcat ${vcf} | awk 'BEGIN{OFS="\\t"} /^#/ {print; next} {gsub(/^chr/, "", \$1); print}' | bgzip -c > adjusted_${vcf}
+        vcf_file="adjusted_${vcf}"
     fi
 
     echo "DEBUG: Using bed file: \$bed_file"
+    echo "DEBUG: Using vcf file: \$vcf_file"
 
     # Index the VCF file
-    tabix -p vcf ${vcf}
+    tabix -p vcf \${vcf_file}
 
     # Extract variants using the adjusted BED fileAdd commentMore actions
-    tabix -h -R \$bed_file ${vcf} | bgzip -c > ${prefix}_ontarget.vcf.gz
+    tabix -h -R \$bed_file \${vcf_file} | bgzip -c > ${prefix}_ontarget.vcf.gz
 
     # Extract benign variants
     zcat ${prefix}_ontarget.vcf.gz | grep -e "^#" -e "Benign" -e "_benign" | grep -e "#" -e "multiple_submitters" > ${prefix}_benign.vcf
