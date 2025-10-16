@@ -79,8 +79,9 @@ workflow SUBSET_REFERENCES_TO_TARGETS {
 
     // Subset clinvar variants
     SUBVAR (
-    ch_meta.combine(ch_clinvar_vcf).map { meta, vcf -> [meta, vcf] },
-    SUBSETCAPTURE.out.target_bed.map { meta, target_bed -> target_bed }
+        ch_meta.combine(ch_clinvar_vcf).map { meta, vcf -> [meta, vcf] },
+        SUBSETCAPTURE.out.target_bed.map { meta, target_bed -> target_bed },
+        GATK4_CREATESEQUENCEDICTIONARY.out.dict
     )
 
     ch_versions = ch_versions.mix(SUBVAR.out.versions)
