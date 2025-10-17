@@ -7,7 +7,7 @@
 
 [![GitHub Actions CI Status](https://github.com/lescai-teaching/eduomics/actions/workflows/ci.yml/badge.svg)](https://github.com/lescai-teaching/eduomics/actions/workflows/ci.yml)
 [![GitHub Actions Linting Status](https://github.com/lescai-teaching/eduomics/actions/workflows/linting.yml/badge.svg)](https://github.com/lescai-teaching/eduomics/actions/workflows/linting.yml)
-[![Cite with Zenodo](http://img.shields.io/badge/DOI-10.5281/zenodo.XXXXXXX-1073c8?labelColor=000000)](https://doi.org/10.5281/zenodo.XXXXXXX)
+[![Cite with Zenodo](http://img.shields.io/badge/DOI-10.5281/zenodo.15835070-1073c8?labelColor=000000)](https://doi.org/10.5281/zenodo.15835070)
 [![nf-test](https://img.shields.io/badge/unit_tests-nf--test-337ab7.svg)](https://www.nf-test.com)
 
 [![Nextflow](https://img.shields.io/badge/nextflow%20DSL2-%E2%89%A525.04.3-23aa62.svg)](https://www.nextflow.io/)
@@ -181,6 +181,6 @@ For further information or help, don't hesitate to get in touch with the develop
 ## Citations
 
 <!-- nf-core: Add citation for pipeline after first release. Uncomment lines below and update Zenodo doi and badge at the top of this file. -->
-<!-- If you use nf-core/eduomics for your analysis, please cite it using the following doi: [10.5281/zenodo.XXXXXX](https://doi.org/10.5281/zenodo.XXXXXX) -->
+If you use lescai-teaching/eduomics for your analysis, please cite it using the following doi: [10.5281/zenodo.15835070](https://doi.org/10.5281/zenodo.15835070)
 
 An extensive list of references for the tools used by the pipeline can be found in the [`CITATIONS.md`](CITATIONS.md) file.

@@ -13,7 +13,7 @@ workflow QUANTIFY_DEANALYSIS_ENRICH_VALIDATE {
     ch_filteredtxfasta            // channel: [ val(meta), path(filteredtxfasta)                   ]
     ch_alignment_mode             // value  : [ boolean                                            ]
     ch_libtype                    // value  : [ val(libtype)                                       ]
-    ch_transcriptData             // channel: [ val(meta), path(transcriptData)                    ]
+    ch_tx2gene                    // channel: [ val(meta), path(tx2gene)                           ]
 
     main:
 
@@ -67,43 +67,49 @@ workflow QUANTIFY_DEANALYSIS_ENRICH_VALIDATE {
     ch_deanalysis_input.dump(tag: 'quant dirs')
 
     // Run differential expression analysis
-    DEANALYSIS ( ch_deanalysis_input, ch_transcriptData )
+    DEANALYSIS ( ch_deanalysis_input, ch_tx2gene )
     ch_versions = ch_versions.mix(DEANALYSIS.out.versions)
 
     // Extract only deseq2_results.tsv for enrichment module
-    ch_deseq2_results_tsv_only = DEANALYSIS.out.deseq2_results.map { meta, tsv, file1, list1 ->
+    ch_deseq2_results_tsv_only = DEANALYSIS.out.deseq2_results.map { meta, tsv, txt, pdfs ->
         tuple(meta, tsv)
     }
 
     // Run enrichment analysis
-    ENRICHMENT ( ch_deseq2_results_tsv_only, DEANALYSIS.out.deseq2_tx2gene )
+    ENRICHMENT ( ch_deseq2_results_tsv_only, ch_tx2gene )
     ch_versions = ch_versions.mix(ENRICHMENT.out.versions)
 
+    // Join channels
+    ch_validation_input = ch_simreads
+    .join(DEANALYSIS.out.deseq2_results, by: 0)
+    .join(ENRICHMENT.out.enrichment_results, by: 0)
+
     // Perform final validation of results
-    RNASEQVALIDATION (
-        ch_simreads,
-        DEANALYSIS.out.deseq2_results,
-        ENRICHMENT.out.enrichment_results,
-        DEANALYSIS.out.deseq2_tx2gene
-    )
+    RNASEQVALIDATION ( ch_validation_input )
     ch_versions = ch_versions.mix(RNASEQVALIDATION.out.versions)
+
+    ch_scenario = DEANALYSIS.out.deseq2_results
+        .map { m, tsv, txt, pdfs ->
+            return [m, false, m.genes]
+        }
 
     emit:
     // SALMON_QUANT outputs
-    salmon_results      = SALMON_QUANT.out.results                               // channel: [ val(meta), path(quant_dir)         ]
-    salmon_json_info    = SALMON_QUANT.out.json_info                             // channel: [ val(meta), path(json_info)         ], optional
-    salmon_lib_format   = SALMON_QUANT.out.lib_format_counts                     // channel: [ val(meta), path(lib_format_counts) ], optional
+    salmon_results            = SALMON_QUANT.out.results                          // channel: [ val(meta), path(quant_dir)         ]
+    salmon_json_info          = SALMON_QUANT.out.json_info                        // channel: [ val(meta), path(json_info)         ], optional
+    salmon_lib_format         = SALMON_QUANT.out.lib_format_counts                // channel: [ val(meta), path(lib_format_counts) ], optional
 
     // DEANALYSIS outputs
-    deseq2_results      = DEANALYSIS.out.deseq2_results                          // channel: [ val(meta), path(deseq2_results), path(deseq2_de_genes), path(*.pdf) ]
-    deseq2_tx2gene      = DEANALYSIS.out.deseq2_tx2gene                          // channel: [ val(meta), path(deseq2_tx2gene)                                     ]
+    deseq2_results            = DEANALYSIS.out.deseq2_results                     // channel: [ val(meta), path(deseq2_results), path(deseq2_de_genes), path(*.pdf) ]
 
     // ENRICHMENT outputs
-    enrichment_results  = ENRICHMENT.out.enrichment_results                      // channel: [ val(meta), path(enrichment_results), path(*.png) ]
+    enrichment_results        = ENRICHMENT.out.enrichment_results                 // channel: [ val(meta), path(enrichment_results), path(*.png) ]
 
     // RNASEQVALIDATION outputs
     rnaseq_validated_results  = RNASEQVALIDATION.out.rnaseq_validated_results    // channel: [ val(meta), path(rnaseq_validation) ], optional
 
-    versions            = ch_versions                                            // channel: [ versions.yml ]
+    scenario                  = ch_scenario                                      // channel: [ val(meta), false, val(genes) ]
+
+    versions                  = ch_versions                                      // channel: [ versions.yml ]
 }
 

@@ -81,7 +81,7 @@ workflow SUBSET_REFERENCES_TO_TARGETS {
     SUBVAR (
         ch_meta.combine(ch_clinvar_vcf).map { meta, vcf -> [meta, vcf] },
         SUBSETCAPTURE.out.target_bed.map { meta, target_bed -> target_bed },
-        GATK4_CREATESEQUENCEDICTIONARY.out.dict
+        SAMTOOLS_FAIDX_INDEX.out.fai.map { meta, fai -> fai }
     )
 
     ch_versions = ch_versions.mix(SUBVAR.out.versions)

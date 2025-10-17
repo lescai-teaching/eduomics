@@ -131,11 +131,7 @@ workflow EDUOMICS {
 
     ch_versions = ch_versions.mix(FASTQ_VARIANT_TO_VALIDATION.out.versions)
 
-    ch_dna_scenario = FASTQ_VARIANT_TO_VALIDATION.out.scenario
-        .map { m, simulatedvar ->
-            return [m, simulatedvar, false]
-        }
-    ch_scenarios = ch_scenarios.mix(ch_dna_scenario)
+    ch_scenarios = ch_scenarios.mix(FASTQ_VARIANT_TO_VALIDATION.out.scenario)
 
 /*
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -176,16 +172,12 @@ workflow EDUOMICS {
         PREPARE_RNA_GENOME.out.filtered_txfasta,
         params.salmon_alignmode,
         params.salmon_libtype,
-        PREPARE_RNA_GENOME.out.transcript_data
+        PREPARE_RNA_GENOME.out.tx2gene
     )
 
     ch_versions = ch_versions.mix(QUANTIFY_DEANALYSIS_ENRICH_VALIDATE.out.versions)
 
-    ch_rna_scenario = QUANTIFY_DEANALYSIS_ENRICH_VALIDATE.out.deseq2_tx2gene
-        .map { m, tx ->
-            return [m, false, m.genes]
-        }
-    ch_scenarios = ch_scenarios.mix(ch_rna_scenario)
+    ch_scenarios = ch_scenarios.mix(QUANTIFY_DEANALYSIS_ENRICH_VALIDATE.out.scenario)
 
 /*
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -209,12 +201,12 @@ workflow EDUOMICS {
         ).set { ch_collated_versions }
 
     emit:
-    versions                 = ch_collated_versions                                               // channel: [ path(versions.yml)                          ]
-    fastq_validated_variants = FASTQ_VARIANT_TO_VALIDATION.out.simulation                         // channel: [ val(meta), path(validated_results_folder/*) ]
-    rnaseq_validated_reads   = QUANTIFY_DEANALYSIS_ENRICH_VALIDATE.out.rnaseq_validated_results   // channel: [ val(meta), path(rnaseq_validation)          ]
-    dnabundle                = SUBSET_REFERENCES_TO_TARGETS.out.dna_bundle                        // channel: [ val(meta), [all references bundle] ]
-    rnabundle                = PREPARE_RNA_GENOME.out.rna_bundle                                  // channel: [ val(meta), [path(txfasta), path(gff3), path(salmonindex)] ]
-    scenario_description     = AISCENARIOS.out.scenario                                           // channel: [ val(meta), path(scenario.txt)               ]
+    versions                 = ch_collated_versions                                               // channel: [ path(versions.yml)                                                                                                      ]
+    fastq_validated_variants = FASTQ_VARIANT_TO_VALIDATION.out.simulation                         // channel: [ val(meta), path(validated_results_folder/*)                                                                             ]
+    rnaseq_validated_reads   = QUANTIFY_DEANALYSIS_ENRICH_VALIDATE.out.rnaseq_validated_results   // channel: [ val(meta), path(rnaseq_validation)                                                                                      ]
+    dnabundle                = SUBSET_REFERENCES_TO_TARGETS.out.dna_bundle                        // channel: [ val(meta), [all references bundle]                                                                                      ]
+    rnabundle                = PREPARE_RNA_GENOME.out.rna_bundle                                  // channel: [ val(meta), [path(filtered_txfasta), path(filtered_gff3), path(tx2gene), path(filtered_genomefasta), path(salmonindex)]  ]
+    scenario_description     = AISCENARIOS.out.scenario                                           // channel: [ val(meta), path(scenario.txt)                                                                                           ]
 
 }
 

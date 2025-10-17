@@ -40,6 +40,7 @@ workflow SIMULATE_RNASEQ_READS {
                 [newmeta, filterd_path] }
         }
     ch_matrices_with_genes.dump(tag: 'count matrices with genes')
+
     ch_fold_change = Channel.value([[id: 'null'], []]) // this simulation is currently not implemented
 
     ch_matrices_with_genes_limited = params.istest

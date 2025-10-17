@@ -4,8 +4,8 @@ process COUNTMATRICES {
 
     conda "${moduleDir}/environment.yml"
     container "${ workflow.containerEngine == 'singularity' && !task.ext.singularity_pull_docker_container ?
-        'oras://community.wave.seqera.io/library/bioconductor-biostrings_r-tidyverse:59cdfcce7d992560':
-        'community.wave.seqera.io/library/bioconductor-biostrings_r-tidyverse:4645f56e7256e01f' }"
+        'oras://community.wave.seqera.io/library/bioconductor-biostrings_r-tidyverse:a28f97e8be230fb0':
+        'community.wave.seqera.io/library/bioconductor-biostrings_r-tidyverse:285d583c318ea12d' }"
 
     input:
     tuple val(meta),  path(filtered_txfasta)

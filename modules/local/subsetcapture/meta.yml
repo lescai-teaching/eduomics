@@ -5,30 +5,30 @@ keywords:
   - capture
   - chromosome
 tools:
-  - grep:
-      description: Search for patterns in text files
-      homepage: https://www.gnu.org/software/grep/
-      documentation: https://www.gnu.org/software/grep/manual/
   - bgzip:
-      description: Compress or expand files
-  - bedtools:
-      description: A powerful toolset for genome arithmetic
-      homepage: https://bedtools.readthedocs.io/
-      documentation: https://bedtools.readthedocs.io/
+      description: Block compression/decompression utility
+      homepage: http://www.htslib.org/
+      documentation: http://www.htslib.org/doc/bgzip.html
+      licence: ["MIT"]
   - tabix:
       description: Index tab-delimited genome position files
       homepage: http://www.htslib.org/doc/tabix.html
       documentation: http://www.htslib.org/doc/tabix.html
+      licence: ["MIT"]
+      identifier: biotools:tabix
+  - bedtools:
+      description: A powerful toolset for genome arithmetic
+      homepage: https://bedtools.readthedocs.io/
+      documentation: https://bedtools.readthedocs.io/
+      licence: ["MIT"]
+      identifier: biotools:bedtools
 
 input:
-  - - meta:
-        type: map
-        description: |
-          Groovy Map containing sample information
-          e.g. `[ id:'sample1', single_end:false ]`
-  - chromosome:
-      type: string
-      description: Chromosome to subset
+  - meta:
+      type: map
+      description: |
+        Groovy Map containing sample information
+        e.g. `[ id:'sample1', single_end:false ]`
   - target_chrom_size:
       type: file
       description: Chromosome sizes file
@@ -40,25 +40,45 @@ input:
 
 output:
   - capture_bed_gz:
-      type: file
-      description: Compressed origin capture BED
-      pattern: "*.capture.bed.gz"
+      - meta:
+          type: map
+          description: Groovy Map containing sample information
+      - "*.capture.bed.gz":
+          type: file
+          description: Compressed origin capture BED
+          pattern: "*.capture.bed.gz"
   - capture_bed_index:
-      type: file
-      description: Index of compressed origin capture BED
-      pattern: "*.capture.bed.gz.tbi"
+      - meta:
+          type: map
+          description: Groovy Map containing sample information
+      - "*.capture.bed.gz.tbi":
+          type: file
+          description: Index of compressed origin capture BED
+          pattern: "*.capture.bed.gz.tbi"
   - target_bed:
-      type: file
-      description: Capture BED subset by target chromosome
-      pattern: "*_target.bed"
+      - meta:
+          type: map
+          description: Groovy Map containing sample information
+      - "*_*_target.bed":
+          type: file
+          description: Capture BED subset by target chromosome
+          pattern: "*_*_target.bed"
   - target_bed_pad50:
-      type: file
-      description: Padded target capture BED by 500 positions
-      pattern: "_target.pad50.bed"
+      - meta:
+          type: map
+          description: Groovy Map containing sample information
+      - "*_*_target.pad50.bed":
+          type: file
+          description: Target capture BED padded by 50 positions
+          pattern: "*_*_target.pad50.bed"
   - target_bed_pad500:
-      type: file
-      description: Padded target capture BED by 50 positions
-      pattern: "*_target.pad500.bed"
+      - meta:
+          type: map
+          description: Groovy Map containing sample information
+      - "*_*_target.pad500.bed":
+          type: file
+          description: Target capture BED padded by 500 positions
+          pattern: "*_*_target.pad500.bed"
   - versions:
       - "versions.yml":
           type: file

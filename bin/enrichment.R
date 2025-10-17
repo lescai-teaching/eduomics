@@ -9,12 +9,11 @@ library(org.Hs.eg.db)
 argv <- commandArgs(trailingOnly = TRUE)
 
 deseq2_resdata <- argv[1]
-deseq2_tx2gene <- argv[2]
+tx2gene <- argv[2]
 
 # Read the input files
 resdata <- read_tsv(deseq2_resdata)
-tx2gene <- read_tsv(deseq2_tx2gene) %>%
-    dplyr::select(transcript_id, gene_id)
+tx2gene <- read_tsv(tx2gene)
 
 # Extract significant genes
 sig_genes <- resdata$gene[which(resdata$padj < 0.05)]

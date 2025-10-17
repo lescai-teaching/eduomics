@@ -36,7 +36,8 @@ nextflow_workflow {
                 { assert workflow.out.filtered_annotation.get(0).get(1).endsWith('.gff3') },
                 { assert workflow.out.gene_lists.get(0).get(1).endsWith('.rds') },
                 { assert workflow.out.gene_list_association.get(0).get(1).endsWith('.tsv') },
-                { assert workflow.out.filtered_transcript_data.get(0).get(1).endsWith('.rds') },
+                { assert workflow.out.transcript_data.get(0).get(1).endsWith('.rds') },
+                { assert workflow.out.tx2gene.get(0).get(1).endsWith('.tsv') },
                 { assert workflow.out.filtered_txfasta.get(0).get(1).endsWith('.fasta') },
                 { assert workflow.out.filtered_genomefasta.get(0).get(1).endsWith('.fasta') },
                 {

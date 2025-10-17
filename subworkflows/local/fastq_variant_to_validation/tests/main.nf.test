@@ -32,12 +32,12 @@ nextflow_workflow {
                 """
                 // channel: [mandatory] [ val(meta), [ reads ] ] <- NB: this channel contains 4 reads 2 * case + 2 * control / modified in sub-workflow
                 input[0] = Channel.of([
-                    [ id: 'sim01', type: 'dnaseq', chromosome: 'chr22', reps: 'none', groups: 2, coverage: 50, simulatedvar: 'chr22-18078510-T-C' ], // meta map
+                    [ id: 'sim01', type: 'dnaseq', chromosome: 'chr22', reps: 'none', groups: 2, coverage: 50, simulatedvar: 'chr22-17189980-G-A', simulatedgene: 'PEX26' ], // meta map
                     [
-                        file('https://raw.githubusercontent.com/lescai-teaching/eduomics_testdata/refs/heads/main/dna/simureads/chr22-18078510-T-C/normal_0.000+disease_1.000_1.fq.gz', checkIfExists: true),
-                        file('https://raw.githubusercontent.com/lescai-teaching/eduomics_testdata/refs/heads/main/dna/simureads/chr22-18078510-T-C/normal_0.000+disease_1.000_2.fq.gz', checkIfExists: true),
-                        file('https://raw.githubusercontent.com/lescai-teaching/eduomics_testdata/refs/heads/main/dna/simureads/chr22-18078510-T-C/normal_1.000+disease_0.000_1.fq.gz', checkIfExists: true),
-                        file('https://raw.githubusercontent.com/lescai-teaching/eduomics_testdata/refs/heads/main/dna/simureads/chr22-18078510-T-C/normal_1.000+disease_0.000_2.fq.gz', checkIfExists: true)
+                        file('https://raw.githubusercontent.com/lescai-teaching/eduomics_testdata/refs/heads/main/dna/simureads/chr22-17189980-G-A/normal_0.000+disease_1.000_1.fq.gz', checkIfExists: true),
+                        file('https://raw.githubusercontent.com/lescai-teaching/eduomics_testdata/refs/heads/main/dna/simureads/chr22-17189980-G-A/normal_0.000+disease_1.000_2.fq.gz', checkIfExists: true),
+                        file('https://raw.githubusercontent.com/lescai-teaching/eduomics_testdata/refs/heads/main/dna/simureads/chr22-17189980-G-A/normal_1.000+disease_0.000_1.fq.gz', checkIfExists: true),
+                        file('https://raw.githubusercontent.com/lescai-teaching/eduomics_testdata/refs/heads/main/dna/simureads/chr22-17189980-G-A/normal_1.000+disease_0.000_2.fq.gz', checkIfExists: true)
                     ]
                 ])
 

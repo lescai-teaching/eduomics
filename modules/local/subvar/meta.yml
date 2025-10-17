@@ -8,14 +8,22 @@ keywords:
   - filtering
   - clinvar
 tools:
-  - "subvar":
-      description: "Module that separates benign and pathogenic variants from clinvar VCF file."
-      homepage: "https://github.com/lescai-teaching/eduomics"
-      documentation: "https://github.com/lescai-teaching/eduomics"
-      tool_dev_url: "https://github.com/lescai-teaching/eduomics"
-      doi: ""
+  - tabix:
+      description: Index tab-delimited genome position files
+      homepage: http://www.htslib.org/doc/tabix.html
+      documentation: http://www.htslib.org/doc/tabix.html
       licence: ["MIT"]
-      identifier:
+      identifier: biotools:tabix
+  - bgzip:
+      description: Block compression/decompression utility
+      homepage: http://www.htslib.org/
+      documentation: http://www.htslib.org/doc/bgzip.html
+      licence: ["MIT"]
+  - grep:
+      description: Search for patterns in text files
+      homepage: https://www.gnu.org/software/grep/
+      documentation: https://www.gnu.org/software/grep/manual/
+      licence: ["GPL-3.0-or-later"]
 
 input:
   - - meta:
@@ -28,42 +36,36 @@ input:
         type: file
         description: Input VCF file containing variants
         pattern: "*.{vcf,vcf.gz}"
-    - bed:
-        type: file
-        description: BED file containing regions of interest
-        pattern: "*.bed"
+  - bed:
+      type: file
+      description: BED file containing regions of interest
+      pattern: "*.bed"
 
 output:
   - benign_vcf:
       - meta:
           type: map
-          description: |
-            Groovy Map containing sample information
-            e.g. [ id:'test_sample' ]
-      - benign.vcf:
+          description: Groovy Map containing sample information
+      - "*_benign.vcf":
           type: file
           description: VCF file containing benign variants
-          pattern: "*.{vcf,vcf.gz}"
+          pattern: "*_benign.vcf"
   - pathogenic_vcf:
       - meta:
           type: map
-          description: |
-            Groovy Map containing sample information
-            e.g. [ id:'test_sample' ]
-      - pathogenic.vcf:
+          description: Groovy Map containing sample information
+      - "*_pathogenic.vcf":
           type: file
           description: VCF file containing pathogenic variants
-          pattern: "*.{vcf,vcf.gz}"
+          pattern: "*_pathogenic.vcf"
   - selected_vcf:
       - meta:
           type: map
-          description: |
-            Groovy Map containing sample information
-            e.g. [ id:'test_sample' ]
-      - selected.vcf:
+          description: Groovy Map containing sample information
+      - "*_ontarget.vcf.gz":
           type: file
-          description: VCF file containing high quality pathogenic variants
-          pattern: "*.{vcf,vcf.gz}"
+          description: VCF file containing variants in target regions
+          pattern: "*_ontarget.vcf.gz"
   - versions:
       - versions.yml:
           type: file
