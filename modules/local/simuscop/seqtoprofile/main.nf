@@ -5,8 +5,8 @@ process SIMUSCOP_SEQTOPROFILE {
 
     conda "${moduleDir}/environment.yml"
     container "${ workflow.containerEngine == 'singularity' && !task.ext.singularity_pull_docker_container ?
-        'oras://community.wave.seqera.io/library/simuscop:2.0.0--46cea91693c644bb':
-        'community.wave.seqera.io/library/simuscop:2.0.0--44718e83828ef52d' }"
+        'oras://community.wave.seqera.io/library/simuscop:2.0.1--332e6fa457ff0a0b':
+        'community.wave.seqera.io/library/simuscop:2.0.1--386e8e5c95cacb1c' }"
 
     input:
     tuple val(meta), path(bam)
