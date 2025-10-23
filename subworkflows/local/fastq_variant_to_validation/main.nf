@@ -137,6 +137,7 @@ workflow FASTQ_VARIANT_TO_VALIDATION {
         return [key, meta, vcf, tbi]
     }
     .groupTuple(by: 0)
+    .filter { key, meta_list, vcf_list, tbi_list -> vcf_list.size() >= 2 }
     .combine(capture)
     .map { key, meta_list, vcf_list, tbi_list, interval ->
         return [meta_list[0], vcf_list, tbi_list, interval, [], []]
