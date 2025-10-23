@@ -70,28 +70,40 @@ workflow QUANTIFY_DEANALYSIS_ENRICH_VALIDATE {
     DEANALYSIS ( ch_deanalysis_input, ch_tx2gene )
     ch_versions = ch_versions.mix(DEANALYSIS.out.versions)
 
+    DEANALYSIS.out.deseq2_results.dump(tag: 'deseq2 results')
+
     // Extract only deseq2_results.tsv for enrichment module
     ch_deseq2_results_tsv_only = DEANALYSIS.out.deseq2_results.map { meta, tsv, txt, pdfs ->
         tuple(meta, tsv)
     }
 
+    ch_deseq2_results_tsv_only.dump(tag: 'enrichment input')
+
     // Run enrichment analysis
     ENRICHMENT ( ch_deseq2_results_tsv_only, ch_tx2gene )
     ch_versions = ch_versions.mix(ENRICHMENT.out.versions)
+
+    ENRICHMENT.out.enrichment_results.dump(tag: 'enrichment results')
 
     // Join channels
     ch_validation_input = ch_simreads
     .join(DEANALYSIS.out.deseq2_results, by: 0)
     .join(ENRICHMENT.out.enrichment_results, by: 0)
 
+    ch_validation_input.dump(tag: 'validation CH')
+
     // Perform final validation of results
     RNASEQVALIDATION ( ch_validation_input )
     ch_versions = ch_versions.mix(RNASEQVALIDATION.out.versions)
 
-    ch_scenario = DEANALYSIS.out.deseq2_results
-        .map { m, tsv, txt, pdfs ->
+    RNASEQVALIDATION.out.rnaseq_validated_results.dump(tag: 'rnaseq validation output')
+
+    ch_scenario = RNASEQVALIDATION.out.rnaseq_validated_results
+        .map { m, folder ->
             return [m, false, m.genes]
         }
+
+    ch_scenario.dump(tag: 'scenario CH')
 
     emit:
     // SALMON_QUANT outputs

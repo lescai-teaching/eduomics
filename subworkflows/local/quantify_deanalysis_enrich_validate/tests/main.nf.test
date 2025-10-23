@@ -2,7 +2,9 @@ nextflow_workflow {
 
     name "Test Subworkflow QUANTIFY_DEANALYSIS_ENRICH_VALIDATE"
     script "../main.nf"
+    config "./test.config"
     workflow "QUANTIFY_DEANALYSIS_ENRICH_VALIDATE"
+    options "-dump-channels"
 
     tag "subworkflows"
     tag "subworkflows_"
