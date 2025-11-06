@@ -1,3 +1,4 @@
+---
 # yaml-language-server: $schema=https://raw.githubusercontent.com/nf-core/modules/master/subworkflows/yaml-schema.json
 name: "subset_references_to_targets"
 description: Subset Human genome fasta, capture BED, GATK bundle and ClinVar VCFs by target chromosome
@@ -12,11 +13,10 @@ components:
   - gatk4/selectvariants
   - local/subsetcapture
   - local/subvar
-
 input:
   - - meta:
         type: map
-        description: [id:'test', chromosome:'chr22', type: "dnaseq"]
+        description: "a Groovy map containing sample information i.e. [id:'test', chromosome:'chr22', type:'dnaseq']"
     - fasta:
         type: file
         description: Reference fasta file
