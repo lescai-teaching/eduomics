@@ -1,44 +1,93 @@
 # yaml-language-server: $schema=https://raw.githubusercontent.com/nf-core/modules/master/subworkflows/yaml-schema.json
 name: "fasta_wgsim_to_profile"
-## nf-core: Add a description of the subworkflow and list keywords
-description: Sort SAM/BAM/CRAM file
+description: Generate sequencing profile from FASTA using WGSIM simulation and GATK variant calling pipeline
 keywords:
-  - sort
-  - bam
-  - sam
-  - cram
-## nf-core: Add a list of the modules and/or subworkflows used in the subworkflow
+  - simulation
+  - wgsim
+  - bwa
+  - gatk
+  - variant calling
+  - profiling
 components:
-  - samtools/sort
+  - wgsim
+  - bwa/mem
   - samtools/index
-## nf-core: List all of the channels used as input with a description and their structure
+  - gatk4/markduplicates
+  - gatk4/baserecalibrator
+  - gatk4/applybqsr
+  - gatk4/haplotypecaller
+  - simuscop/seqtoprofile
 input:
-  - ch_bam:
+  - fasta:
       type: file
       description: |
-        The input channel containing the BAM/CRAM/SAM files
-        Structure: [ val(meta), path(bam) ]
-      pattern: "*.{bam/cram/sam}"
-## nf-core: List all of the channels used as output with a descriptions and their structure
+        Reference FASTA file
+        Structure: [ val(meta), path(fasta) ]
+      pattern: "*.{fa,fasta}"
+  - fai:
+      type: file
+      description: |
+        FASTA index file
+        Structure: [ val(meta), path(fai) ]
+      pattern: "*.fai"
+  - dict:
+      type: file
+      description: |
+        FASTA dictionary file
+        Structure: [ val(meta), path(dict) ]
+      pattern: "*.dict"
+  - bwa_index:
+      type: directory
+      description: |
+        BWA index directory
+        Structure: [ val(meta), path(bwa_index) ]
+  - dbsnp:
+      type: file
+      description: |
+        dbSNP VCF file
+        Structure: [ path(dbsnp) ]
+      pattern: "*.vcf.gz"
+  - dbsnp_tbi:
+      type: file
+      description: |
+        dbSNP VCF index file
+        Structure: [ path(dbsnp_tbi) ]
+      pattern: "*.vcf.gz.tbi"
+  - mills:
+      type: file
+      description: |
+        Mills indels VCF file
+        Structure: [ path(mills) ]
+      pattern: "*.vcf.gz"
+  - mills_tbi:
+      type: file
+      description: |
+        Mills indels VCF index file
+        Structure: [ path(mills_tbi) ]
+      pattern: "*.vcf.gz.tbi"
+  - capture:
+      type: file
+      description: |
+        Capture regions file
+        Structure: [ path(capture) ]
 output:
   - bam:
       type: file
       description: |
-        Channel containing BAM files
+        Processed BAM files
         Structure: [ val(meta), path(bam) ]
       pattern: "*.bam"
-  - bai:
+  - vcf:
       type: file
       description: |
-        Channel containing indexed BAM (BAI) files
-        Structure: [ val(meta), path(bai) ]
-      pattern: "*.bai"
-  - csi:
+        Called variants VCF files
+        Structure: [ val(meta), path(vcf) ]
+      pattern: "*.vcf.gz"
+  - profile:
       type: file
       description: |
-        Channel containing CSI files
-        Structure: [ val(meta), path(csi) ]
-      pattern: "*.csi"
+        Generated sequencing profiles
+        Structure: [ val(meta), path(profile) ]
   - versions:
       type: file
       description: |

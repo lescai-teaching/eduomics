@@ -11,246 +11,346 @@ keywords:
 components:
   - samtools/faidx
   - gatk4/selectvariants
-  - local/subsetcapture
-  - local/subvar
+  - gatk4/createsequencedictionary
+  - subsetcapture
+  - subvar
+  - bwa/index
 input:
-  - - meta:
-        type: map
-        description: "a Groovy map containing sample information i.e. [id:'test', chromosome:'chr22', type:'dnaseq']"
-    - fasta:
-        type: file
-        description: Reference fasta file
-        pattern: "*.{fa,fasta}"
-  - - meta:
-        type: map
-        description: Metadata map
-    - fai:
-        type: file
-        description: Fasta index file
-        pattern: "*.fai"
-  - - get_sizes:
-        type: boolean
-        description: Boolean value to determine if sizes should be calculated
-  - - capture_bed:
-        type: file
-        description: Capture bed file
-        pattern: "*.bed"
-  - - meta:
-        type: map
-        description: Metadata map
-    - chromosome:
-        type: value
-        description: Chromosome information
-  - - meta:
-        type: map
-        description: Metadata map
-    - gnomad_vcf:
-        type: file
-        description: gnomAD VCF file
-        pattern: "*.vcf{.gz,}"
-    - gnomad_tbi:
-        type: file
-        description: gnomAD VCF index file
-        pattern: "*.{tbi,idx}"
-  - - meta:
-        type: map
-        description: Metadata map
-    - mills_vcf:
-        type: file
-        description: Mills VCF file
-        pattern: "*.vcf{.gz,}"
-    - mills_tbi:
-        type: file
-        description: Mills VCF index file
-        pattern: "*.{tbi,idx}"
-  - - meta:
-        type: map
-        description: Metadata map
-    - 1000g_vcf:
-        type: file
-        description: 1000G VCF file
-        pattern: "*.vcf{.gz,}"
-    - 1000g_tbi:
-        type: file
-        description: 1000G VCF index file
-        pattern: "*.{tbi,idx}"
-  - - meta:
-        type: map
-        description: Metadata map
-    - dbsnp_vcf:
-        type: file
-        description: dbSNP VCF file
-        pattern: "*.vcf{.gz,}"
-    - dbsnp_tbi:
-        type: file
-        description: dbSNP VCF index file
-        pattern: "*.{tbi,idx}"
-  - - meta:
-        type: map
-        description: Metadata map
-    - clinvar_vcf:
-        type: file
-        description: ClinVar VCF file
-        pattern: "*.vcf{.gz,}"
+  - ch_meta:
+      type: value
+      description: |
+        a Groovy map containing sample information i.e. [ id:'test', chromosome:'chr22', type:'dnaseq' ]
+        Structure: [ val(meta) ]
+  - ch_fasta:
+      type: file
+      description: |
+        The input channel containing reference fasta file
+        Structure: [ path(fasta) ]
+      pattern: "*.{fa,fasta}"
+  - ch_get_sizes:
+      type: boolean
+      description: |
+        Boolean value to determine if sizes should be calculated
+        Structure: [ get_sizes ]
+  - capture_bed:
+      type: boolean
+      description: |
+        Capture bed file
+        Structure: [ path(capture_bed) ]
+      pattern: "*.bed"
+  - ch_gnomad:
+      description: |
+        Channel with the gnomAD VCF file and index
+        Structure: [ path(vcf), path(vcf_idx) ]
+      structure:
+        - gnomad_vcf:
+            type: file
+            description: |
+              VCF(.gz) file
+            pattern: "*.{vcf,vcf.gz}"
+        - gnomad_tbi:
+            type: file
+            description: VCF file index
+            pattern: "*.{idx,tbi}"
+  - ch_mills:
+      description: |
+        Channel with the Mills VCF file and index
+        Structure: [ path(vcf), path(vcf_idx) ]
+      structure:
+        - mills_vcf:
+            type: file
+            description: |
+              VCF(.gz) file
+            pattern: "*.{vcf,vcf.gz}"
+        - mills_tbi:
+            type: file
+            description: VCF file index
+            pattern: "*.{idx,tbi}"
+  - ch_1000g:
+      description: |
+        Channel with the 1000G VCF file and index
+        Structure: [ path(vcf), path(vcf_idx) ]
+      structure:
+        - 1000g_vcf:
+            type: file
+            description: |
+              VCF(.gz) file
+            pattern: "*.{vcf,vcf.gz}"
+        - 1000g_tbi:
+            type: file
+            description: VCF file index
+            pattern: "*.{idx,tbi}"
+  - ch_dbsnp:
+      description: |
+        Channel with the dbsnp VCF file and index
+        Structure: [ path(vcf), path(vcf_idx) ]
+      structure:
+        - dbsnp_vcf:
+            type: file
+            description: |
+              VCF(.gz) file
+            pattern: "*.{vcf,vcf.gz}"
+        - dbsnp_tbi:
+            type: file
+            description: VCF file index
+            pattern: "*.{idx,tbi}"
+  - ch_clinvar_vcf:
+      type: file
+      description: |
+        ClinVar VCF file
+        Structure: [ path(clinvar_vcf) ]
+      pattern: "*.{vcf,vcf.gz}"
 output:
   - target_fa:
-      - meta:
-          type: map
-          description: Metadata map
-      - fa:
-          type: file
-          description: Subset fasta file
-          pattern: "*.{fa,fasta}"
+      description: |
+        Channel containing salmon quantification files  i.e. [ id:'test', chromosome:'chr22', type:'dnaseq' ]
+        Structure: [ val(meta), path(fasta) ]
+      structure:
+        - meta:
+            type: map
+            description: |
+              Groovy Map containing sample information
+              e.g. `[ id:'test', chromosome:'chr22', type:'dnaseq' ]`
+        - fasta:
+            type: file
+            description: Subset fasta file
+            pattern: "*.{fa,fasta}"
   - target_fai:
-      - meta:
-          type: map
-          description: Metadata map
-      - fai:
-          type: file
-          description: Subset fasta index file
-          pattern: "*.fai"
+      description: |
+        Channel containing FASTA index files
+        Structure: [ val(meta), path(fai) ]
+      structure:
+        - meta:
+            type: map
+            description: |
+              Groovy Map containing sample information
+              e.g. `[ id:'test', chromosome:'chr22', type:'dnaseq' ]`
+        - fai:
+            type: file
+            description: FASTA index file
+            pattern: "*.fai"
   - target_sizes:
-      - meta:
-          type: map
-          description: Metadata map
-      - sizes:
-          type: file
-          description: Subset sizes file
-          pattern: "*.sizes"
+      description: |
+        Channel containing chromosome sizes files
+        Structure: [ val(meta), path(sizes) ]
+      structure:
+        - meta:
+            type: map
+            description: |
+              Groovy Map containing sample information
+              e.g. `[ id:'test', chromosome:'chr22', type:'dnaseq' ]`
+        - sizes:
+            type: file
+            description: Chromosome sizes file
+            pattern: "*.sizes"
+  - target_bwa_index:
+      description: |
+        Channel containing BWA index files
+        Structure: [ val(meta), path(bwa_index) ]
+      structure:
+        - meta:
+            type: map
+            description: |
+              Groovy Map containing sample information
+              e.g. `[ id:'test', chromosome:'chr22', type:'dnaseq' ]`
+        - bwa_index:
+            type: directory
+            description: BWA index directory
   - capture_bed_gz:
-      - meta:
-          type: map
-          description: Metadata map
-      - bed_gz:
-          type: file
-          description: Gzipped capture bed file
-          pattern: "*.bed.gz"
+      description: |
+        Channel containing compressed capture BED files
+        Structure: [ path(capture_bed_gz) ]
+      structure:
+        - capture_bed_gz:
+            type: file
+            description: Compressed capture BED file
+            pattern: "*.bed.gz"
   - capture_bed_index:
-      - meta:
-          type: map
-          description: Metadata map
-      - bed_index:
-          type: file
-          description: Capture bed index file
-          pattern: "*.bed.gz.tbi"
+      description: |
+        Channel containing capture BED index files
+        Structure: [ path(capture_bed_index) ]
+      structure:
+        - capture_bed_index:
+            type: file
+            description: Capture BED index file
+            pattern: "*.bed.gz.tbi"
   - target_bed:
-      - meta:
-          type: map
-          description: Metadata map
-      - bed:
-          type: file
-          description: Target bed file
-          pattern: "*.bed"
+      description: |
+        Channel containing target BED files
+        Structure: [ path(target_bed) ]
+      structure:
+        - target_bed:
+            type: file
+            description: Target regions BED file
+            pattern: "*.bed"
   - target_bed_pad50:
-      - meta:
-          type: map
-          description: Metadata map
-      - bed_pad50:
-          type: file
-          description: Target bed file with 50bp padding
-          pattern: "*_pad50.bed"
+      description: |
+        Channel containing target BED files with 50bp padding
+        Structure: [ path(target_bed_pad50) ]
+      structure:
+        - target_bed_pad50:
+            type: file
+            description: Target regions BED file with 50bp padding
+            pattern: "*.bed"
   - target_bed_pad500:
-      - meta:
-          type: map
-          description: Metadata map
-      - bed_pad500:
-          type: file
-          description: Target bed file with 500bp padding
-          pattern: "*_pad500.bed"
+      description: |
+        Channel containing target BED files with 500bp padding
+        Structure: [ path(target_bed_pad500) ]
+      structure:
+        - target_bed_pad500:
+            type: file
+            description: Target regions BED file with 500bp padding
+            pattern: "*.bed"
   - target_gnomad_vcf:
-      - meta:
-          type: map
-          description: Metadata map
-      - vcf:
-          type: file
-          description: Subset gnomAD VCF file
-          pattern: "*.vcf{.gz,}"
+      description: |
+        Channel containing subset gnomAD VCF files
+        Structure: [ path(vcf) ]
+      structure:
+        - vcf:
+            type: file
+            description: Subset gnomAD VCF file
+            pattern: "*.{vcf,vcf.gz}"
   - target_gnomad_tbi:
-      - meta:
-          type: map
-          description: Metadata map
-      - tbi:
-          type: file
-          description: Subset gnomAD VCF index file
-          pattern: "*.{tbi,idx}"
+      description: |
+        Channel containing subset gnomAD VCF index files
+        Structure: [ path(tbi) ]
+      structure:
+        - tbi:
+            type: file
+            description: Subset gnomAD VCF index file
+            pattern: "*.{idx,tbi}"
   - target_mills_vcf:
-      - meta:
-          type: map
-          description: Metadata map
-      - vcf:
-          type: file
-          description: Subset Mills VCF file
-          pattern: "*.vcf{.gz,}"
+      description: |
+        Channel containing subset Mills VCF files
+        Structure: [ path(vcf) ]
+      structure:
+        - vcf:
+            type: file
+            description: Subset Mills indels VCF file
+            pattern: "*.{vcf,vcf.gz}"
   - target_mills_tbi:
-      - meta:
-          type: map
-          description: Metadata map
-      - tbi:
-          type: file
-          description: Subset Mills VCF index file
-          pattern: "*.{tbi,idx}"
+      description: |
+        Channel containing subset Mills VCF index files
+        Structure: [ path(tbi) ]
+      structure:
+        - tbi:
+            type: file
+            description: Subset Mills indels VCF index file
+            pattern: "*.{idx,tbi}"
   - target_1000g_vcf:
-      - meta:
-          type: map
-          description: Metadata map
-      - vcf:
-          type: file
-          description: Subset 1000G VCF file
-          pattern: "*.vcf{.gz,}"
+      description: |
+        Channel containing subset 1000G VCF files
+        Structure: [ path(vcf) ]
+      structure:
+        - vcf:
+            type: file
+            description: Subset 1000 Genomes VCF file
+            pattern: "*.{vcf,vcf.gz}"
   - target_1000g_tbi:
-      - meta:
-          type: map
-          description: Metadata map
-      - tbi:
-          type: file
-          description: Subset 1000G VCF index file
-          pattern: "*.{tbi,idx}"
+      description: |
+        Channel containing subset 1000G VCF index files
+        Structure: [ path(tbi) ]
+      structure:
+        - tbi:
+            type: file
+            description: Subset 1000 Genomes VCF index file
+            pattern: "*.{idx,tbi}"
   - target_dbsnp_vcf:
-      - meta:
-          type: map
-          description: Metadata map
-      - vcf:
-          type: file
-          description: Subset dbSNP VCF file
-          pattern: "*.vcf{.gz,}"
+      description: |
+        Channel containing subset dbSNP VCF files
+        Structure: [ path(vcf) ]
+      structure:
+        - vcf:
+            type: file
+            description: Subset dbSNP VCF file
+            pattern: "*.{vcf,vcf.gz}"
   - target_dbsnp_tbi:
-      - meta:
-          type: map
-          description: Metadata map
-      - tbi:
-          type: file
-          description: Subset dbSNP VCF index file
-          pattern: "*.{tbi,idx}"
+      description: |
+        Channel containing subset dbSNP VCF index files
+        Structure: [ path(tbi) ]
+      structure:
+        - tbi:
+            type: file
+            description: Subset dbSNP VCF index file
+            pattern: "*.{idx,tbi}"
   - clinvar_benign_vcf:
-      - meta:
-          type: map
-          description: Metadata map
-      - vcf:
-          type: file
-          description: Subset ClinVar benign VCF file
-          pattern: "*_benign.vcf{.gz,}"
+      description: |
+        Channel containing ClinVar benign variants VCF files
+        Structure: [ val(meta), path(benign_vcf) ]
+      structure:
+        - meta:
+            type: map
+            description: |
+              Groovy Map containing sample information
+              e.g. `[ id:'test', chromosome:'chr22', type:'dnaseq' ]`
+        - benign_vcf:
+            type: file
+            description: ClinVar benign variants VCF file
+            pattern: "*.{vcf,vcf.gz}"
   - clinvar_pathogenic_vcf:
-      - meta:
-          type: map
-          description: Metadata map
-      - vcf:
-          type: file
-          description: Subset ClinVar pathogenic VCF file
-          pattern: "*_pathogenic.vcf{.gz,}"
+      description: |
+        Channel containing ClinVar pathogenic variants VCF files
+        Structure: [ val(meta), path(pathogenic_vcf) ]
+      structure:
+        - meta:
+            type: map
+            description: |
+              Groovy Map containing sample information
+              e.g. `[ id:'test', chromosome:'chr22', type:'dnaseq' ]`
+        - pathogenic_vcf:
+            type: file
+            description: ClinVar pathogenic variants VCF file
+            pattern: "*.{vcf,vcf.gz}"
   - clinvar_selected_vcf:
-      - meta:
-          type: map
-          description: Metadata map
-      - vcf:
-          type: file
-          description: Subset ClinVar selected VCF file
-          pattern: "*_selected.vcf{.gz,}"
+      description: |
+        Channel containing ClinVar selected variants VCF files
+        Structure: [ val(meta), path(selected_vcf) ]
+      structure:
+        - meta:
+            type: map
+            description: |
+              Groovy Map containing sample information
+              e.g. `[ id:'test', chromosome:'chr22', type:'dnaseq' ]`
+        - selected_vcf:
+            type: file
+            description: ClinVar selected variants VCF file
+            pattern: "*.{vcf,vcf.gz}"
+  - target_dict:
+      description: |
+        Channel containing sequence dictionary files
+        Structure: [ val(meta), path(dict) ]
+      structure:
+        - meta:
+            type: map
+            description: |
+              Groovy Map containing sample information
+              e.g. `[ id:'test', chromosome:'chr22', type:'dnaseq' ]`
+        - dict:
+            type: file
+            description: Sequence dictionary file
+            pattern: "*.dict"
   - versions:
-      - versions:
-          type: file
-          description: File containing software versions
-          pattern: "versions.yml"
-
+      description: |
+        Channel containing software versions
+        Structure: [ versions.yml ]
+      structure:
+        - versions.yml:
+            type: file
+            description: File containing software versions
+            pattern: "versions.yml"
+  - dna_bundle:
+      description: |
+        Channel containing all reference files bundled together
+        Structure: [ val(meta), path [all references bundle] ]
+      structure:
+        - meta:
+            type: map
+            description: |
+              Groovy Map containing sample information
+              e.g. `[ id:'test', chromosome:'chr22', type:'dnaseq' ]`
+        - bundle:
+            type: array
+            description: Array containing all reference files (FASTA, FAI, BED files, VCF files, indices, dictionary, BWA index)
 authors:
   - "@msantorsola"
 maintainers:
