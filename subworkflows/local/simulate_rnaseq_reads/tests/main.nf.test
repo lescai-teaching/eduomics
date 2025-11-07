@@ -29,10 +29,6 @@ nextflow_workflow {
                 ])
                 input[3] = Channel.value([
                     [ id:'simtest', chromosome:'chr22', coverage: '30', reps:'3', groups:'2', simthreshold: '0.3' ], // meta map
-                    file('https://raw.githubusercontent.com/lescai-teaching/eduomics_testdata/refs/heads/main/rnaseq/polyester/fcmatrix_testdata.rds', checkIfExists: true)
-                ])
-                input[4] = Channel.value([
-                    [ id:'simtest', chromosome:'chr22', coverage: '30', reps:'3', groups:'2', simthreshold: '0.3' ], // meta map
                     file('https://raw.githubusercontent.com/lescai-teaching/eduomics_testdata/refs/heads/main/rnaseq/countmatrices/small_gene_lists.tsv', checkIfExists: true)
                 ])
                 """

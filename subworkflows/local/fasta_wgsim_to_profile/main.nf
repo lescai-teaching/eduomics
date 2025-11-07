@@ -28,9 +28,11 @@ workflow FASTA_WGSIM_TO_PROFILE {
 
     // simulate reads on the chosen fasta
     WGSIM(fasta)
+    ch_versions = ch_versions.mix(WGSIM.out.versions)
 
     // align simulated reads to their reference
     BWA_MEM( WGSIM.out.fastq, bwa_index, fasta, true )
+    ch_versions = ch_versions.mix(BWA_MEM.out.versions)
 
     SAMTOOLS_INDEX ( BWA_MEM.out.bam )
     ch_versions = ch_versions.mix(SAMTOOLS_INDEX.out.versions)
@@ -80,6 +82,7 @@ workflow FASTA_WGSIM_TO_PROFILE {
     ch_versions = ch_versions.mix(GATK4_APPLYBQSR.out.versions)
 
     INDEX_RECAL(GATK4_APPLYBQSR.out.bam)
+    ch_versions = ch_versions.mix(INDEX_RECAL.out.versions)
 
     empty_models_ch = Channel.value([[]])
 

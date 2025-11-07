@@ -43,9 +43,10 @@ process PYCONVERTOSIM {
     do
         counter=\$((counter+1))
         variant=\$(echo -e \"\$line\" | awk -F'\\t' '{print \$3 "-" \$4 "-" \$5 "-" \$6}')
-        cp ${prefix}_base_variation.txt ${prefix}_simvar_\${variant}_\${counter}_unsorted.tmp
-        echo "\$line" >> ${prefix}_simvar_\${variant}_\${counter}_unsorted.tmp
-        sort -k4 -n ${prefix}_simvar_\${variant}_\${counter}_unsorted.tmp > ${prefix}_simvar_\${variant}_\${counter}.txt
+        gene=\$(grep -v '^#' "${vcf_pathogenic}" | awk -v p="\$(echo \"\${variant}\" | cut -d'-' -f2)" -F'\\t' '\$2 == p {print \$8}' | sed -nE 's/.*(^|;)GENEINFO=([^;]+).*/\\2/p' | cut -d':' -f1 | head -n 1 || echo "")
+        cp ${prefix}_base_variation.txt ${prefix}_simvar_\${variant}_\${gene}_\${counter}_unsorted.tmp
+        echo "\$line" >> ${prefix}_simvar_\${variant}_\${gene}_\${counter}_unsorted.tmp
+        sort -k4 -n ${prefix}_simvar_\${variant}_\${gene}_\${counter}_unsorted.tmp > ${prefix}_simvar_\${variant}_\${gene}_\${counter}.txt
     done < ${prefix}_patho_variation.txt
 
     cat <<-END_VERSIONS > versions.yml

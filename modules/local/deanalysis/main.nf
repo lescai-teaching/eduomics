@@ -8,12 +8,11 @@ process DEANALYSIS {
         'community.wave.seqera.io/library/bioconductor-deseq2_bioconductor-tximport_r-pheatmap_r-tidyverse:3db5891c323469dc' }"
 
     input:
-    tuple val(meta), path(quant_dirs)
-    tuple val(meta2), path(transcriptData)
+    tuple val(meta) , path(quant_dirs)
+    tuple val(meta2), path(tx2gene)
 
     output:
     tuple val(meta), path("deseq2_results.tsv"), path("deseq2_de_genes.txt"), path("*.pdf")    , emit: deseq2_results
-    tuple val(meta), path("deseq2_tx2gene.tsv")                                                , emit: deseq2_tx2gene
     path "versions.yml"                                                                        , emit: versions
 
     when:
@@ -27,7 +26,7 @@ process DEANALYSIS {
     de_analysis.R \\
         '${meta.reps}' \\
         '${meta.groups}' \\
-        '${transcriptData}' \\
+        '${tx2gene}' \\
         '${quant_dirs.join(',')}'
 
     cat <<-END_VERSIONS > versions.yml
@@ -45,7 +44,6 @@ process DEANALYSIS {
 
     """
     touch deseq2_results.tsv
-    touch deseq2_tx2gene.tsv
     touch deseq2_de_genes.txt
     touch deseq2_ma_plot.pdf
     touch deseq2_dispersion_plot.pdf

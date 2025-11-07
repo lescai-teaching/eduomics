@@ -13,7 +13,7 @@ nextflow_process {
             process {
                 """
                 input[0] = [
-                    [ id:'test1', simulatedvar:'chr22-17189980-T-C' ],
+                    [ id: 'test1', simulatedvar: 'chr22-17189980-G-A', simulatedgene: 'ADA2' ],
                     file("https://raw.githubusercontent.com/lescai-teaching/eduomics_testdata/refs/heads/main/dna/genotypeGVCFs/simulation1_chr22-17189980.vcf.gz"),
                     [
                         file("https://raw.githubusercontent.com/lescai-teaching/eduomics_testdata/refs/heads/main/dna/test1_case_1.fastq.gz"),
@@ -43,7 +43,7 @@ nextflow_process {
             process {
                 """
                 input[0] = [
-                    [ id:'test2', simulatedvar:'LOLLOLOLLO' ],
+                    [ id: 'test2', simulatedvar: 'LOLLOLOLLO', simulatedgene: 'ADA2' ],
                     file("https://raw.githubusercontent.com/lescai-teaching/eduomics_testdata/refs/heads/main/dna/genotypeGVCFs/simulation1_chr22-17189980.vcf.gz"),
                     [
                         file("https://raw.githubusercontent.com/lescai-teaching/eduomics_testdata/refs/heads/main/dna/test1_case_1.fastq.gz"),
@@ -69,7 +69,7 @@ nextflow_process {
             process {
                 """
                 input[0] = [
-                    [ id:'test_stub', simulatedvar:'chr22-1234-A-T' ],
+                    [ id: 'test_stub', simulatedvar: 'chr22-1234-A-T', simulatedgene: 'ADA2' ],
                     file("dummy.vcf.gz"),
                     [
                         file("dummy_case_1.fastq.gz"),

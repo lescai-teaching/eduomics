@@ -157,7 +157,6 @@ rna_results/
 │       │   │   ├── sample_02_2.fasta.gz
 │       │   │   └── ...
 │       │   ├── deseq2_results.tsv          # DE analysis results
-|       |   |── deseq2_tx2gene.tsv          # Association between genes_id and transcripts_id
 │       │   ├── deseq2_de_genes.txt         # List of DE genes
 │       │   ├── deseq2_ma_plot.pdf          # MA plot
 │       │   ├── deseq2_dispersion_plot.pdf  # Dispersion plot
@@ -172,6 +171,8 @@ rna_results/
 │       └── references/                     # Reference bundle
 │           ├── transcripts.fa
 │           ├── annotation.gff3
+│           ├── genome.fa
+|           |── tx2gene.tsv
 │           └── salmon_index/
 ```
 

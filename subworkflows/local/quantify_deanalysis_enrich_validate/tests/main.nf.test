@@ -2,7 +2,9 @@ nextflow_workflow {
 
     name "Test Subworkflow QUANTIFY_DEANALYSIS_ENRICH_VALIDATE"
     script "../main.nf"
+    config "./test.config"
     workflow "QUANTIFY_DEANALYSIS_ENRICH_VALIDATE"
+    options "-dump-channels"
 
     tag "subworkflows"
     tag "subworkflows_"
@@ -86,7 +88,7 @@ nextflow_workflow {
                 input[5] = Channel.value("IU")
                 input[6] = Channel.value([
                     [ id: 'simtest', chromosome: 'chr22', reps: 3, groups: 2, genes: 'A,B,C' ],
-                    file("https://raw.githubusercontent.com/lescai-teaching/eduomics_testdata/refs/heads/main/rnaseq/countmatrices/transcriptData_chr22.rds", checkIfExists: true)
+                    file("https://raw.githubusercontent.com/lescai-teaching/eduomics_testdata/refs/heads/main/rnaseq/enrichment/tx2gene.tsv", checkIfExists: true)
                 ])
                 """
             }
@@ -183,7 +185,7 @@ nextflow_workflow {
                 input[5] = Channel.value("IU")
                 input[6] = Channel.value([
                     [ id: 'simtest', chromosome: 'chr22', reps: 3, groups: 2, genes: 'A,B,C' ],
-                    file("https://raw.githubusercontent.com/lescai-teaching/eduomics_testdata/refs/heads/main/rnaseq/countmatrices/transcriptData_chr22.rds", checkIfExists: true)
+                    file("https://raw.githubusercontent.com/lescai-teaching/eduomics_testdata/refs/heads/main/rnaseq/enrichment/tx2gene.tsv", checkIfExists: true)
                 ])
                 """
             }

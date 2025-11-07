@@ -47,7 +47,7 @@ input:
     - tx2gene:
         type: file
         description: TSV mapping transcripts to genes
-        pattern: "tx2gene.tsv"
+        pattern: "*_tx2gene_*.tsv"
 output:
   - enrichment_results:
       - meta:

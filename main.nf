@@ -111,12 +111,12 @@ workflow NFCORE_EDUOMICS {
     )
 
     emit:
-    versions                 = EDUOMICS.out.versions                   // channel: [ path(versions.yml)                          ]
-    fastq_validated_variants = EDUOMICS.out.fastq_validated_variants   // channel: [ val(meta), path(validated_results_folder/*) ]
-    rnaseq_validated_reads   = EDUOMICS.out.rnaseq_validated_reads     // channel: [ val(meta), path(rnaseq_validation)          ]
-    dnabundle                = EDUOMICS.out.dnabundle                  // channel: [ val(meta), [all references bundle] ]
-    rnabundle                = EDUOMICS.out.rnabundle                  // channel: [ val(meta), [path(txfasta), path(gff3), path(salmonindex)] ]
-    scenario_description     = EDUOMICS.out.scenario_description       // channel: [ val(meta), path(scenario.txt)               ]
+    versions                 = EDUOMICS.out.versions                   // channel: [ path(versions.yml)                                                                                                      ]
+    fastq_validated_variants = EDUOMICS.out.fastq_validated_variants   // channel: [ val(meta), path(validated_results_folder/*)                                                                             ]
+    rnaseq_validated_reads   = EDUOMICS.out.rnaseq_validated_reads     // channel: [ val(meta), path(rnaseq_validation)                                                                                      ]
+    dnabundle                = EDUOMICS.out.dnabundle                  // channel: [ val(meta), [all references bundle]                                                                                      ]
+    rnabundle                = EDUOMICS.out.rnabundle                  // channel: [ val(meta), [path(filtered_txfasta), path(filtered_gff3), path(tx2gene), path(filtered_genomefasta), path(salmonindex)]  ]
+    scenario_description     = EDUOMICS.out.scenario_description       // channel: [ val(meta), path(scenario.txt)                                                                                           ]
 
 }
 /*
@@ -175,20 +175,20 @@ workflow {
 output {
 
     softwareversions {
-        path "${params.outdir}/pipeline_info"
+        path "pipeline_info"
         mode 'copy'
     }
 
     dnasimulation {
         path { meta, files ->
-            "${params.outdir}/dna_simulations/${meta.id}/${meta.simulatedvar}"
+            "dna_simulations/${meta.id}/${meta.simulatedvar}"
         }
         mode 'copy'
     }
 
     dnabundle {
         path { meta, files ->
-            "${params.outdir}/dna_simulations/${meta.id}/references"
+            "dna_simulations/${meta.id}/references"
         }
         mode 'copy'
     }
@@ -196,14 +196,14 @@ output {
     rnasimulation {
         path { meta, files ->
             def simfolder = meta.genes.split(',').take(5).join('_')
-            "${params.outdir}/rna_simulations/${meta.id}/${simfolder}"
+            "rna_simulations/${meta.id}/${simfolder}"
         }
         mode 'copy'
     }
 
     rnabundle {
         path { meta, files ->
-            "${params.outdir}/rna_simulations/${meta.id}/references"
+            "rna_simulations/${meta.id}/references"
         }
         mode 'copy'
     }
@@ -212,11 +212,11 @@ output {
     scenario {
         path { meta, text ->
             if (meta.type == "dna"){
-                "${params.outdir}/dna_simulations/${meta.id}/${meta.simulatedvar}"
+                "dna_simulations/${meta.id}/${meta.simulatedvar}"
             }
             else {
                 def simfolder = meta.genes.split(',').take(5).join('_')
-                "${params.outdir}/rna_simulations/${meta.id}/${simfolder}"
+                "rna_simulations/${meta.id}/${simfolder}"
             }
         }
         mode 'copy'

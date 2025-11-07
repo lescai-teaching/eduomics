@@ -12,17 +12,29 @@ tools:
       description: Python programming language
       homepage: https://www.python.org/
       documentation: https://docs.python.org/
+      licence: ["PSF-2.0"]
+      version: "3.9.21"
+  - sort:
+      description: Sort lines in text files
+      homepage: https://www.gnu.org/software/coreutils/
+      documentation: https://www.gnu.org/software/coreutils/manual/
+      licence: ["GPL-3.0-or-later"]
+  - awk:
+      description: Pattern scanning and processing language
+      homepage: https://www.gnu.org/software/gawk/
+      documentation: https://www.gnu.org/software/gawk/manual/
+      licence: ["GPL-3.0-or-later"]
 input:
   - - meta:
         type: map
-        description: Metadata map
+        description: Metadata map for benign VCF
     - vcf_benign:
         type: file
         description: Input VCF file with benign variants
         pattern: "*.vcf"
-  - - meta:
+  - - meta2:
         type: map
-        description: Metadata map
+        description: Metadata map for pathogenic VCF
     - vcf_pathogenic:
         type: file
         description: Input VCF file with pathogenic variants
@@ -48,10 +60,10 @@ output:
       - meta:
           type: map
           description: Metadata map
-      - "*_simvar_*.txt":
+      - "*_simvar_*_*.txt":
           type: file
           description: Output files containing combined variations
-          pattern: "*_simvar_*.txt"
+          pattern: "*_simvar_*_*.txt"
   - versions:
       - "versions.yml":
           type: file

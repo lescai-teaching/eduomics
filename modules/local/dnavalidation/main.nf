@@ -21,9 +21,11 @@ process DNAVALIDATION {
     def args = task.ext.args ?: ''
     def prefix = task.ext.prefix ?: "${meta.id}"
     def variant = meta.simulatedvar ?: ''
+    def gene = meta.simulatedgene ?: ''
     """
     variantpos=\$(cut -d"-" -f2 <<<"${variant}")
     result_dir="dna_${variant}_validation"
+    gene="${gene}"
 
     # Nextflow wrappers enable 'pipefail', causing this pipeline to exit with
     # a non-zero status when `grep -q` stops reading early (SIGPIPE). Temporarily
@@ -31,9 +33,10 @@ process DNAVALIDATION {
     # found.
     set +o pipefail
     # check whether the variant position is present in the VCF
-    if gzip -cd ${vcf} | grep -v '^#' | grep -q "\$variantpos"; then
+    if gzip -cd ${vcf} | grep -v '^#' | cut -f1,2 | grep -q "\$variantpos\$"; then
         mkdir -p "\$result_dir"
         echo "${variant}" > "\$result_dir/solution_${variant}.txt"
+        echo "${gene}" >> "\$result_dir/solution_${variant}.txt"
         cp ${vcf} "\$result_dir/"
         for read in ${reads}; do
             cp "\$read" "\$result_dir/"
@@ -48,7 +51,8 @@ process DNAVALIDATION {
     """
 
     stub:
-    def variant = meta.simulatedvar ?: 'chr22-1234-A-T'
+    def variant = meta.simulatedvar ?: ''
+    def gene    = meta.simulatedgene ?: ''
     """
     mkdir -p dna_${variant}_validation
     touch dna_${variant}_validation/solution_${variant}.txt

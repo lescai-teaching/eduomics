@@ -13,12 +13,12 @@ process SUBSETCAPTURE {
     path capture_bed
 
     output:
-    tuple val(meta), path("*.capture.bed.gz"), emit: capture_bed_gz
-    tuple val(meta), path("*.capture.bed.gz.tbi"), emit: capture_bed_index
-    tuple val(meta), path("*_target.bed"), emit: target_bed
-    tuple val(meta), path("*_target.pad50.bed"), emit: target_bed_pad50
-    tuple val(meta), path("*_target.pad500.bed"), emit: target_bed_pad500
-    path "versions.yml", emit: versions
+    tuple val(meta), path("*.capture.bed.gz"),      emit: capture_bed_gz
+    tuple val(meta), path("*.capture.bed.gz.tbi"),  emit: capture_bed_index
+    tuple val(meta), path("*_target.bed"),          emit: target_bed
+    tuple val(meta), path("*_target.pad50.bed"),    emit: target_bed_pad50
+    tuple val(meta), path("*_target.pad500.bed"),   emit: target_bed_pad500
+    path "versions.yml",                            emit: versions
 
     when:
     task.ext.when == null || task.ext.when

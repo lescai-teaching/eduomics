@@ -14,16 +14,16 @@ include { DNAVALIDATION                  } from '../../../modules/local/dnavalid
 workflow FASTQ_VARIANT_TO_VALIDATION {
 
     take:
-    reads       // channel: [mandatory] [ val(meta), [ reads ] ] <- NB: this channel contains 4 reads 2 * case + 2 * control / modified in sub-workflow
-    fasta       // channel: [mandatory] [ val(meta), [ fasta ] ]
-    fai         // channel: [mandatory] [ val(meta), [fai] ]
-    dict        // channel: [mandatory] [ val(meta), [dict] ]
+    reads       // channel: [mandatory] [ val(meta), [ reads ]   ] <- NB: this channel contains 4 reads 2 * case + 2 * control / modified in sub-workflow
+    fasta       // channel: [mandatory] [ val(meta), [ fasta ]   ]
+    fai         // channel: [mandatory] [ val(meta), [fai]       ]
+    dict        // channel: [mandatory] [ val(meta), [dict]      ]
     bwa_index   // channel: [mandatory] [ val(meta), [bwa_index] ]
-    dbsnp       // channel: [mandatory] [ [dbsnp] ]
-    dbsnp_tbi   // channel: [mandatory] [ [dbsnp_tbi] ]
-    mills       // channel: [mandatory] [ [mills] ]
-    mills_tbi   // channel: [mandatory] [ [mills_tbi] ]
-    capture     // channel: [mandatory] [ [capture] ]
+    dbsnp       // channel: [mandatory] [ [dbsnp]                ]
+    dbsnp_tbi   // channel: [mandatory] [ [dbsnp_tbi]            ]
+    mills       // channel: [mandatory] [ [mills]                ]
+    mills_tbi   // channel: [mandatory] [ [mills_tbi]            ]
+    capture     // channel: [mandatory] [ [capture]              ]
 
     main:
 
@@ -47,6 +47,7 @@ workflow FASTQ_VARIANT_TO_VALIDATION {
 
     // align simulated reads to their reference
     BWA_MEM( simulated_reads_ch, bwa_index, fasta, true )
+    ch_versions = ch_versions.mix(BWA_MEM.out.versions)
 
     SAMTOOLS_INDEX ( BWA_MEM.out.bam )
     ch_versions = ch_versions.mix(SAMTOOLS_INDEX.out.versions)
@@ -103,6 +104,7 @@ workflow FASTQ_VARIANT_TO_VALIDATION {
     ch_versions = ch_versions.mix(GATK4_APPLYBQSR.out.versions)
 
     INDEX_RECAL(GATK4_APPLYBQSR.out.bam)
+    ch_versions = ch_versions.mix(INDEX_RECAL.out.versions)
 
     empty_models_ch = Channel.value([[]])
 
@@ -137,6 +139,7 @@ workflow FASTQ_VARIANT_TO_VALIDATION {
         return [key, meta, vcf, tbi]
     }
     .groupTuple(by: 0)
+    .filter { key, meta_list, vcf_list, tbi_list -> vcf_list.size() >= 2 }
     .combine(capture)
     .map { key, meta_list, vcf_list, tbi_list, interval ->
         return [meta_list[0], vcf_list, tbi_list, interval, [], []]
@@ -184,16 +187,20 @@ workflow FASTQ_VARIANT_TO_VALIDATION {
     DNAVALIDATION( validation_ch )
     ch_versions = ch_versions.mix(DNAVALIDATION.out.versions)
 
+    DNAVALIDATION.out.dna_validated_results.dump(tag: 'dnavalidation output')
+
     scenarios_ch = DNAVALIDATION.out.dna_validated_results
         .map { meta, results ->
-            return [meta, meta.simulatedvar]
+            return [meta, meta.simulatedvar, meta.simulatedgene]
         }
+
+    scenarios_ch.dump(tag: 'scenario CH')
 
     emit:
     // the following channels could be empty as a result of optional emission
     // must be handled in main before they are passed to the aiscenarios module
     simulation = DNAVALIDATION.out.dna_validated_results  // channel: [ val(meta), path(validated_results_folder/*) ]
-    scenario   = scenarios_ch                             // channel: [ val(meta), val(variant) ]
-    versions   = ch_versions                              // channel: [ versions.yml ]
+    scenario   = scenarios_ch                             // channel: [ val(meta), val(variant), val(gene)          ]
+    versions   = ch_versions                              // channel: [ versions.yml                                ]
 
 }

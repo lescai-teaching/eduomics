@@ -96,7 +96,7 @@ nextflow_process {
                 .groupTuple(by: 0)
                 input[1] = [
                     [ id: 'simtest', chromosome: 'chr22', coverage: 30, reps: 3, groups: 2 ], // meta map
-                    file("https://raw.githubusercontent.com/lescai-teaching/eduomics_testdata/refs/heads/main/rnaseq/countmatrices/transcriptData_chr22.rds", checkIfExists: true)
+                    file("https://raw.githubusercontent.com/lescai-teaching/eduomics_testdata/refs/heads/main/rnaseq/enrichment/tx2gene.tsv", checkIfExists: true)
                 ]
                 """
             }
@@ -112,7 +112,6 @@ nextflow_process {
                     def pdfs = process.out.deseq2_results[0][3]
                     assert pdfs.every { it.toString().endsWith(".pdf") }
                 },
-                { assert process.out.deseq2_tx2gene },
                 { assert process.out.versions }
             )
         }
@@ -132,7 +131,7 @@ nextflow_process {
                 .groupTuple(by: 0)
                 input[1] = [
                     [ id: 'simtest', chromosome: 'chr22', coverage: 30, reps: 3, groups: 2 ], // meta map
-                    file("https://raw.githubusercontent.com/lescai-teaching/eduomics_testdata/refs/heads/main/rnaseq/countmatrices/transcriptData_chr22.rds", checkIfExists: true)
+                    file("https://raw.githubusercontent.com/lescai-teaching/eduomics_testdata/refs/heads/main/rnaseq/enrichment/tx2gene.tsv", checkIfExists: true)
                 ]
                 """
             }
@@ -148,7 +147,6 @@ nextflow_process {
                     def pdfs = process.out.deseq2_results[0][3]
                     assert pdfs.every { it.toString().endsWith(".pdf") }
                 },
-                { assert process.out.deseq2_tx2gene },
                 { assert process.out.versions }
             )
         }

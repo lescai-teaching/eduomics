@@ -80,20 +80,20 @@ input:
         - libtype:
             type: string
             description: library type based on strandedness
-  - ch_transcriptData:
+  - ch_tx2gene:
       description: |
-        Channel containing the transcript data from the simulated chromosome
-        Structure: [ val(meta), path(transcriptData) ]
+        Channel containing the transcript to genes from the simulated chromosome
+        Structure: [ val(meta), path(tx2gene) ]
       structure:
         - meta:
             type: map
             description: |
               Groovy Map containing sample information
               e.g. `[ id:'test', chromosome: 'chr22', coverage: 30, reps: 3, groups: 2, simthreshold: 0.3 ]`
-        - filtered_transcriptData:
+        - tx2gene:
             type: file
-            description: RDS file containing transcript data from the simulated chromosome
-            pattern: "transcriptData.rds"
+            description: TSV mapping transcripts to genes
+            pattern: "*_tx2gene_*.tsv"
 output:
   - salmon_results:
       description: |
@@ -151,20 +151,6 @@ output:
             type: file
             description: deseq2 results in TSV format, deseq2 DE genes in TXT format and related plots in pdf format
             pattern: "deseq2_results.tsv, deseq2_de_genes.txt, *.pdf"
-  - deseq2_tx2gene:
-      description: |
-        Channel containing the mapping between transcripts and genes
-        Structure: [ val(meta), path(deseq2_tx2gene) ]
-      structure:
-        - meta:
-            type: map
-            description: |
-              Groovy Map containing sample information
-              e.g. `[ id:'test', chromosome: 'chr22', coverage: 30, reps: 3, groups: 2, simthreshold: 0.3, genes: 'A,B,C' ]`
-        - deseq2_tx2gene:
-            type: file
-            description: TSV mapping transcripts to genes
-            pattern: "deseq2_tx2gene.tsv"
   - enrichment_results:
       description: |
         Channel containing the enrichemnt results and the related plots

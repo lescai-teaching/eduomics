@@ -1,29 +1,12 @@
 {
-    "@context": [
-        "https://w3id.org/ro/crate/1.1/context",
-        {
-            "GithubService": "https://w3id.org/ro/terms/test#GithubService",
-            "JenkinsService": "https://w3id.org/ro/terms/test#JenkinsService",
-            "PlanemoEngine": "https://w3id.org/ro/terms/test#PlanemoEngine",
-            "TestDefinition": "https://w3id.org/ro/terms/test#TestDefinition",
-            "TestInstance": "https://w3id.org/ro/terms/test#TestInstance",
-            "TestService": "https://w3id.org/ro/terms/test#TestService",
-            "TestSuite": "https://w3id.org/ro/terms/test#TestSuite",
-            "TravisService": "https://w3id.org/ro/terms/test#TravisService",
-            "definition": "https://w3id.org/ro/terms/test#definition",
-            "engineVersion": "https://w3id.org/ro/terms/test#engineVersion",
-            "instance": "https://w3id.org/ro/terms/test#instance",
-            "resource": "https://w3id.org/ro/terms/test#resource",
-            "runsOn": "https://w3id.org/ro/terms/test#runsOn"
-        }
-    ],
+    "@context": "https://w3id.org/ro/crate/1.1/context",
     "@graph": [
         {
             "@id": "./",
             "@type": "Dataset",
             "creativeWorkStatus": "Stable",
-            "datePublished": "2025-07-07T08:32:55+00:00",
-            "description": "<h1>\n  <picture>\n    <source media=\"(prefers-color-scheme: dark)\" srcset=\"docs/images/eduomics_logo_dark.png\">\n    <img alt=\"eduomics logo\" src=\"docs/images/eduomics_logo_light.png\">\n  </picture>\n</h1>\n\n[![GitHub Actions CI Status](https://github.com/lescai-teaching/eduomics/actions/workflows/ci.yml/badge.svg)](https://github.com/lescai-teaching/eduomics/actions/workflows/ci.yml)\n[![GitHub Actions Linting Status](https://github.com/lescai-teaching/eduomics/actions/workflows/linting.yml/badge.svg)](https://github.com/lescai-teaching/eduomics/actions/workflows/linting.yml)\n[![Cite with Zenodo](http://img.shields.io/badge/DOI-10.5281/zenodo.XXXXXXX-1073c8?labelColor=000000)](https://doi.org/10.5281/zenodo.XXXXXXX)\n[![nf-test](https://img.shields.io/badge/unit_tests-nf--test-337ab7.svg)](https://www.nf-test.com)\n\n[![Nextflow](https://img.shields.io/badge/nextflow%20DSL2-%E2%89%A525.04.3-23aa62.svg)](https://www.nextflow.io/)\n[![run with conda](http://img.shields.io/badge/run%20with-conda-3EB049?labelColor=000000&logo=anaconda)](https://docs.conda.io/en/latest/)\n[![run with docker](https://img.shields.io/badge/run%20with-docker-0db7ed?labelColor=000000&logo=docker)](https://www.docker.com/)\n[![run with singularity](https://img.shields.io/badge/run%20with-singularity-1d355c.svg?labelColor=000000)](https://sylabs.io/docs/)\n[![Launch on Seqera Platform](https://img.shields.io/badge/Launch%20%F0%9F%9A%80-Seqera%20Platform-%234256e7)](https://cloud.seqera.io/launch?pipeline=https://github.com/nf-core/eduomics)\n\n## Introduction\n\n**Eduomics** is a bioinformatics pipeline designed for educational purposes that simulates realistic genomic and transcriptomic datasets. The pipeline creates controlled, validated datasets that can be used to teach bioinformatics analysis workflows, variant calling, and differential gene expression analysis.\n\nThe pipeline is built using [Nextflow](https://www.nextflow.io), a workflow tool to run tasks across multiple compute infrastructures in a very portable manner. It uses Docker/Singularity containers making installation trivial and results highly reproducible. The [Nextflow DSL2](https://www.nextflow.io/docs/latest/index.html) implementation of this pipeline uses one container per process which makes it much easier to maintain and update software dependencies. Where possible, these processes have been submitted to and installed from [nf-core/modules](https://github.com/nf-core/modules) in order to make them available to all nf-core pipelines, and to everyone within the Nextflow community!\n\n## Functionality Overview\n\nA graphical view of the pipeline can be seen below.\n\n<h1>\n  <picture>\n    <source media=\"(prefers-color-scheme: dark)\" srcset=\"docs/images/eduomics_metromap_dark.svg\">\n    <img alt=\"eduomics pipeline overview\" src=\"docs/images/eduomics_metromap_light.svg\">\n  </picture>\n</h1>\n\n## Pipeline Logic and Assumptions\n\n### Core Educational Philosophy\n\nThe eduomics pipeline is built on the principle that **learning bioinformatics requires realistic, well-characterized datasets** where the \"ground truth\" is known. Traditional educational approaches often use oversimplified toy datasets or real datasets where the biological truth is unknown, making it difficult for students to validate their analytical approaches.\n\n### Pipeline Architecture\n\nThe pipeline operates on two main simulation modes:\n\n#### 1. DNA Variant Simulation Mode\n\n- **Purpose**: Teaches variant calling and clinical interpretation workflows\n- **Logic**: Injects known pathogenic variants into specific genomic regions and generates realistic sequencing reads\n- **Educational Value**: Students can practice variant calling knowing exactly which variants should be detected\n\n#### 2. RNA Differential Expression Simulation Mode\n\n- **Purpose**: Teaches RNA-seq analysis and differential expression workflows\n- **Logic**: Creates realistic count matrices with known differential expression patterns and generates corresponding RNA-seq reads\n- **Educational Value**: Students can practice RNA-seq analysis with known differentially expressed genes\n\n### Key Assumptions\n\n1. **Chromosome-specific Analysis**: The pipeline focuses on single chromosomes (typically chr22) to reduce computational requirements while maintaining biological realism\n2. **Capture-based Sequencing**: For DNA simulations, the pipeline assumes exome or targeted sequencing using capture regions\n3. **Paired-end Sequencing**: All simulations generate paired-end reads reflecting modern sequencing practices\n4. **Human Reference**: The pipeline is designed for human genomic data using standard reference genomes\n5. **Educational Context**: All simulations include AI-generated educational scenarios to provide biological context\n\n## Schematic Pipeline Workflow Overview\n\n```mermaid\ngraph TD\n    A[Input Samplesheet] --> B{Data Type?}\n    B -->|DNA| C[DNA Simulation Branch]\n    B -->|RNA| D[RNA Simulation Branch]\n\n    C --> C1[Subset References to Target Regions]\n    C1 --> C2[Extract Pathogenic Variants]\n    C2 --> C3[Generate Sequencing Profile]\n    C3 --> C4[Simulate DNA Reads with Variants]\n    C4 --> C5[Validate Variant Detection]\n    C5 --> C6[Generate AI Educational Scenario]\n\n    D --> D1[Subset Transcriptome References]\n    D1 --> D2[Create Count Matrices]\n    D2 --> D3[Simulate RNA-seq Reads]\n    D3 --> D4[Quantify Expression]\n    D4 --> D5[Perform Differential Expression Analysis]\n    D5 --> D6[Validate Results & Generate Scenario]\n\n    C6 --> E[Organized Output with References]\n    D6 --> E\n```\n\n## Main Features\n\n- **\ud83e\uddec Realistic DNA Simulations**: Generate sequencing data with known pathogenic variants for variant calling practice\n- **\ud83e\uddee RNA-seq Simulations**: Create differential expression datasets with known ground truth\n- **\ud83e\udd16 AI-Powered Scenarios**: Automatically generate educational contexts and case studies\n- **\ud83d\udcda Educational Focus**: Designed specifically for teaching bioinformatics workflows\n- **\ud83d\udd2c Validation Built-in**: Ensures simulated data meets quality standards for educational use\n- **\ud83d\udce6 Complete Packages**: Provides both simulated data and reference materials needed for analysis\n- **\u26a1 Scalable**: Configurable coverage, sample sizes, and complexity levels\n\n## Documentation\n\nThe eduomics pipeline comes with documentation about the pipeline [usage](docs/usage.md) and [output](docs/output.md).\n\n## Usage\n\n> [!NOTE]\n> If you are new to Nextflow and nf-core, please refer to [this page](https://nf-co.re/docs/usage/installation) on how to set-up Nextflow. Make sure to [test your setup](https://nf-co.re/docs/usage/introduction#how-to-run-a-pipeline) with `-profile test` before running the workflow on actual data.\n\nFirst, prepare a samplesheet with your simulation parameters that looks as follows:\n\n`samplesheet.csv`:\n\n```csv\nid,type,chromosome,coverage,capture,reps,groups,simthreshold\ndna_simulation_1,dna,chr22,100,https://example.com/capture.bed,1,2,0.3\nrna_simulation_1,rna,chr22,30,,3,2,0.3\n```\n\nEach row represents a simulation to be performed. See the [usage documentation](docs/usage.md) for detailed parameter explanations.\n\nNow, you can run the pipeline using:\n\n```bash\nnextflow run eduomics \\\n   -profile <docker/singularity/.../institute> \\\n   --input samplesheet.csv \\\n   --genome GATK.GRCh38 \\\n   --outdir <OUTDIR>\n```\n\n> [!WARNING]\n> Please provide pipeline parameters via the CLI or Nextflow `-params-file` option. Custom config files including those provided by the `-c` Nextflow option can be used to provide any configuration _**except for parameters**_; see [docs](https://nf-co.re/docs/usage/getting_started/configuration#custom-configuration-files).\n\nFor more details and further functionality, please refer to the [usage documentation](https://nf-co.re/eduomics/usage).\n\n## Pipeline outputs\n\nThe pipeline generates organized educational datasets with the following structure:\n\n- **DNA Simulations**: Simulated FASTQ files with known variants, reference materials, and educational scenarios\n- **RNA Simulations**: Simulated RNA-seq data with known differential expression, analysis results, and educational contexts\n- **Reference Bundles**: All necessary reference files for downstream analysis\n- **Educational Materials**: AI-generated scenarios and validation results\n\nFor detailed information about the output files and reports, please refer to the [output documentation](docs/output.md).\n\n## Educational Use Cases\n\n### For Instructors\n\n- Create custom datasets for specific learning objectives\n- Generate multiple scenarios with different complexity levels\n- Provide students with realistic data where ground truth is known\n- Validate student analyses against known results\n\n### For Students\n\n- Practice variant calling with datasets containing known pathogenic variants\n- Learn RNA-seq analysis with controlled differential expression patterns\n- Understand the relationship between sequencing parameters and data quality\n- Develop skills in interpreting bioinformatics results\n\n### For Workshops and Training\n\n- Generate datasets tailored to workshop duration and participant skill level\n- Create reproducible training materials\n- Provide consistent datasets across multiple training sessions\n\n## Credits\n\nEduomics was originally written by Mariangela Santorsola, Lorenzo Sola, Davide Bagordo, Simone Carpanzano, Francesco Lescai.\n\n## Contributions and Support\n\nIf you would like to contribute to this pipeline, please see the [contributing guidelines](.github/CONTRIBUTING.md).\n\nFor further information or help, don't hesitate to get in touch with the development team.\n\n## Citations\n\n<!-- nf-core: Add citation for pipeline after first release. Uncomment lines below and update Zenodo doi and badge at the top of this file. -->\n<!-- If you use nf-core/eduomics for your analysis, please cite it using the following doi: [10.5281/zenodo.XXXXXX](https://doi.org/10.5281/zenodo.XXXXXX) -->\n\nAn extensive list of references for the tools used by the pipeline can be found in the [`CITATIONS.md`](CITATIONS.md) file.\n",
+            "datePublished": "2025-11-07T13:57:44+00:00",
+            "description": "<h1>\n  <picture>\n    <source media=\"(prefers-color-scheme: dark)\" srcset=\"docs/images/eduomics_logo_dark.png\">\n    <img alt=\"eduomics logo\" src=\"docs/images/eduomics_logo_light.png\">\n  </picture>\n</h1>\n\n[![GitHub Actions CI Status](https://github.com/lescai-teaching/eduomics/actions/workflows/ci.yml/badge.svg)](https://github.com/lescai-teaching/eduomics/actions/workflows/ci.yml)\n[![GitHub Actions Linting Status](https://github.com/lescai-teaching/eduomics/actions/workflows/linting.yml/badge.svg)](https://github.com/lescai-teaching/eduomics/actions/workflows/linting.yml)\n[![Cite with Zenodo](http://img.shields.io/badge/DOI-10.5281/zenodo.15835070-1073c8?labelColor=000000)](https://doi.org/10.5281/zenodo.15835070)\n[![nf-test](https://img.shields.io/badge/unit_tests-nf--test-337ab7.svg)](https://www.nf-test.com)\n\n[![Nextflow](https://img.shields.io/badge/nextflow%20DSL2-%E2%89%A525.04.3-23aa62.svg)](https://www.nextflow.io/)\n[![run with conda](http://img.shields.io/badge/run%20with-conda-3EB049?labelColor=000000&logo=anaconda)](https://docs.conda.io/en/latest/)\n[![run with docker](https://img.shields.io/badge/run%20with-docker-0db7ed?labelColor=000000&logo=docker)](https://www.docker.com/)\n[![run with singularity](https://img.shields.io/badge/run%20with-singularity-1d355c.svg?labelColor=000000)](https://sylabs.io/docs/)\n[![Launch on Seqera Platform](https://img.shields.io/badge/Launch%20%F0%9F%9A%80-Seqera%20Platform-%234256e7)](https://cloud.seqera.io/launch?pipeline=https://github.com/nf-core/eduomics)\n\n## Introduction\n\n**Eduomics** is a bioinformatics pipeline designed for educational purposes that simulates realistic genomic and transcriptomic datasets. The pipeline creates controlled, validated datasets that can be used to teach bioinformatics analysis workflows, variant calling, and differential gene expression analysis.\n\nThe pipeline is built using [Nextflow](https://www.nextflow.io), a workflow tool to run tasks across multiple compute infrastructures in a very portable manner. It uses Docker/Singularity containers making installation trivial and results highly reproducible. The [Nextflow DSL2](https://www.nextflow.io/docs/latest/index.html) implementation of this pipeline uses one container per process which makes it much easier to maintain and update software dependencies. Where possible, these processes have been submitted to and installed from [nf-core/modules](https://github.com/nf-core/modules) in order to make them available to all nf-core pipelines, and to everyone within the Nextflow community!\n\n## Functionality Overview\n\nA graphical view of the pipeline can be seen below.\n\n<h1>\n  <picture>\n    <source media=\"(prefers-color-scheme: dark)\" srcset=\"docs/images/eduomics_metromap_dark.svg\">\n    <img alt=\"eduomics pipeline overview\" src=\"docs/images/eduomics_metromap_light.svg\">\n  </picture>\n</h1>\n\n## Pipeline Logic and Assumptions\n\n### Core Educational Philosophy\n\nThe eduomics pipeline is built on the principle that **learning bioinformatics requires realistic, well-characterized datasets** where the \"ground truth\" is known. Traditional educational approaches often use oversimplified toy datasets or real datasets where the biological truth is unknown, making it difficult for students to validate their analytical approaches.\n\n### Pipeline Architecture\n\nThe pipeline operates on two main simulation modes:\n\n#### 1. DNA Variant Simulation Mode\n\n- **Purpose**: Teaches variant calling and clinical interpretation workflows\n- **Logic**: Injects known pathogenic variants into specific genomic regions and generates realistic sequencing reads\n- **Educational Value**: Students can practice variant calling knowing exactly which variants should be detected\n\n#### 2. RNA Differential Expression Simulation Mode\n\n- **Purpose**: Teaches RNA-seq analysis and differential expression workflows\n- **Logic**: Creates realistic count matrices with known differential expression patterns and generates corresponding RNA-seq reads\n- **Educational Value**: Students can practice RNA-seq analysis with known differentially expressed genes\n\n### Key Assumptions\n\n1. **Chromosome-specific Analysis**: The pipeline focuses on single chromosomes (typically chr22) to reduce computational requirements while maintaining biological realism\n2. **Capture-based Sequencing**: For DNA simulations, the pipeline assumes exome or targeted sequencing using capture regions\n3. **Paired-end Sequencing**: All simulations generate paired-end reads reflecting modern sequencing practices\n4. **Human Reference**: The pipeline is designed for human genomic data using standard reference genomes\n5. **Educational Context**: All simulations include AI-generated educational scenarios to provide biological context\n\n## Schematic Pipeline Workflow Overview\n\n```mermaid\ngraph TD\n    A[Input Samplesheet] --> B{Data Type?}\n    B -->|DNA| C[DNA Simulation Branch]\n    B -->|RNA| D[RNA Simulation Branch]\n\n    C --> C1[Subset References to Target Regions]\n    C1 --> C2[Extract Pathogenic Variants]\n    C2 --> C3[Generate Sequencing Profile]\n    C3 --> C4[Simulate DNA Reads with Variants]\n    C4 --> C5[Validate Variant Detection]\n    C5 --> C6[Generate AI Educational Scenario]\n\n    D --> D1[Subset Transcriptome References]\n    D1 --> D2[Create Count Matrices]\n    D2 --> D3[Simulate RNA-seq Reads]\n    D3 --> D4[Quantify Expression]\n    D4 --> D5[Perform Differential Expression Analysis]\n    D5 --> D6[Validate Results & Generate Scenario]\n\n    C6 --> E[Organized Output with References]\n    D6 --> E\n```\n\n## Main Features\n\n- **\ud83e\uddec Realistic DNA Simulations**: Generate sequencing data with known pathogenic variants for variant calling practice\n- **\ud83e\uddee RNA-seq Simulations**: Create differential expression datasets with known ground truth\n- **\ud83e\udd16 AI-Powered Scenarios**: Automatically generate educational contexts and case studies\n- **\ud83d\udcda Educational Focus**: Designed specifically for teaching bioinformatics workflows\n- **\ud83d\udd2c Validation Built-in**: Ensures simulated data meets quality standards for educational use\n- **\ud83d\udce6 Complete Packages**: Provides both simulated data and reference materials needed for analysis\n- **\u26a1 Scalable**: Configurable coverage, sample sizes, and complexity levels\n\n## Documentation\n\nThe eduomics pipeline comes with documentation about the pipeline [usage](docs/usage.md) and [output](docs/output.md).\n\n## Usage\n\n> [!NOTE]\n> If you are new to Nextflow and nf-core, please refer to [this page](https://nf-co.re/docs/usage/installation) on how to set-up Nextflow. Make sure to [test your setup](https://nf-co.re/docs/usage/introduction#how-to-run-a-pipeline) with `-profile test` before running the workflow on actual data.\n\nFirst, prepare a samplesheet with your simulation parameters that looks as follows:\n\n`samplesheet.csv`:\n\n```csv\nid,type,chromosome,coverage,capture,reps,groups,simthreshold\ndna_simulation_1,dna,chr22,100,https://example.com/capture.bed,1,2,0.3\nrna_simulation_1,rna,chr22,30,,3,2,0.3\n```\n\nEach row represents a simulation to be performed. See the [usage documentation](docs/usage.md) for detailed parameter explanations.\n\nNow, you can run the pipeline using:\n\n```bash\nnextflow run eduomics \\\n   -profile <docker/singularity/.../institute> \\\n   --input samplesheet.csv \\\n   --genome GATK.GRCh38 \\\n   --outdir <OUTDIR>\n```\n\n> [!WARNING]\n> Please provide pipeline parameters via the CLI or Nextflow `-params-file` option. Custom config files including those provided by the `-c` Nextflow option can be used to provide any configuration _**except for parameters**_; see [docs](https://nf-co.re/docs/usage/getting_started/configuration#custom-configuration-files).\n\nFor more details and further functionality, please refer to the [usage documentation](https://nf-co.re/eduomics/usage).\n\n## Pipeline outputs\n\nThe pipeline generates organized educational datasets with the following structure:\n\n- **DNA Simulations**: Simulated FASTQ files with known variants, reference materials, and educational scenarios\n- **RNA Simulations**: Simulated RNA-seq data with known differential expression, analysis results, and educational contexts\n- **Reference Bundles**: All necessary reference files for downstream analysis\n- **Educational Materials**: AI-generated scenarios and validation results\n\nFor detailed information about the output files and reports, please refer to the [output documentation](docs/output.md).\n\n## Educational Use Cases\n\n### For Instructors\n\n- Create custom datasets for specific learning objectives\n- Generate multiple scenarios with different complexity levels\n- Provide students with realistic data where ground truth is known\n- Validate student analyses against known results\n\n### For Students\n\n- Practice variant calling with datasets containing known pathogenic variants\n- Learn RNA-seq analysis with controlled differential expression patterns\n- Understand the relationship between sequencing parameters and data quality\n- Develop skills in interpreting bioinformatics results\n\n### For Workshops and Training\n\n- Generate datasets tailored to workshop duration and participant skill level\n- Create reproducible training materials\n- Provide consistent datasets across multiple training sessions\n\n## Credits\n\nEduomics was originally written by Mariangela Santorsola, Lorenzo Sola, Davide Bagordo, Simone Carpanzano, Francesco Lescai.\n\n## Contributions and Support\n\nIf you would like to contribute to this pipeline, please see the [contributing guidelines](.github/CONTRIBUTING.md).\n\nFor further information or help, don't hesitate to get in touch with the development team.\n\n## Citations\n\n<!-- nf-core: Add citation for pipeline after first release. Uncomment lines below and update Zenodo doi and badge at the top of this file. -->\nIf you use lescai-teaching/eduomics for your analysis, please cite it using the following doi: [10.5281/zenodo.15835070](https://doi.org/10.5281/zenodo.15835070)\n\nAn extensive list of references for the tools used by the pipeline can be found in the [`CITATIONS.md`](CITATIONS.md) file.\n",
             "hasPart": [
                 {
                     "@id": "main.nf"
@@ -103,11 +86,6 @@
             "mainEntity": {
                 "@id": "main.nf"
             },
-            "mentions": [
-                {
-                    "@id": "#d7ab7458-b2d5-4107-9f16-06946e3626a6"
-                }
-            ],
             "name": "nf-core/eduomics"
         },
         {
@@ -134,20 +112,20 @@
             ],
             "creator": [
                 {
-                    "@id": "https://orcid.org/0000-0002-6399-9101"
+                    "@id": "https://orcid.org/0000-0003-3149-2530"
                 },
                 {
                     "@id": "#Davide.bagordo@unipv.it"
                 },
                 {
-                    "@id": "#53608000+lescai@users.noreply.github.com"
+                    "@id": "#francesco.lescai@unipv.it"
                 },
                 {
-                    "@id": "https://orcid.org/0000-0003-3149-2530"
+                    "@id": "https://orcid.org/0000-0002-6399-9101"
                 }
             ],
             "dateCreated": "",
-            "dateModified": "2025-07-07T10:32:55Z",
+            "dateModified": "2025-11-07T13:57:44Z",
             "dct:conformsTo": "https://bioschemas.org/profiles/ComputationalWorkflow/1.0-RELEASE/",
             "keywords": [
                 "nf-core",
@@ -158,10 +136,10 @@
             ],
             "maintainer": [
                 {
-                    "@id": "https://orcid.org/0000-0002-6399-9101"
+                    "@id": "https://orcid.org/0000-0003-3149-2530"
                 },
                 {
-                    "@id": "https://orcid.org/0000-0003-3149-2530"
+                    "@id": "https://orcid.org/0000-0002-6399-9101"
                 }
             ],
             "name": [
@@ -175,10 +153,10 @@
             },
             "url": [
                 "https://github.com/nf-core/eduomics",
-                "https://nf-co.re/eduomics/1.0.0/"
+                "https://nf-co.re/eduomics/1.1.0/"
             ],
             "version": [
-                "1.0.0"
+                "1.1.0"
             ]
         },
         {
@@ -192,37 +170,6 @@
                 "@id": "https://www.nextflow.io/"
             },
             "version": "!>=25.04.3"
-        },
-        {
-            "@id": "#d7ab7458-b2d5-4107-9f16-06946e3626a6",
-            "@type": "TestSuite",
-            "instance": [
-                {
-                    "@id": "#3f894ab0-71b7-4418-950d-3842f54dd82b"
-                }
-            ],
-            "mainEntity": {
-                "@id": "main.nf"
-            },
-            "name": "Test suite for nf-core/eduomics"
-        },
-        {
-            "@id": "#3f894ab0-71b7-4418-950d-3842f54dd82b",
-            "@type": "TestInstance",
-            "name": "GitHub Actions workflow for testing nf-core/eduomics",
-            "resource": "repos/nf-core/eduomics/actions/workflows/ci.yml",
-            "runsOn": {
-                "@id": "https://w3id.org/ro/terms/test#GithubService"
-            },
-            "url": "https://api.github.com"
-        },
-        {
-            "@id": "https://w3id.org/ro/terms/test#GithubService",
-            "@type": "TestService",
-            "name": "Github Actions",
-            "url": {
-                "@id": "https://github.com"
-            }
         },
         {
             "@id": "assets/",
@@ -346,28 +293,28 @@
             "url": "https://nf-co.re/"
         },
         {
-            "@id": "https://orcid.org/0000-0002-6399-9101",
+            "@id": "https://orcid.org/0000-0003-3149-2530",
             "@type": "Person",
-            "email": "53608000+lescai@users.noreply.github.com",
-            "name": "Francesco Lescai"
+            "email": "47034913+LorenzoS96@users.noreply.github.com",
+            "name": "Lorenzo Sola"
         },
         {
             "@id": "#Davide.bagordo@unipv.it",
             "@type": "Person",
             "email": "Davide.bagordo@unipv.it",
-            "name": "Davide Bagordo"
+            "name": "DavideBag Bagordo"
         },
         {
-            "@id": "#53608000+lescai@users.noreply.github.com",
+            "@id": "#francesco.lescai@unipv.it",
             "@type": "Person",
-            "email": "53608000+lescai@users.noreply.github.com",
+            "email": "francesco.lescai@unipv.it",
             "name": "Francesco L"
         },
         {
-            "@id": "https://orcid.org/0000-0003-3149-2530",
+            "@id": "https://orcid.org/0000-0002-6399-9101",
             "@type": "Person",
-            "email": "47034913+LorenzoS96@users.noreply.github.com",
-            "name": "Lorenzo Sola"
+            "email": "53608000+lescai@users.noreply.github.com",
+            "name": "Francesco Lescai"
         }
     ]
 }

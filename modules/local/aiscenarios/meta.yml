@@ -29,7 +29,7 @@ input:
           e.g. [ id:'sample2', single_end:false ]
     - genes:
         type: string
-        description: Gene list for differential expression scenario generation in the format 'TCN2,NAGA,CYB5R3,PNPLA5,ARSA'
+        description: Genes with the simulated variants in the format 'geneA' or gene list for differential expression scenario generation in the format 'geneA, geneB, geneC'
 
 output:
   - scenario:
