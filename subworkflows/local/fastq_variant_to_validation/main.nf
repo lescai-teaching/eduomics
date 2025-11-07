@@ -47,6 +47,7 @@ workflow FASTQ_VARIANT_TO_VALIDATION {
 
     // align simulated reads to their reference
     BWA_MEM( simulated_reads_ch, bwa_index, fasta, true )
+    ch_versions = ch_versions.mix(BWA_MEM.out.versions)
 
     SAMTOOLS_INDEX ( BWA_MEM.out.bam )
     ch_versions = ch_versions.mix(SAMTOOLS_INDEX.out.versions)
@@ -103,6 +104,7 @@ workflow FASTQ_VARIANT_TO_VALIDATION {
     ch_versions = ch_versions.mix(GATK4_APPLYBQSR.out.versions)
 
     INDEX_RECAL(GATK4_APPLYBQSR.out.bam)
+    ch_versions = ch_versions.mix(INDEX_RECAL.out.versions)
 
     empty_models_ch = Channel.value([[]])
 

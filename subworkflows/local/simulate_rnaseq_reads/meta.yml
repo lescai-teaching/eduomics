@@ -8,7 +8,7 @@ keywords:
   - polyester
 components:
   - countmatrices
-  - polyester_simulate
+  - polyester/simulate
 input:
   - ch_filtered_txfasta:
       description: |
