@@ -17,8 +17,8 @@ template:
   org: nf-core
   name: eduomics
   description: Simulation Pipeline for Educational Omics Data
-  author: Mariangela Santorsola, Lorenzo Sola, Davide Bagordo, Simone 
-    Carpanzano, Francesco Lescai
+  author: Lorenzo Sola, Davide Bagordo, Simone 
+    Carpanzano, Mariangela Santorsola, Francesco Lescai
   version: 1.1.0
   force: true
   outdir: ./eduomics
