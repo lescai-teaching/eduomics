@@ -5,7 +5,7 @@
 
 ## Introduction
 
-The eduomics pipeline is designed to create realistic, educational genomic datasets that support problem-based learning through structured storylines. Rather than generating random data, eduomics produces biologically plausible datasets tailored to guide students through complete bioinformatics workflows, from raw sequencing data to interpretation of the results. This guide will walk you through setting up and running simulations for both DNA variant calling and RNA differential expression scenarios.
+The eduomics pipeline is designed to create realistic, educational genomic datasets that support storyline-based learning. Rather than generating random data, eduomics produces biologically plausible datasets, accompanied by AI-generated scenarios, tailored to guide students through complete bioinformatics workflows, from raw sequencing data to interpretation of the results. This guide will walk you through setting up and running simulations for both DNA variant calling and RNA differential expression scenarios.
 
 ## Quick Start Tutorial
 
