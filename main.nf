@@ -15,8 +15,6 @@
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 */
 
-nextflow.preview.output = true
-
 include { EDUOMICS                     } from './workflows/eduomics'
 include { SUBSET_REFERENCES_TO_TARGETS } from './subworkflows/local/subset_references_to_targets'
 include { PREPARE_RNA_GENOME           } from './subworkflows/local/prepare_rna_genome'
